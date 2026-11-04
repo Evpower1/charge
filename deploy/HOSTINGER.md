@@ -36,7 +36,7 @@ If the account cannot provide these, do not upload the source into `public_html`
    - `NODE_ENV=production`
    - `APP_DEMO_MODE=false` — public demo mode would allow unauthenticated administration.
    - `APP_URL=https://evpower.et` for the final domain. For a provider preview, use its actual HTTPS origin until cutover, then update/rebuild for the final origin. The configured origin must match the browser origin for form submissions to pass security checks.
-   - `DATABASE_PATH` set to the actual absolute private persistent path confirmed by the provider. The uppercase placeholder in the example is not a usable path. This location must be available to the application during startup/build and runtime. Do not place customer data under `public_html`, in `/tmp`, or in a directory replaced by deployments.
+   - `DATABASE_PATH` set to the actual absolute private persistent path confirmed by the provider. The uppercase placeholder in the example is not a usable path. This location must be available to the application at runtime. The build does not open the database. Do not place customer data under `public_html`, in `/tmp`, or in a directory replaced by deployments.
    - `ADMIN_EMAIL` set to the initial administrator's chosen email.
    - `ADMIN_PASSWORD` set securely to a strong password of at least 12 characters before first startup. The administrator is created when the database is first initialised; log in to confirm, then remove this bootstrap variable from hosting settings. It does not reset an existing account or promote a customer account.
    - `CHAPA_SECRET_KEY` only when the merchant account is ready for payment testing. Leave unset for initial visual review. Checkout is then disabled in production, while the site, contact form, and booking requests remain available. Never enable public demo mode to work around missing payments.
@@ -63,6 +63,14 @@ Keep install/build/start commands as `npm ci`, `npm run build`, and `npm start`.
 The matching official `@next/swc-wasm-nodejs` package is locked at 16.4.5 and installed with npm integrity checks. `scripts/prepare-swc.mjs` copies that verified package into Next.js’s generated WASM fallback cache before build/start. This avoids relying on the host’s failing native SWC or an incomplete automatic WASM download. Do not disable TLS, signature, or integrity checks.
 
 If logs still reference a hashed `*.next.config.ts` file, the old build workspace is still being used. If Node reports that `node:sqlite` is missing, select Node.js 24.x or update the 22.x runtime to at least 22.13. If another build error remains, share its raw log lines with secret values removed.
+
+## Recover from a build-time SQLite lock
+
+Deploy the latest `main` commit. Database initialization now happens on the first request, not when parallel Next.js build workers import server modules. The root layout and product routes explicitly wait for a request before querying the catalogue. Builds do not need access to the runtime `DATABASE_PATH`.
+
+The runtime shares one database connection per process and sets `busy_timeout` before enabling WAL or initializing tables. Schema and seed changes are transactional. Keep the existing database and journal files; SQLite handles recovery. The repository excludes `.data/` and contains no committed SQLite files. This fix does not change `DATABASE_PATH`, delete stored data, or remove the need for persistent storage.
+
+Validation includes a complete Node.js 22/WASM build with `DATABASE_PATH` pointing to an unwritable `/proc` location, proving no database is opened during build. Runtime account/order/booking checks use separate disposable databases.
 
 ## Read-only checks after deployment
 

@@ -31,6 +31,10 @@ The project uses `next.config.mjs` so loading the configuration does not require
 
 Deploy the latest Git commit with a clean dependency/build cache after switching from the previous TypeScript configuration. Do not commit temporary `*.next.config.ts` or `next.config.compiled.js` files. See `deploy/HOSTINGER.md`.
 
+## Database initialization
+
+SQLite is opened lazily on the first request through `getDb()`, never when Next.js imports modules during build-time page collection. Server-rendered catalogue queries wait for a request. A successful build does not require access to the runtime database directory and does not bootstrap accounts or seed data. Run `npm run test:build-no-db` to check this against a deliberately unusable database path. One connection is shared across server bundles in each process, including production. Initialization sets a 10-second busy timeout before lock-taking operations and performs schema/seed/admin bootstrap changes in one transaction. Existing data is retained, and SQLite manages journal recovery; do not delete database/journal files to work around a build failure.
+
 ## Production
 
 1. Use a persistent, writable volume for `DATABASE_PATH`. The default is `.data/evpower.sqlite`. Back up the SQLite database consistently; SQLite’s backup API or `VACUUM INTO` is preferable to copying an active database without its WAL. This application targets one Node deployment with persistent storage, not ephemeral serverless instances.

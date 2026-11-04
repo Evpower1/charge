@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { randomUUID, randomBytes } from 'node:crypto';
 import { z } from 'zod';
-import { db, demoMode } from '@/lib/db';
+import { getDb, demoMode } from '@/lib/db';
 import { currentUser, setSession, hashPassword, verifyPassword, safeUser, hashToken, requireAdmin, rateLimit, protectMutation, readBody } from '@/lib/server';
 import { chapa } from '@/lib/chapa';
 import type { Product, Order } from '@/lib/types';
@@ -13,8 +13,9 @@ const phone = z.string().trim().regex(/^\+?[\d\s()-]{9,22}$/, 'Please enter a va
 const text = z.string().trim().min(3).max(500);
 const json = (data: unknown, status = 200) => NextResponse.json(data, { status, headers: { 'Cache-Control': 'no-store' } });
 const fail = (message: string, status = 400): never => { throw Object.assign(new Error(message), { status }); };
-const itemsFor = (id: string) => db.prepare('SELECT product_id,name,quantity,price FROM order_items WHERE order_id = ?').all(id);
+const itemsFor = (id: string) => getDb().prepare('SELECT product_id,name,quantity,price FROM order_items WHERE order_id = ?').all(id);
 function orderFor(req: NextRequest, id: string) {
+  const db = getDb();
   const order = db.prepare('SELECT * FROM orders WHERE id = ?').get(id);
   if (!order) return fail('Order not found.', 404);
   const user = currentUser(req);
@@ -23,6 +24,7 @@ function orderFor(req: NextRequest, id: string) {
   return order;
 }
 async function verifyPayment(tx: string) {
+  const db = getDb();
   if (!/^[A-Za-z0-9-]{10,80}$/.test(tx)) fail('Invalid payment reference.');
   const order = db.prepare('SELECT * FROM orders WHERE tx_ref = ?').get(tx);
   if (!order) return fail('Order not found.', 404);
@@ -36,6 +38,7 @@ async function handle(req: NextRequest, parts: string[]) {
   const path = parts.join('/');
   const method = req.method;
   if (method !== 'GET') protectMutation(req);
+  const db = getDb();
   if (method === 'GET' && path === 'catalog') return json({
     products: db.prepare('SELECT * FROM products').all(), stations: db.prepare('SELECT * FROM stations').all(),
     demo: demoMode, paymentsAvailable: !!process.env.CHAPA_SECRET_KEY,

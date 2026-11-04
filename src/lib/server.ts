@@ -1,17 +1,19 @@
 import 'server-only';
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
-import { db, demoMode } from './db';
+import { getDb, demoMode } from './db';
 import type { User } from './types';
 export const hashToken = (s: string) => createHash('sha256').update(s).digest('hex');
 export const safeUser = (u: Record<string, unknown>): User => ({id: u.id as string, name: u.name as string, email: u.email as string, phone: u.phone as string, role: u.role as string});
 export function currentUser(req: NextRequest): User | null {
   const token = req.cookies.get('evpower_session')?.value;
   if (!token) return null;
+  const db = getDb();
   const user = db.prepare('SELECT users.* FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.token = ? AND sessions.expires_at > ?').get(hashToken(token), Date.now());
   return user ? safeUser(user) : null;
 }
 export function setSession(res: NextResponse, userId: string) {
+  const db = getDb();
   const token = randomBytes(32).toString('hex');
   db.prepare('DELETE FROM sessions WHERE expires_at < ?').run(Date.now());
   db.prepare('INSERT INTO sessions VALUES (?,?,?)').run(hashToken(token), userId, Date.now() + 1000 * 60 * 60 * 24 * 7);
@@ -31,6 +33,7 @@ export function requireAdmin(req: NextRequest) {
   if (currentUser(req)?.role !== 'admin' && !demoMode) throw Object.assign(new Error('Administrator access required.'), { status: 403 });
 }
 export function rateLimit(key: string, max: number, windowMs = 15 * 60 * 1000) {
+  const db = getDb();
   db.prepare('DELETE FROM rate_limits WHERE reset_at < ?').run(Date.now());
   const row = db.prepare('SELECT count FROM rate_limits WHERE key = ?').get(key);
   if (row && Number(row.count) >= max) throw Object.assign(new Error('Too many attempts. Please try again in a few minutes.'), { status: 429 });
