@@ -1,0 +1,16 @@
+import Link from 'next/link';
+import { PageIntro } from '@/components/ui';
+import { CTA } from '@/components/shell';
+export const metadata={title:'Frequently Asked Questions'};
+const questions=[
+ ['compatibility','Will your chargers work with my EV?','Connector type, your vehicle’s onboard charger, and the electrical supply all matter. Our catalogue includes Type 2 chargers and GB/T accessories. Contact us with your vehicle model before ordering so we can confirm compatibility.'],
+ ['mobile','Can you charge my vehicle at my location?','Send a mobile charging request with your location and vehicle details. Our team will confirm coverage, connector suitability, timing, and pricing before dispatch. A request is not a confirmed appointment.'],
+ ['locations','Are all locations on the map operational?','No. Sample locations are clearly labelled and are not verified operating stations. Use the “Verified only” filter to view confirmed entries. Call 8890 for current charging availability before travelling.'],
+ ['payments','Which payment methods are supported?','Live payments use Chapa’s hosted checkout. Depending on Chapa’s current availability and merchant account configuration, payment options may include Telebirr, CBE Birr, bank payments, and cards. Your available options appear on Chapa’s checkout page.'],
+ ['delivery','Where do you deliver?','Our initial delivery areas are Addis Ababa and Adama. Standard delivery is 250 ETB, with free delivery on orders of 25,000 ETB or more. Delivery dates are confirmed by our team.'],
+ ['installation','Can you install a charger at my home or business?','Yes, you can request an installation assessment or select standard wallbox installation at checkout. Standard installation is listed at 3,500 ETB; site conditions and additional electrical work may affect the final scope. Any extra work will be quoted before it begins.'],
+ ['account','Do I need an account to shop?','No. Guest checkout is supported. An account makes it easier to track orders, save addresses, view bookings, and access invoices from one place.'],
+ ['returns','What if I need help after a purchase?','Call 8890, WhatsApp +251 911 049 916, or email info@evpower.et with your order reference. Our team will review the product, delivery, warranty, or return question and explain the available next steps.'],
+ ['business','Can you support a fleet or charging partnership?','We welcome enquiries from fleet operators, property owners, hospitality businesses, and organisations exploring electric mobility. Use the contact form and choose “Business partnership” or “Fleet solutions” to start a conversation.']
+];
+export default function Page(){return <><PageIntro eyebrow="Frequently asked questions" title="A little clarity for the road ahead." text="From your first connector to your next delivery. Answers to the questions we hear along the way."/><section className="section faq-page"><div className="container"><div className="faq-list">{questions.map(([id,q,a])=><details id={id} key={id}><summary>{q}<span>+</span></summary><p>{a}</p></details>)}<p style={{fontSize:13,marginTop:30}}>Something else on your mind? <Link className="text-link" href="/contact">Talk to our team ↗</Link></p></div></div></section><CTA/></>;}
