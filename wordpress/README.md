@@ -9,13 +9,19 @@ This is a separate, installable WordPress version of Evpower. It uses the native
 3. Under **Plugins → Add New**, install and activate **WooCommerce** from the WordPress plugin directory. Complete its business setup as appropriate for Evpower.
 4. Download [evpower.zip](packages/evpower.zip). In **Appearance → Themes → Add New → Upload Theme**, upload this file and activate **Evpower**.
 5. Download [evpower-core.zip](packages/evpower-core.zip). In **Plugins → Add New → Upload Plugin**, upload this file and activate **Evpower Core**. Upload the two ZIPs separately; the theme ZIP belongs under Themes and the plugin ZIP under Plugins.
-6. Open **Evpower → Setup & help**. Review the options, then choose **Create missing starter content**. It preserves existing page content and products. Options let you set the new homepage and site identity, import draft sample products, and explicitly switch the Cart/Checkout pages to the classic shortcodes needed by the included Chapa gateway. The Cart/Checkout option replaces only those two pages’ content; leave it unchecked if you need to preserve a custom checkout.
+6. Open **Evpower → Setup & help**. Select **Set the Evpower Home page as this WordPress site’s homepage**. On a new site, also select **Use Post name URLs**. Then choose **Create missing starter content**. It preserves existing page content and products. Options let you set the new homepage and site identity, import draft sample products, and explicitly switch the Cart/Checkout pages to the classic shortcodes needed by the included Chapa gateway. The Cart/Checkout option replaces only those two pages’ content; leave it unchecked if you need to preserve a custom checkout.
 7. If an existing page has the same address (for example `/about/`), setup keeps it. To use the Evpower design there, open the page and insert the corresponding **Evpower** pattern, then review and update it. **Settings → Reading** controls the homepage.
 8. In **WooCommerce → Settings**, configure Ethiopia, Ethiopian birr (**ETB**), taxes, delivery zones/rates, guest checkout, and registration. Review actual product photos, specifications, prices, warranty, and stock. The optional six sample products are **drafts with zero stock**.
 9. Complete and publish the Privacy Policy and Terms drafts. Assign them in **Settings → Privacy** and **WooCommerce → Settings → Advanced**. Supply real station records in **Evpower → Charging locations**. Setup creates no verified stations or invented availability.
 10. Configure notification email under **Evpower → Setup & help** and configure Hostinger’s mail/SMTP service. Test a contact enquiry, a charging request, a guest order, account login, and any enabled payment method before setting **WooCommerce → Settings → Site visibility → Live**. Submissions are saved even if email delivery fails.
 
 The packages do not change DNS, remove the deployed Next.js app, import its SQLite data, or change the hosted website by themselves. Move `evpower.et` to the reviewed WordPress installation through Hostinger only when ready. Existing Next.js accounts, password hashes, orders, invoices, images, and Website Studio revisions need a separate data migration; they are not silently copied into WordPress.
+
+## Fix the default post or 404 menu links
+
+If the Evpower header/footer appear around “Welcome to WordPress”, the theme is active but WordPress is still displaying its latest post. Open **Evpower → Setup & help**, select the homepage option, and create missing starter content. If the button is disabled, activate WooCommerce first. Version 1.0.1 fixes a setup-button bug in 1.0.0 that could keep the button disabled even when WooCommerce was active; upload the updated Evpower Core ZIP under Plugins and choose Replace current before retrying. If Home already exists, check it in **Pages** and confirm it is published.
+
+Then open **Settings → Reading**, choose **A static page → Home**, and save. Open **Settings → Permalinks**, choose **Post name**, and save. Version 1.0.1 also offers the Post name choice on the setup screen; changing the site-wide URL structure requires selecting that option. Clear Hostinger/LiteSpeed page caches afterward. Existing page and template edits are preserved.
 
 ## Edit the website
 
@@ -59,6 +65,8 @@ Testing used a mocked provider. A merchant sandbox transaction and a real hostin
 ## Rebuild and validate
 
 Validated on WordPress **7.1.4**, WooCommerce **11.2.1**, PHP **8.3**, and MariaDB **11.4**. All 45 integration checks and the full browser suite passed, including mobile layouts/navigation, map filters, requests, cart/checkout, protected receipts, native block validation, and saving a real WordPress page edit. Test map tiles and Chapa responses were simulated; no real email or payment was sent.
+
+The 1.0.1 setup regression also runs through the real dashboard: it reproduces the default-post homepage, selects the homepage and Post name options, confirms the hero and six public page routes, and checks that repeated setup preserves settings when those options are not selected.
 
 `python wordpress/package.py` rebuilds the two uploadable packages and their SHA-256 manifest. It packages only `evpower/` and `evpower-core/`, never local databases, test credentials, the testing mail/network fixture, or WordPress itself. Local fonts include their OFL licenses; vendored Leaflet includes its license and npm integrity record.
 

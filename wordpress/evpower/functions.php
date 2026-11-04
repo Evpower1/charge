@@ -13,7 +13,27 @@ add_action( 'after_setup_theme', function () {
 } );
 
 add_action( 'wp_enqueue_scripts', function () {
-    wp_enqueue_style( 'evpower', get_theme_file_uri( 'assets/theme.css' ), array(), '1.0.0' );
+    wp_enqueue_style( 'evpower', get_theme_file_uri( 'assets/theme.css' ), array(), '1.0.1' );
+} );
+
+// Keep setup guidance in the dashboard; visitors never see installation notices.
+add_action( 'admin_notices', function () {
+    if ( ! current_user_can( 'manage_options' ) || 'evpower' !== get_stylesheet() || 'evpower' === ( $_GET['page'] ?? '' ) ) { return; }
+    $installed = function_exists( 'evpower_setup_content' );
+    $pages = get_option( 'evpower_pages', array() );
+    $homepage = 'page' === get_option( 'show_on_front' ) && 'publish' === get_post_status( (int) get_option( 'page_on_front' ) );
+    $missing = false;
+    foreach ( array( 'home', 'services', 'locations', 'about', 'contact', 'booking' ) as $key ) {
+        if ( empty( $pages[ $key ] ) || 'publish' !== get_post_status( $pages[ $key ] ) ) { $missing = true; break; }
+    }
+    if ( $installed && $homepage && ! $missing && get_option( 'permalink_structure' ) ) { return; }
+    echo '<div class="notice notice-warning"><h2>Finish setting up your Evpower website</h2>';
+    if ( ! $installed ) {
+        echo '<p>The theme is active. Install and activate Evpower Core to create the homepage and service pages. Activate WooCommerce for the shop.</p><p><a class="button button-primary" href="https://github.com/Evpower1/charge/raw/refs/heads/main/wordpress/packages/evpower-core.zip">Download Evpower Core</a> <a class="button" href="' . esc_url( admin_url( 'plugin-install.php?tab=upload' ) ) . '">Upload plugin</a></p>';
+    } else {
+        echo '<p>Open Setup &amp; help, select the homepage and Post name URL options, then create missing starter content. This replaces the default-post homepage with the Evpower page and prepares its menu links.</p><p><a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=evpower' ) ) . '">Finish Evpower setup</a></p>';
+    }
+    echo '</div>';
 } );
 
 add_action( 'init', function () {

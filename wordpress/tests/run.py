@@ -43,5 +43,6 @@ fixtures = TEMP / 'fixtures.json'
 fixtures.write_text(docker('exec', 'evpower-wp-test', 'cat', '/tmp/evpower-wordpress-fixtures.json'))
 fixtures.chmod(0o600)
 print(wp('eval', 'global $wpdb; $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE \'_transient_evpower_form_%\' OR option_name LIKE \'_transient_timeout_evpower_form_%\'"); echo "Local test form counters reset.";'))
+subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('setup-browser.py'))], cwd=ROOT, check=True)
 subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('browser.py'))], cwd=ROOT, check=True)
 print('WordPress integration and browser checks passed. Stop only these test servers with: python wordpress/tests/runtime.py stop')

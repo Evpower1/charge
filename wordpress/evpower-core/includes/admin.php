@@ -17,20 +17,27 @@ function evpower_admin_page() {
     <div class="wrap" style="max-width:1000px">
         <h1>Evpower — your WordPress website</h1>
         <p>Edit pages in <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=page' ) ); ?>">Pages</a>. Edit the header, footer, navigation, templates, logo, colours, and fonts in <a href="<?php echo esc_url( admin_url( 'site-editor.php' ) ); ?>">Appearance → Editor</a>.</p>
-        <?php if ( isset( $_GET['evpower_created'] ) ) : ?><div class="notice notice-success"><p>Starter content prepared. Existing pages and products were kept. Review Pages, your homepage settings, delivery rates, legal policies, and product details before launch.</p></div><?php endif; ?>
+        <?php if ( isset( $_GET['evpower_created'] ) ) : ?><div class="notice notice-success"><p>Starter content prepared. Existing pages and products were kept. Review the setup checks below, delivery rates, legal policies, and product details before launch.</p></div><?php endif; ?>
         <?php if ( ! $ready ) : ?><div class="notice notice-warning"><p>Install and activate WooCommerce before creating starter content. The Evpower theme uses WooCommerce for products, inventory, cart, checkout, customer accounts, and orders.</p></div><?php endif; ?>
         <?php if ( 'evpower' !== get_stylesheet() ) : ?><div class="notice notice-warning"><p>Activate the Evpower theme in Appearance → Themes to use its editable starter pages and Site Editor.</p></div><?php endif; ?>
         <h2>1. Prepare starter pages</h2>
+        <p><strong>Seeing “Welcome to WordPress” or broken menu links?</strong> Select the homepage and Post name URL options below, then create missing starter content. A theme supplies the design; this step creates the pages and selects what the homepage displays.</p>
         <p>This creates missing Evpower pages only. It never replaces an existing page’s content, imports your old app’s customer data, or deletes orders. Privacy and terms pages start as drafts for your review. Sample products are optional and always drafts.</p>
         <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
             <input type="hidden" name="action" value="evpower_setup">
             <?php wp_nonce_field( 'evpower_setup' ); ?>
             <p><label><input type="checkbox" name="homepage" value="1"> Set the Evpower Home page as this WordPress site’s homepage.</label></p>
+            <p><label><input type="checkbox" name="permalinks" value="1"> Use Post name URLs, such as /services/ (recommended for a new website). This changes the site-wide permalink setting; leave unchecked to preserve an existing custom URL structure.</label></p>
             <p><label><input type="checkbox" name="identity" value="1"> Set the site title to Evpower and the tagline to “Powering journeys. Moving Ethiopia forward.”</label></p>
             <p><label><input type="checkbox" name="sample_products" value="1"> Import six sample products as drafts for review. No station is marked verified or created automatically.</label></p>
             <p><label><input type="checkbox" name="classic_checkout" value="1"> Use the classic WooCommerce Cart and Checkout for the included Chapa gateway. This replaces those two pages’ content; review or back them up first. Other pages are preserved.</label></p>
-            <?php submit_button( 'Create missing starter content', 'primary', 'submit', true, array( 'disabled' => ! $ready || 'evpower' !== get_stylesheet() ) ); ?>
+            <?php submit_button( 'Create missing starter content', 'primary', 'submit', true, ( ! $ready || 'evpower' !== get_stylesheet() ) ? array( 'disabled' => 'disabled' ) : array() ); ?>
         </form>
+        <h3>Setup checks</h3>
+        <ul>
+            <li>Homepage: <?php if ( 'page' === get_option( 'show_on_front' ) && 'publish' === get_post_status( (int) get_option( 'page_on_front' ) ) ) : ?>a published static page is selected.<?php else : ?>still showing latest posts. Select the homepage option above, or choose Home in <a href="<?php echo esc_url( admin_url( 'options-reading.php' ) ); ?>">Settings → Reading</a>.<?php endif; ?></li>
+            <li>Menu URLs: <?php if ( get_option( 'permalink_structure' ) ) : ?>a named URL structure is configured.<?php else : ?>WordPress is using Plain URLs. Select the Post name option above, or save Post name in <a href="<?php echo esc_url( admin_url( 'options-permalink.php' ) ); ?>">Settings → Permalinks</a>.<?php endif; ?></li>
+        </ul>
         <h2>2. Configure the shop</h2>
         <p>In WooCommerce → Settings, set your business details, Ethiopian birr (ETB), delivery zones and rates, taxes, guest checkout, and account registration. Use the classic Cart and Checkout pages created by this setup for the included Chapa gateway.</p>
         <p>Chapa is disabled until you configure a merchant key in WooCommerce → Settings → Payments → Chapa. You can also define <code>EVPOWER_CHAPA_SECRET_KEY</code> in a private wp-config.php instead of saving the key in WordPress. Never share the key in chat.</p>
@@ -53,6 +60,10 @@ function evpower_admin_page() {
 function evpower_setup_content( $options = array() ) {
     if ( ! current_user_can( 'manage_options' ) ) { return new WP_Error( 'forbidden', 'Administrator access required.' ); }
     if ( ! function_exists( 'WC' ) || 'evpower' !== get_stylesheet() ) { return new WP_Error( 'dependencies', 'Activate WooCommerce and the Evpower theme first.' ); }
+    if ( ! empty( $options['permalinks'] ) ) {
+        global $wp_rewrite;
+        $wp_rewrite->set_permalink_structure( '/%postname%/' );
+    }
     $pages = get_option( 'evpower_pages', array() );
     $definitions = array(
         'home' => array( 'Home', 'home', 'page-home', 'publish', 'Evpower charging, chargers, and EV care in Ethiopia.' ),
@@ -102,7 +113,7 @@ function evpower_setup_content( $options = array() ) {
 add_action( 'admin_post_evpower_setup', function () {
     if ( ! current_user_can( 'manage_options' ) ) { wp_die( 'Administrator access required.', '', array( 'response' => 403 ) ); }
     check_admin_referer( 'evpower_setup' );
-    $result = evpower_setup_content( array( 'homepage' => ! empty( $_POST['homepage'] ), 'identity' => ! empty( $_POST['identity'] ), 'sample_products' => ! empty( $_POST['sample_products'] ), 'classic_checkout' => ! empty( $_POST['classic_checkout'] ) ) );
+    $result = evpower_setup_content( array( 'homepage' => ! empty( $_POST['homepage'] ), 'permalinks' => ! empty( $_POST['permalinks'] ), 'identity' => ! empty( $_POST['identity'] ), 'sample_products' => ! empty( $_POST['sample_products'] ), 'classic_checkout' => ! empty( $_POST['classic_checkout'] ) ) );
     if ( is_wp_error( $result ) ) { wp_die( esc_html( $result->get_error_message() ) ); }
     wp_safe_redirect( admin_url( 'admin.php?page=evpower&evpower_created=1' ) ); exit;
 } );

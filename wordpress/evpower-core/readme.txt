@@ -4,7 +4,7 @@ Tags: charging, bookings, woocommerce
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,3 +24,9 @@ Requests and enquiries are private administrator-managed records. Notifications 
 
 == External services ==
 The locations map displays OpenStreetMap tiles and attribution (https://www.openstreetmap.org/copyright). Leaflet 1.9.4 is bundled locally with its license. The optional Chapa gateway uses https://api.chapa.co for merchant payment initialization and verification, and redirects buyers to hosted Chapa checkout. Merchant credentials stay server-side. No other external service is required by this plugin.
+
+== Changelog ==
+
+= 1.0.1 =
+* Fix the setup button remaining disabled when all requirements are active.
+* Add an explicit Post name URL choice and homepage/permalink setup checks.
