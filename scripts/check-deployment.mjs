@@ -19,9 +19,9 @@ try {
     const response = await read(path);
     assert.equal(response.status, 200, `${path} must respond successfully`);
     assert.equal(response.headers.get('x-content-type-options'), 'nosniff', 'Missing content-type security header');
-    assert.equal(response.headers.get('x-frame-options'), 'DENY', 'Missing framing protection');
+    assert.equal(response.headers.get('x-frame-options'), 'SAMEORIGIN', 'Missing same-origin framing protection');
     const csp = response.headers.get('content-security-policy') || '';
-    assert.ok(csp.includes("frame-ancestors 'none'"), 'Missing frame-ancestor policy');
+    assert.ok(csp.includes("frame-ancestors 'self'"), 'Missing frame-ancestor policy');
     assert.ok(!csp.includes('unsafe-eval'), 'Development script policy detected on a production deployment');
     const html = await response.text();
     assert.ok(html.includes('<h1'), `${path} is missing its main heading`);

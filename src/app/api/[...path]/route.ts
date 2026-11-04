@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { getDb, demoMode } from '@/lib/db';
 import { currentUser, setSession, hashPassword, verifyPassword, safeUser, hashToken, requireAdmin, rateLimit, protectMutation, readBody } from '@/lib/server';
 import { chapa } from '@/lib/chapa';
+import { getWebsiteState,syncAnnouncement } from '@/lib/website-server';
+import { safeImage } from '@/lib/website';
 import type { Product, Order } from '@/lib/types';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -42,7 +44,7 @@ async function handle(req: NextRequest, parts: string[]) {
   if (method === 'GET' && path === 'catalog') return json({
     products: db.prepare('SELECT * FROM products').all(), stations: db.prepare('SELECT * FROM stations').all(),
     demo: demoMode, paymentsAvailable: !!process.env.CHAPA_SECRET_KEY,
-    announcement: db.prepare("SELECT value FROM content WHERE id = 'announcement'").get()?.value
+    announcement:getWebsiteState(db).published.settings.announcement,site:getWebsiteState(db).published
   });
   if (method === 'GET' && path === 'session') return json({ user: currentUser(req), demo: demoMode });
   if (method === 'POST' && (path === 'auth/register' || path === 'auth/login')) {
@@ -100,7 +102,7 @@ async function handle(req: NextRequest, parts: string[]) {
   if (method === 'POST' && path === 'orders') {
     const input = z.object({ name, email, phone, city: z.enum(['Addis Ababa', 'Adama']), address: text, installation: z.boolean(), items: z.array(z.object({ productId: z.string().max(80), quantity: z.number().int().min(1).max(20) })).min(1).max(30) }).parse(await readBody(req));
     rateLimit(`order:${input.email}`, 10);
-    if (!process.env.CHAPA_SECRET_KEY && !demoMode) fail('Online checkout is not available yet. Please call 8890 to place an order.', 503);
+    if (!process.env.CHAPA_SECRET_KEY && !demoMode) fail(`Online checkout is not available yet. Please call ${getWebsiteState(db).published.settings.tollFree} to place an order.`, 503);
     const combined = new Map<string, number>();
     for (const i of input.items) combined.set(i.productId, (combined.get(i.productId) || 0) + i.quantity);
     const items = [...combined].map(([id, quantity]) => {
@@ -148,10 +150,11 @@ async function handle(req: NextRequest, parts: string[]) {
   if (method === 'GET' && parts[0] === 'orders' && parts[1]) {
     const order = orderFor(req, parts[1]);
     if (parts[2] === 'invoice') {
+      const brand=getWebsiteState(db).published.settings;
       if (order.payment_status !== 'paid' && order.payment_status !== 'demo') fail('Invoices are available after payment is confirmed.');
       const escape = (s: unknown) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
       const items = itemsFor(order.id as string);
-      return new NextResponse(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Evpower invoice ${escape(order.id)}</title><style>body{font:15px Arial;color:#172937;max-width:760px;margin:60px auto;padding:24px}h1{font-size:32px}table{width:100%;border-collapse:collapse;margin:32px 0}td,th{text-align:left;padding:15px;border-bottom:1px solid #ddd}button{background:#173f3c;color:white;padding:12px 20px;border:0;border-radius:8px;cursor:pointer}.muted{color:#667570}@media print{button{display:none}}</style></head><body><h1>evpower<span style="color:#81ad19">.</span></h1><p>${order.payment_status === 'demo' ? '<strong>DEMO INVOICE — no payment collected; not a tax invoice</strong>' : 'Payment receipt — not a tax invoice'}</p><h2>${escape(order.id)}</h2><p class="muted">${escape(order.created_at)}</p><p>${escape(order.name)}<br>${escape(order.email)}<br>${escape(order.address)}, ${escape(order.city)}</p><table><thead><tr><th>Item</th><th>Qty</th><th>ETB</th></tr></thead><tbody>${items.map(i => `<tr><td>${escape(i.name)}</td><td>${escape(i.quantity)}</td><td>${Number(i.price) * Number(i.quantity)}</td></tr>`).join('')}<tr><td>Delivery</td><td></td><td>${Number(order.delivery)}</td></tr><tr><td>Installation</td><td></td><td>${Number(order.installation)}</td></tr><tr><th>Total (ETB)</th><td></td><th>${Number(order.total)}</th></tr></tbody></table><p>Thank you for choosing a cleaner journey. Contact us: 8890 / +251 911 049 916</p><button onclick="window.print()">Print / save as PDF</button></body></html>`, {headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'private, no-store'}});
+      return new NextResponse(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>${escape(brand.companyName)} invoice ${escape(order.id)}</title><style>body{font:15px Arial;color:#172937;max-width:760px;margin:60px auto;padding:24px}h1{font-size:32px}table{width:100%;border-collapse:collapse;margin:32px 0}td,th{text-align:left;padding:15px;border-bottom:1px solid #ddd}button{background:#173f3c;color:white;padding:12px 20px;border:0;border-radius:8px;cursor:pointer}.muted{color:#667570}@media print{button{display:none}}</style></head><body><h1>${escape(brand.logoText)}<span style="color:#81ad19">.</span></h1><p>${order.payment_status === 'demo' ? '<strong>DEMO INVOICE — no payment collected; not a tax invoice</strong>' : 'Payment receipt — not a tax invoice'}</p><h2>${escape(order.id)}</h2><p class="muted">${escape(order.created_at)}</p><p>${escape(order.name)}<br>${escape(order.email)}<br>${escape(order.address)}, ${escape(order.city)}</p><table><thead><tr><th>Item</th><th>Qty</th><th>ETB</th></tr></thead><tbody>${items.map(i => `<tr><td>${escape(i.name)}</td><td>${escape(i.quantity)}</td><td>${Number(i.price) * Number(i.quantity)}</td></tr>`).join('')}<tr><td>Delivery</td><td></td><td>${Number(order.delivery)}</td></tr><tr><td>Installation</td><td></td><td>${Number(order.installation)}</td></tr><tr><th>Total (ETB)</th><td></td><th>${Number(order.total)}</th></tr></tbody></table><p>Thank you for choosing a cleaner journey. Contact us: ${escape(brand.tollFree)} / ${escape(brand.phoneDisplay)}</p><button onclick="window.print()">Print / save as PDF</button></body></html>`, {headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'private, no-store'}});
     }
     const { guest_token: _guest, ...clean } = order;
     return json({ ...clean, items: itemsFor(order.id as string) });
@@ -182,8 +185,8 @@ async function handle(req: NextRequest, parts: string[]) {
       return json({ products: db.prepare('SELECT * FROM products').all(), stations: db.prepare('SELECT * FROM stations').all(), orders: db.prepare('SELECT id,name,email,total,status,payment_status,created_at FROM orders ORDER BY created_at DESC LIMIT 500').all(), customers: db.prepare('SELECT id,name,email,phone,created_at,role FROM users ORDER BY created_at DESC LIMIT 500').all(), bookings: db.prepare('SELECT * FROM bookings ORDER BY created_at DESC LIMIT 500').all(), enquiries: db.prepare('SELECT * FROM enquiries ORDER BY created_at DESC LIMIT 500').all(), content: db.prepare('SELECT * FROM content').all(), demo: demoMode });
     }
     if (method === 'PUT' && path === 'admin/products') {
-      const p = z.object({ id: z.string().min(1).max(80), name, category: z.enum(['Home chargers', 'Portable chargers', 'Business chargers', 'Accessories']), price: z.number().int().min(1).max(10000000), stock: z.number().int().min(0).max(100000), description: z.string().min(10).max(2000), power: z.string().max(50), connector: z.string().max(50) }).parse(await readBody(req));
-      db.prepare("INSERT INTO products (id,name,category,price,stock,description,power,connector,color) VALUES (?,?,?,?,?,?,?,?,'white') ON CONFLICT(id) DO UPDATE SET name=excluded.name,category=excluded.category,price=excluded.price,stock=excluded.stock,description=excluded.description,power=excluded.power,connector=excluded.connector").run(p.id, p.name, p.category, p.price, p.stock, p.description, p.power, p.connector);
+      const p = z.object({ id: z.string().min(1).max(80), name, category: z.enum(['Home chargers', 'Portable chargers', 'Business chargers', 'Accessories']), price: z.number().int().min(1).max(10000000), stock: z.number().int().min(0).max(100000), description: z.string().min(10).max(2000), power: z.string().max(50), connector: z.string().max(50), image_url:z.string().refine(safeImage).default('') }).parse(await readBody(req));
+      db.prepare("INSERT INTO products (id,name,category,price,stock,description,power,connector,color,image_url) VALUES (?,?,?,?,?,?,?,?,'white',?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,category=excluded.category,price=excluded.price,stock=excluded.stock,description=excluded.description,power=excluded.power,connector=excluded.connector,image_url=excluded.image_url").run(p.id, p.name, p.category, p.price, p.stock, p.description, p.power, p.connector,p.image_url);
       return json({ ok: true });
     }
     if (method === 'PUT' && path === 'admin/stations') {
@@ -206,7 +209,7 @@ async function handle(req: NextRequest, parts: string[]) {
     }
     if (method === 'PUT' && path === 'admin/content') {
       const p = z.object({ announcement: z.string().trim().min(3).max(120) }).parse(await readBody(req));
-      db.prepare("UPDATE content SET value = ? WHERE id = 'announcement'").run(p.announcement);
+      syncAnnouncement(db,p.announcement);
       return json({ ok: true });
     }
     if (method === 'PUT' && path === 'admin/customers') {

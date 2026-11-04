@@ -106,7 +106,8 @@ async def main():
 
         await page.goto(BASE + '/contact?topic=Business%20partnership', wait_until='networkidle')
         await expect(page.get_by_role('combobox', name='How can we help?', exact=True)).to_have_value('Business partnership')
-        await page.get_by_label('Full name', exact=True).fill('Browser Partner')
+        partner_name = 'Browser Partner ' + uuid.uuid4().hex[:8]
+        await page.get_by_label('Full name', exact=True).fill(partner_name)
         await page.get_by_label('Email address', exact=True).fill(email)
         await page.get_by_label('Your message').fill('We would like to discuss workplace charging for our business.')
         await page.get_by_role('checkbox').check()
@@ -140,7 +141,7 @@ async def main():
         await page.get_by_role('button', name='Save content').click()
         await expect(page.locator('.topbar').get_by_text('Good energy. Browser-tested journeys.')).to_be_visible()
         await page.get_by_role('button', name='Enquiries', exact=False).click()
-        await expect(page.get_by_text('Browser Partner · Business partnership')).to_be_visible()
+        await expect(page.get_by_role('heading', name=partner_name + ' · Business partnership', exact=True)).to_be_visible()
         print('PASS: administration updates inventory/content and receives enquiries')
         assert not errors, errors
         print('PASS: no browser exceptions or console errors')

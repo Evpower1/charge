@@ -5,12 +5,13 @@ import { getDb, demoMode } from './db';
 import type { User } from './types';
 export const hashToken = (s: string) => createHash('sha256').update(s).digest('hex');
 export const safeUser = (u: Record<string, unknown>): User => ({id: u.id as string, name: u.name as string, email: u.email as string, phone: u.phone as string, role: u.role as string});
-export function currentUser(req: NextRequest): User | null {
-  const token = req.cookies.get('evpower_session')?.value;
+export function sessionUser(token: string | undefined): User | null {
   if (!token) return null;
-  const db = getDb();
-  const user = db.prepare('SELECT users.* FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.token = ? AND sessions.expires_at > ?').get(hashToken(token), Date.now());
+  const user = getDb().prepare('SELECT users.* FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.token = ? AND sessions.expires_at > ?').get(hashToken(token), Date.now());
   return user ? safeUser(user) : null;
+}
+export function currentUser(req: NextRequest): User | null {
+  return sessionUser(req.cookies.get('evpower_session')?.value);
 }
 export function setSession(res: NextResponse, userId: string) {
   const db = getDb();
@@ -39,14 +40,14 @@ export function rateLimit(key: string, max: number, windowMs = 15 * 60 * 1000) {
   if (row && Number(row.count) >= max) throw Object.assign(new Error('Too many attempts. Please try again in a few minutes.'), { status: 429 });
   db.prepare('INSERT INTO rate_limits VALUES (?,?,?) ON CONFLICT(key) DO UPDATE SET count = count + 1').run(key, 1, Date.now() + windowMs);
 }
-export function protectMutation(req: NextRequest) {
+export function protectMutation(req: NextRequest, maxBytes = 32000) {
   const origin = req.headers.get('origin');
   const expected = process.env.APP_URL ? new URL(process.env.APP_URL).origin : req.nextUrl.origin;
   if (!origin || origin !== expected) throw Object.assign(new Error('This request could not be verified. Please refresh the page.'), { status: 403 });
   const length = Number(req.headers.get('content-length') || 0);
-  if (length > 32000) throw Object.assign(new Error('Request is too large.'), { status: 413 });
+  if (length > maxBytes) throw Object.assign(new Error('Request is too large.'), { status: 413 });
 }
-export async function readBody(req: NextRequest) {
+export async function readBody(req: NextRequest, maxBytes = 32000) {
   if (!req.headers.get('content-type')?.startsWith('application/json')) throw Object.assign(new Error('JSON form data is required.'), { status: 415 });
   const reader = req.body?.getReader();
   if (!reader) throw new SyntaxError('Missing request body');
@@ -56,7 +57,7 @@ export async function readBody(req: NextRequest) {
     const { value, done } = await reader.read();
     if (done) break;
     length += value.byteLength;
-    if (length > 32000) { await reader.cancel(); throw Object.assign(new Error('Request is too large.'), { status: 413 }); }
+    if (length > maxBytes) { await reader.cancel(); throw Object.assign(new Error('Request is too large.'), { status: 413 }); }
     chunks.push(value);
   }
   return JSON.parse(Buffer.concat(chunks).toString('utf8'));

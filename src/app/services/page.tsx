@@ -1,3 +1,4 @@
+import { pageMetadata,ensurePageVisible } from '@/lib/website-request';
 import { ServicesPage } from '@/components/pages';
-export const metadata = {title: 'EV Charging Services'};
-export default function Page(){return <ServicesPage/>;}
+export async function generateMetadata(){return pageMetadata('/services','EV Charging Services');}
+export default async function Page(){await ensurePageVisible('/services');return <ServicesPage/>;}

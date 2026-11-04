@@ -18,7 +18,7 @@ If the account cannot provide these, do not upload the source into `public_html`
 ## Upload and configure
 
 1. Keep the existing website in place while preparing the new application. Use a provider preview/staging address if offered. Do not replace the existing domain, change DNS, or remove an old site until the new deployment has been reviewed.
-2. Use hPanel's Node.js application deployment flow and choose source ZIP upload if offered. Upload `evpower-hostinger.zip`. `package.json` is at the root of the ZIP. If hPanel only offers Git deployment, use a private Git repository containing this same source; no Git push has been performed by the agent.
+2. The source is in GitHub at `Evpower1/charge`, branch `main`. In the existing hPanel Git deployment, redeploy the latest `main` commit to install code updates. For a new application, use **Deploy from Git** and connect this repository. ZIP upload is an alternative if offered; `package.json` is at the root of `evpower-hostinger.zip`.
 3. Select the **Next.js** preset, application root `.` (ZIP root), and **Node.js 24.x** if offered. A current **22.x** release at least 22.13 also works.
 4. Use the following commands where hPanel exposes them. If a preset supplies the equivalent commands automatically, retain that preset:
 
@@ -87,3 +87,11 @@ To regenerate the source archive from the checkout:
 ```sh
 python scripts/package-hostinger.py /workspace/evpower-hostinger.zip
 ```
+
+## Enabling the website studio
+
+The update adds `/admin/editor`. Sign in through `/account` with the existing administrator credentials. It makes additive runtime database changes only: editor documents, version history, media, and a product-image column. Existing orders, accounts, bookings, inventory, and enquiries are retained. The initial editor document inherits the current announcement.
+
+Website content and uploaded images are stored in the same SQLite database. Back it up and confirm persistent storage before redeployment; a database inside a replaced build directory will not provide durable content storage. The code does not change your configured `DATABASE_PATH` or delete data.
+
+Only administrators can open saved drafts or publish/restore changes in production. Draft preview is same-origin and cookie-authenticated. Anonymous visitors receive the published document only. The frame policy allows same-origin embedding for the editor and continues to reject embedding by other origins. Leave `APP_DEMO_MODE=false` on the public site and keep Chapa unset until merchant payments are configured.

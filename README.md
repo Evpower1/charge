@@ -25,6 +25,23 @@ The example enables **local demonstration mode**: accounts, bookings, enquiries,
 - Administration: add/edit products and inventory, order fulfilment, customer contact profiles, payment records, station records, booking status, enquiries, and the site announcement.
 - The contact form stores enquiries in the admin dashboard. It does **not** send email notifications. Phone, email and WhatsApp links use the contact information provided by Evpower: 8890, +251 911 049 916, info@evpower.et.
 
+## Website studio: edit without code
+
+After deployment, sign in at `/account` using your administrator account, then open `/admin/editor` (or click **Website editor** on the dashboard).
+
+- **Click content in the preview** to edit headings, paragraphs, link destinations, images, alt descriptions, and input hints. Text controls include weight, italics, colour, and size. Header/footer/call-to-action content is also editable.
+- **Page** controls add, reorder (drag or arrow buttons), hide/show, and style sections. Add text, hero, image/story, feature cards, FAQ, and call-to-action sections. Create custom pages and edit their SEO title/description; add a navigation link when ready. Built-in core pages can be hidden but not deleted; Home remains active.
+- **Brand** controls the company name, text/image logo, browser icon, announcement, tagline, contact details, WhatsApp, and default SEO.
+- **Theme** controls colours, fonts, button corners, and content width. Desktop/mobile preview buttons let you check the result.
+- **Navigation** controls link labels, destinations, ordering, and visibility. Additional links appear under a More menu.
+- **Images** are uploaded as PNG/JPEG/WebP (8 MB maximum) and stored in the SQLite database. SVG/HTML uploads and executable URLs are rejected. Archived images leave the library but remain available to existing pages/history. Product photos are managed in **Dashboard → Products → Edit**.
+- **Save draft** keeps changes private. The preview requires an authenticated administrator (or isolated demo mode). **Publish changes** makes the saved draft public on the next page load; no code build is needed for later content edits.
+- **History** restores a published version into the draft for review. It never rolls back products, orders, customers, or payments. Optimistic revision checks prevent a stale editor tab overwriting newer work.
+
+This is a structured visual page editor, not an arbitrary JavaScript/PHP editor. Commerce records and transaction rules remain in the business dashboard; payment credentials, domain/DNS, hosting configuration, and database backups remain hosting responsibilities. Images and editor documents use the same persistent SQLite database as business data: keep `DATABASE_PATH` outside directories replaced by deployment and maintain backups.
+
+The first request adds editor tables and a product-photo column without deleting existing data. The current announcement is migrated into the initial website document. No database access is introduced during the build.
+
 ## Hostinger build compatibility
 
 The project uses `next.config.mjs` so loading the configuration does not require native TypeScript transpilation. `npm run build` uses Webpack, and `scripts/prepare-swc.mjs` provisions the matching official SWC WebAssembly package into Next.js’s generated fallback cache. Native SWC is used when available; the verified WASM dependency is available when an older host cannot load the native binary. The same preparation runs before `npm start`. No dependency source or binary verification is disabled. Keep `next` and `@next/swc-wasm-nodejs` pinned to the same version.
@@ -52,6 +69,12 @@ npm start
 ```
 
 No payment details are stored by Evpower. Secrets remain server-side. APIs use schema validation, bounded request bodies, origin checks, rate limits for public submission/authentication endpoints, parameterised SQL, protected cookies, and per-order authorisation. Keep the runtime/dependencies updated and add deployment-level request limits and monitoring for public traffic.
+
+## Editor validation
+
+Run against disposable local databases only. Bootstrap the secure instance on port 3002 with a test `ADMIN_EMAIL` and `ADMIN_PASSWORD`, then supply those same values as `TEST_ADMIN_EMAIL` and `TEST_ADMIN_PASSWORD` to `npm run test:cms`. Alternatively, `TEST_ADMIN_CREDENTIALS_FILE` can reference a private local JSON fixture with `email` and `password` keys. Never use production credentials or production customer data for these tests.
+
+`npm run test:cms` covers draft isolation, administrator/customer permissions, unsafe content rejection, optimistic concurrency, raster media uploads, page publication/visibility/SEO, product photos, and version restoration. `python -u tests/editor-browser.py` exercises the live editor, draft/public separation, undo/redo, theme/mobile previews, section management, custom pages, navigation, image uploads, and history restoration. The browser script reads the private test fixture named by `TEST_ADMIN_CREDENTIALS_FILE` (the cloud test workspace uses a generated file under `/tmp`).
 
 ## Validation
 

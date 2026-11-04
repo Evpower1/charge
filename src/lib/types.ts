@@ -1,4 +1,4 @@
-export type Product = { id: string; name: string; category: string; price: number; old_price: number | null; description: string; power: string; connector: string; stock: number; badge: string; color: string; featured: number };
+export type Product = { image_url?: string; id: string; name: string; category: string; price: number; old_price: number | null; description: string; power: string; connector: string; stock: number; badge: string; color: string; featured: number };
 export type Station = { id: string; name: string; city: string; area: string; lat: number; lng: number; power: string; connectors: string; hours: string; verified: number; source_url: string; verified_at: string; status: string };
 export type User = { id: string; name: string; email: string; phone: string; role: string };
 export type CartItem = { productId: string; quantity: number };

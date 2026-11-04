@@ -1,18 +1,20 @@
 'use client';
+import { useCmsRender } from './cms-runtime';
 import Link from 'next/link';
 import { ArrowUpRight, ArrowRight, Zap, ShieldCheck, Plus, X, Minus, ShoppingBag, Check, LoaderCircle } from 'lucide-react';
 import { useEffect, useRef, useId, type ReactNode } from 'react';
 import { useStore } from './store';
 import { money, type Product } from '@/lib/types';
-export function Brand({ light = false }: { light?: boolean }) { return <Link href="/" className={`brand ${light?'brand-light':''}`} aria-label="Evpower home"><span className="brand-symbol"><Zap fill="currentColor" strokeWidth={1.5}/></span><span>evpower<span className="brand-dot">.</span></span></Link>; }
-export function SectionHeading({ eyebrow, title, text, action, href }: { eyebrow: string; title: string; text?: string; action?: string; href?: string }) { return <div className="section-heading"><div><div className="eyebrow"><span/> {eyebrow}</div><h2>{title}</h2></div><div className="section-heading-right">{text&&<p>{text}</p>}{action&&href&&<Link className="text-link" href={href}>{action}<ArrowUpRight size={17}/></Link>}</div></div>; }
-export function PageIntro({ eyebrow, title, text, children }: { eyebrow: string; title: string; text: string; children?: ReactNode }) { return <section className="page-intro"><div className="container"><div className="breadcrumbs"><Link href="/">Home</Link><span>/</span><span>{eyebrow}</span></div><div className="eyebrow"><span/>{eyebrow}</div><h1>{title}</h1><p>{text}</p>{children}</div><span className="intro-orbit" aria-hidden="true"/></section>; }
+export function Brand({ light = false }: { light?: boolean }) { const {site}=useStore();const settings=site.settings;return <Link href="/" className={`brand ${light?'brand-light':''}`} aria-label={`${settings.companyName} home`}>{settings.logo?<img src={settings.logo} alt={settings.companyName} className="custom-logo"/>:<><span className="brand-symbol"><Zap fill="currentColor" strokeWidth={1.5}/></span><span>{settings.logoText}<span className="brand-dot">.</span></span></>}</Link>; }
+export function SectionHeading({ eyebrow, title, text, action, href }: { eyebrow: string; title: string; text?: string; action?: string; href?: string }) {const cmsRender=useCmsRender(); return cmsRender(<div className="section-heading"><div><div className="eyebrow"><span/> {eyebrow}</div><h2>{title}</h2></div><div className="section-heading-right">{text&&<p>{text}</p>}{action&&href&&<Link className="text-link" href={href}>{action}<ArrowUpRight size={17}/></Link>}</div></div>); }
+export function PageIntro({ eyebrow, title, text, children }: { eyebrow: string; title: string; text: string; children?: ReactNode }) {const cmsRender=useCmsRender(); return cmsRender(<section className="page-intro"><div className="container"><div className="breadcrumbs"><Link href="/">Home</Link><span>/</span><span>{eyebrow}</span></div><div className="eyebrow"><span/>{eyebrow}</div><h1>{title}</h1><p>{text}</p>{children}</div><span className="intro-orbit" aria-hidden="true"/></section>); }
 export function EmptyState({ icon, title, text, action }: {icon?:ReactNode;title:string;text:string;action?:ReactNode}) { return <div className="empty-state"><div className="empty-icon">{icon||<ShoppingBag/>}</div><h3>{title}</h3><p>{text}</p>{action}</div>; }
 export function Spinner() { return <LoaderCircle className="spin" size={18}/>; }
 export function ErrorMessage({ message }: {message:string}) { return message?<p className="form-error" role="alert">{message}</p>:null; }
 export function ProductArt({ product, large = false }: {product:Product;large?:boolean}) {
   const color=product.color;
   const id=useId();
+  if(product.image_url)return <img className="product-art product-photo" src={product.image_url} alt={product.name}/>;
   return <svg viewBox="0 0 360 280" className={`product-art ${large?'large':''}`} role="img" aria-label={`${product.name} product illustration`}>
     <defs><linearGradient id={`${id}-body`} x1="0" y1="0" x2="1" y2="1"><stop stopColor={color==='dark'?'#354943':'#ffffff'}/><stop offset="1" stopColor={color==='dark'?'#122a25':'#d5ded8'}/></linearGradient><filter id={`${id}-shadow`} x="-50%" y="-30%" width="200%" height="180%"><feDropShadow dx="7" dy="12" stdDeviation="10" floodColor="#193e30" floodOpacity=".15"/></filter></defs>
     <ellipse cx="184" cy="246" rx="79" ry="11" fill="#193e30" opacity=".06"/>
@@ -47,7 +49,7 @@ export function Modal({ children, title, onClose, wide = false }: {children:Reac
     document.addEventListener('keydown',listener);
     return()=>{document.body.style.overflow=overflow;document.removeEventListener('keydown',listener);previous?.focus();};
   },[]);
-  return <div className="modal-backdrop" onClick={e=>{if(e.target===e.currentTarget)onClose();}}><div className={`modal ${wide?'modal-wide':''}`} role="dialog" aria-modal="true" aria-label={title} tabIndex={-1} ref={ref}><div className="modal-heading"><h2>{title}</h2><button className="icon-button" aria-label="Close dialog" onClick={onClose}><X/></button></div>{children}</div></div>;
+  return <div className="modal-backdrop" onClick={e=>{if(e.target===e.currentTarget)onClose();}}><div className={`modal ${wide?'modal-wide':''}`} role="dialog" aria-modal="true" aria-label={title} tabIndex={-1} ref={ref}><div className="modal-heading"><h2>{title}</h2><button type="button" className="icon-button" aria-label="Close dialog" onClick={onClose}><X/></button></div>{children}</div></div>;
 }
 export function CartDrawer() {
   const store=useStore();

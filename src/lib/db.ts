@@ -44,7 +44,11 @@ function initialize(db: DatabaseSync) {
     CREATE TABLE IF NOT EXISTS enquiries (id TEXT PRIMARY KEY, name TEXT, email TEXT, topic TEXT, message TEXT, created_at TEXT DEFAULT CURRENT_TIMESTAMP);
     CREATE TABLE IF NOT EXISTS content (id TEXT PRIMARY KEY, value TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS rate_limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, reset_at INTEGER NOT NULL);
+    CREATE TABLE IF NOT EXISTS website_state (id INTEGER PRIMARY KEY CHECK(id=1), draft TEXT NOT NULL, published TEXT NOT NULL, revision INTEGER NOT NULL DEFAULT 0, published_revision INTEGER NOT NULL DEFAULT 0);
+    CREATE TABLE IF NOT EXISTS website_versions (id INTEGER PRIMARY KEY AUTOINCREMENT, document TEXT NOT NULL, note TEXT NOT NULL, author TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+    CREATE TABLE IF NOT EXISTS website_media (id TEXT PRIMARY KEY, name TEXT NOT NULL, mime TEXT NOT NULL, size INTEGER NOT NULL, bytes BLOB NOT NULL, archived INTEGER DEFAULT 0, created_at TEXT DEFAULT CURRENT_TIMESTAMP);
   `);
+  if (!db.prepare('PRAGMA table_info(products)').all().some(column => column.name === 'image_url')) db.exec("ALTER TABLE products ADD COLUMN image_url TEXT NOT NULL DEFAULT ''");
   if (!db.prepare('SELECT id FROM products LIMIT 1').get()) {
     const products = [
       ['home-7', 'HomeCharge 7.4 kW', 'Home chargers', 42500, 48000, 'Your everyday charging, made effortless. A compact smart wallbox with app control, scheduled charging, and built-in safety protection. Professional installation available.', '7.4 kW', 'Type 2', 18, 'BESTSELLER', 'white', 1],
@@ -54,7 +58,7 @@ function initialize(db: DatabaseSync) {
       ['business-44', 'BusinessCharge Duo', 'Business chargers', 145000, null, 'Two vehicles. One elegant charging station. A dual-port solution for offices, hospitality, and commercial parking with RFID access management.', '2 × 22 kW', 'Type 2', 6, 'FOR BUSINESS', 'duo', 0],
       ['adapter', 'GB/T Charging Adapter', 'Accessories', 12500, null, 'A compact AC adapter for compatible GB/T vehicles. Check your vehicle specifications before ordering; our team can help you find the right fit.', '7.4 kW AC', 'GB/T', 20, '', 'adapter', 0]
     ];
-    const insert = db.prepare('INSERT OR IGNORE INTO products VALUES (?,?,?,?,?,?,?,?,?,?,?,?)');
+    const insert = db.prepare('INSERT OR IGNORE INTO products (id,name,category,price,old_price,description,power,connector,stock,badge,color,featured) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)');
     for (const p of products) insert.run(...p);
   }
   if (!db.prepare('SELECT id FROM stations LIMIT 1').get()) {

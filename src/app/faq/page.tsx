@@ -1,7 +1,9 @@
+import { pageMetadata,ensurePageVisible } from '@/lib/website-request';
+import { CmsPage } from '@/components/cms-page';
 import Link from 'next/link';
 import { PageIntro } from '@/components/ui';
 import { CTA } from '@/components/shell';
-export const metadata={title:'Frequently Asked Questions'};
+export async function generateMetadata(){return pageMetadata('/faq','Frequently Asked Questions');}
 const questions=[
  ['compatibility','Will your chargers work with my EV?','Connector type, your vehicle’s onboard charger, and the electrical supply all matter. Our catalogue includes Type 2 chargers and GB/T accessories. Contact us with your vehicle model before ordering so we can confirm compatibility.'],
  ['mobile','Can you charge my vehicle at my location?','Send a mobile charging request with your location and vehicle details. Our team will confirm coverage, connector suitability, timing, and pricing before dispatch. A request is not a confirmed appointment.'],
@@ -13,4 +15,4 @@ const questions=[
  ['returns','What if I need help after a purchase?','Call 8890, WhatsApp +251 911 049 916, or email info@evpower.et with your order reference. Our team will review the product, delivery, warranty, or return question and explain the available next steps.'],
  ['business','Can you support a fleet or charging partnership?','We welcome enquiries from fleet operators, property owners, hospitality businesses, and organisations exploring electric mobility. Use the contact form and choose “Business partnership” or “Fleet solutions” to start a conversation.']
 ];
-export default function Page(){return <><PageIntro eyebrow="Frequently asked questions" title="A little clarity for the road ahead." text="From your first connector to your next delivery. Answers to the questions we hear along the way."/><section className="section faq-page"><div className="container"><div className="faq-list">{questions.map(([id,q,a])=><details id={id} key={id}><summary>{q}<span>+</span></summary><p>{a}</p></details>)}<p style={{fontSize:13,marginTop:30}}>Something else on your mind? <Link className="text-link" href="/contact">Talk to our team ↗</Link></p></div></div></section><CTA/></>;}
+export default async function Page(){await ensurePageVisible('/faq');return <CmsPage pageKey="/faq"><PageIntro eyebrow="Frequently asked questions" title="A little clarity for the road ahead." text="From your first connector to your next delivery. Answers to the questions we hear along the way."/><section className="section faq-page"><div className="container"><div className="faq-list">{questions.map(([id,q,a])=><details id={id} key={id}><summary>{q}<span>+</span></summary><p>{a}</p></details>)}<p style={{fontSize:13,marginTop:30}}>Something else on your mind? <Link className="text-link" href="/contact">Talk to our team ↗</Link></p></div></div></section><CTA/></CmsPage>;}
