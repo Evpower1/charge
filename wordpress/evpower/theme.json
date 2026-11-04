@@ -1,0 +1,202 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "appearanceTools": true,
+    "useRootPaddingAwareAlignments": true,
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1328px"
+    },
+    "color": {
+      "palette": [
+        {
+          "slug": "ink",
+          "name": "Main text",
+          "color": "#183330"
+        },
+        {
+          "slug": "navy",
+          "name": "Dark sections",
+          "color": "#10292e"
+        },
+        {
+          "slug": "accent",
+          "name": "Good energy lime",
+          "color": "#c4f06b"
+        },
+        {
+          "slug": "muted",
+          "name": "Secondary text",
+          "color": "#737e79"
+        },
+        {
+          "slug": "soft",
+          "name": "Soft background",
+          "color": "#f5f7f2"
+        },
+        {
+          "slug": "paper",
+          "name": "Paper",
+          "color": "#ffffff"
+        }
+      ]
+    },
+    "typography": {
+      "fluid": true,
+      "fontFamilies": [
+        {
+          "fontFamily": "\"DM Sans\",sans-serif",
+          "name": "DM Sans",
+          "slug": "dm",
+          "fontFace": [
+            {
+              "fontFamily": "DM Sans",
+              "fontStyle": "normal",
+              "fontWeight": "100 1000",
+              "src": [
+                "file:./assets/fonts/dm-sans.woff2"
+              ]
+            }
+          ]
+        },
+        {
+          "fontFamily": "Manrope,sans-serif",
+          "name": "Manrope",
+          "slug": "manrope",
+          "fontFace": [
+            {
+              "fontFamily": "Manrope",
+              "fontStyle": "normal",
+              "fontWeight": "200 800",
+              "src": [
+                "file:./assets/fonts/manrope.woff2"
+              ]
+            }
+          ]
+        }
+      ],
+      "fontSizes": [
+        {
+          "slug": "small",
+          "name": "Small",
+          "size": "0.85rem"
+        },
+        {
+          "slug": "medium",
+          "name": "Body",
+          "size": "1rem"
+        },
+        {
+          "slug": "large",
+          "name": "Large",
+          "size": "1.5rem"
+        },
+        {
+          "slug": "x-large",
+          "name": "Heading",
+          "size": "clamp(2rem,4vw,3.5rem)"
+        }
+      ]
+    },
+    "spacing": {
+      "units": [
+        "px",
+        "rem",
+        "%",
+        "vw"
+      ],
+      "blockGap": true
+    },
+    "border": {
+      "radius": true
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var:preset|color|paper",
+      "text": "var:preset|color|ink"
+    },
+    "spacing": {
+      "blockGap": "1.5rem"
+    },
+    "typography": {
+      "fontFamily": "var:preset|font-family|dm",
+      "fontSize": "1rem",
+      "lineHeight": "1.75"
+    },
+    "elements": {
+      "heading": {
+        "typography": {
+          "fontFamily": "var:preset|font-family|manrope",
+          "fontWeight": "600",
+          "lineHeight": "1.13",
+          "letterSpacing": "-0.04em"
+        }
+      },
+      "link": {
+        "color": {
+          "text": "inherit"
+        },
+        "typography": {
+          "textDecoration": "none"
+        }
+      },
+      "button": {
+        "border": {
+          "radius": "7px"
+        },
+        "color": {
+          "background": "var:preset|color|accent",
+          "text": "var:preset|color|navy"
+        },
+        "typography": {
+          "fontWeight": "600",
+          "fontSize": "0.85rem"
+        },
+        "spacing": {
+          "padding": {
+            "top": "1rem",
+            "bottom": "1rem",
+            "left": "1.4rem",
+            "right": "1.4rem"
+          }
+        }
+      }
+    },
+    "blocks": {
+      "core/navigation": {
+        "typography": {
+          "fontSize": "0.83rem",
+          "fontWeight": "500"
+        }
+      },
+      "core/site-title": {
+        "typography": {
+          "fontFamily": "var:preset|font-family|manrope",
+          "fontSize": "2rem",
+          "fontWeight": "800",
+          "letterSpacing": "-0.07em"
+        }
+      },
+      "core/post-title": {
+        "typography": {
+          "fontSize": "clamp(2.5rem,5vw,4.5rem)"
+        }
+      }
+    }
+  },
+  "templateParts": [
+    {
+      "name": "header",
+      "title": "Evpower header",
+      "area": "header"
+    },
+    {
+      "name": "footer",
+      "title": "Evpower footer",
+      "area": "footer"
+    }
+  ],
+  "patterns": []
+}

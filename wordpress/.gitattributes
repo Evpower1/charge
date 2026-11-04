@@ -1,0 +1,3 @@
+# Preserve the verified upstream Leaflet files, including their CRLF endings.
+evpower-core/assets/leaflet/** -text whitespace=cr-at-eol
+packages/*.zip binary

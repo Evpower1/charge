@@ -1,5 +1,7 @@
 # Evpower
 
+A native WordPress / WooCommerce version, with uploadable theme and plugin packages, is available in [wordpress/README.md](wordpress/README.md). The two versions have separate administration and databases.
+
 A responsive EV charging and commerce website for Evpower, Ethiopia. Built with Next.js App Router, React, TypeScript, local variable fonts, Lucide icons, and SQLite. No external image, font, or map requests are needed to render the site.
 
 ## Run locally
