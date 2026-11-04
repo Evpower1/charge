@@ -10,7 +10,7 @@ destination = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else root.parent 
 if destination.exists():
     raise SystemExit(f'Refusing to overwrite an existing archive: {destination}')
 roots = ['src', 'public', 'deploy', 'scripts']
-files = [root / name for name in ['package.json', 'package-lock.json', 'tsconfig.json', 'next-env.d.ts', 'next.config.ts', '.nvmrc', '.gitignore', 'README.md']]
+files = [root / name for name in ['package.json', 'package-lock.json', 'tsconfig.json', 'next-env.d.ts', 'next.config.mjs', '.nvmrc', '.gitignore', 'README.md']]
 for directory in roots:
     files.extend(p for p in (root / directory).rglob('*') if p.is_file())
 approved_examples = {'deploy/hostinger.env.example'}

@@ -8,7 +8,7 @@ The user reports a Hostinger Business plan. The agent has not accessed the Hosti
 
 In hPanel, check whether the website-creation flow offers a Node.js application. Confirm that it supports:
 
-- Node.js **24.x**, matching the tested application runtime (see `.nvmrc`).
+- Node.js **24.x** (recommended, see `.nvmrc`) or **22.13+**. Node.js 22.23.4 is compatibility-tested.
 - A Next.js application with a server process and API routes.
 - A private, writable database directory that persists across restarts **and redeployments**. The current application uses SQLite and must run as a single application instance with that persistent storage.
 - Application environment variables and HTTPS for evpower.et.
@@ -19,7 +19,7 @@ If the account cannot provide these, do not upload the source into `public_html`
 
 1. Keep the existing website in place while preparing the new application. Use a provider preview/staging address if offered. Do not replace the existing domain, change DNS, or remove an old site until the new deployment has been reviewed.
 2. Use hPanel's Node.js application deployment flow and choose source ZIP upload if offered. Upload `evpower-hostinger.zip`. `package.json` is at the root of the ZIP. If hPanel only offers Git deployment, use a private Git repository containing this same source; no Git push has been performed by the agent.
-3. Select the **Next.js** preset, application root `.` (ZIP root), and **Node.js 24.x**.
+3. Select the **Next.js** preset, application root `.` (ZIP root), and **Node.js 24.x** if offered. A current **22.x** release at least 22.13 also works.
 4. Use the following commands where hPanel exposes them. If a preset supplies the equivalent commands automatically, retain that preset:
 
    | Setting | Value |
@@ -53,6 +53,16 @@ If the account cannot provide these, do not upload the source into `public_html`
 - Complete a Chapa merchant sandbox transaction and verify the exact order amount and fulfilment state. The callback is `https://evpower.et/api/payments/verify?tx_ref=...`; the return page is `https://evpower.et/checkout?reference=...`. Chapa checkout supports only the methods enabled for the merchant account. The agent has not performed a live payment.
 - Confirm your privacy/returns/warranty terms and statutory tax-invoice process. Current printable receipts are not statutory tax invoices. Enquiries and bookings are saved for admin review; email notifications are not configured.
 - Approve the working preview before replacing an existing website or changing DNS. No Hostinger deployment, domain/DNS change, cloud-environment configuration change, or publication has been performed by the agent.
+
+## Recover from the native SWC / glibc build failure
+
+Use the latest commit from the `main` branch. The old `next.config.ts` has been replaced with `next.config.mjs`; the repository contains no generated hashed TypeScript config. Hostinger may retain generated files in a previous build workspace, so request a fresh deployment or clear only its dependency/build cache before retrying. Do not delete your production database or its persistent directory.
+
+Keep install/build/start commands as `npm ci`, `npm run build`, and `npm start`. The build script now selects Webpack (which supports SWC WASM); direct `next build` would choose Turbopack, which requires the native library and does not solve this failure.
+
+The matching official `@next/swc-wasm-nodejs` package is locked at 16.4.5 and installed with npm integrity checks. `scripts/prepare-swc.mjs` copies that verified package into Next.js’s generated WASM fallback cache before build/start. This avoids relying on the host’s failing native SWC or an incomplete automatic WASM download. Do not disable TLS, signature, or integrity checks.
+
+If logs still reference a hashed `*.next.config.ts` file, the old build workspace is still being used. If Node reports that `node:sqlite` is missing, select Node.js 24.x or update the 22.x runtime to at least 22.13. If another build error remains, share its raw log lines with secret values removed.
 
 ## Read-only checks after deployment
 

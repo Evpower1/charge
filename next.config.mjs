@@ -1,5 +1,6 @@
-import type { NextConfig } from 'next';
-const config: NextConfig = {
+// @ts-check
+/** @type {import('next').NextConfig} */
+const config = {
   poweredByHeader: false,
   devIndicators: false,
   async headers() {

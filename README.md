@@ -4,7 +4,7 @@ A responsive EV charging and commerce website for Evpower, Ethiopia. Built with 
 
 ## Run locally
 
-Requires **Node.js 24.22 or newer** (uses `node:sqlite`).
+Use **Node.js 24.x** (recommended) or **Node.js 22.13+** (uses `node:sqlite`). The Hostinger compatibility build is tested on Node.js 22.23.4.
 
 ```sh
 npm ci
@@ -24,6 +24,12 @@ The example enables **local demonstration mode**: accounts, bookings, enquiries,
 - A city-filtered, selectable, zoomable **illustrative station map**, not a road navigation map. Addis Ababa and Adama samples are explicitly unverified. Admin verification requires an HTTPS evidence URL. No live station telemetry is claimed.
 - Administration: add/edit products and inventory, order fulfilment, customer contact profiles, payment records, station records, booking status, enquiries, and the site announcement.
 - The contact form stores enquiries in the admin dashboard. It does **not** send email notifications. Phone, email and WhatsApp links use the contact information provided by Evpower: 8890, +251 911 049 916, info@evpower.et.
+
+## Hostinger build compatibility
+
+The project uses `next.config.mjs` so loading the configuration does not require native TypeScript transpilation. `npm run build` uses Webpack, and `scripts/prepare-swc.mjs` provisions the matching official SWC WebAssembly package into Next.js’s generated fallback cache. Native SWC is used when available; the verified WASM dependency is available when an older host cannot load the native binary. The same preparation runs before `npm start`. No dependency source or binary verification is disabled. Keep `next` and `@next/swc-wasm-nodejs` pinned to the same version.
+
+Deploy the latest Git commit with a clean dependency/build cache after switching from the previous TypeScript configuration. Do not commit temporary `*.next.config.ts` or `next.config.compiled.js` files. See `deploy/HOSTINGER.md`.
 
 ## Production
 
