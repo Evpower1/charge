@@ -13,7 +13,7 @@ $evpower_preview = \Elementor\Plugin::$instance->preview;
 if ( ! $evpower_preview->is_preview() || (int) $evpower_preview->get_post_id() !== $evpower_layout->ID ) { $evpower_preview->init(); }
 ?><!doctype html>
 <html <?php language_attributes(); ?>>
-<head><meta charset="<?php bloginfo( 'charset' ); ?>"><meta name="viewport" content="width=device-width, initial-scale=1"><?php wp_head(); ?></head>
+<head><meta charset="<?php bloginfo( 'charset' ); ?>"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="evpower-layout-preview" content="<?php echo esc_attr( EVPOWER_CORE_VERSION ); ?>"><meta name="evpower-preview-state" content="<?php echo $evpower_preview->is_preview() && (int) $evpower_preview->get_post_id() === $evpower_layout->ID ? 'active' : 'inactive'; ?>"><?php wp_head(); ?></head>
 <body <?php body_class(); ?>><?php wp_body_open(); ?>
 <main id="content" class="ep-elementor-layout-preview"><?php $GLOBALS['post'] = $evpower_layout; setup_postdata( $evpower_layout ); the_content(); ?></main>
 <?php wp_footer(); ?></body></html>

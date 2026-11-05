@@ -2,6 +2,8 @@
 defined( 'ABSPATH' ) || exit;
 require_once EVPOWER_CORE_PATH . 'includes/elementor-convert.php';
 require_once EVPOWER_CORE_PATH . 'includes/elementor-admin.php';
+require_once EVPOWER_CORE_PATH . 'includes/elementor-preview-route.php';
+require_once EVPOWER_CORE_PATH . 'includes/elementor-diagnostics.php';
 
 add_action( 'init', function () { add_post_type_support( 'page', 'elementor' ); }, 20 );
 add_action( 'elementor/elements/categories_registered', function ( $manager ) {

@@ -4,7 +4,7 @@ This is a separate, installable WordPress version of Evpower, with Elementor edi
 
 ## Elementor: the owner workflow
 
-Use **Evpower theme 1.1.0** and **Evpower Core 1.1.3** using the ZIPs under `packages/`. Upload each ZIP in its matching Themes/Plugins screen and choose **Replace current with uploaded**. Existing WordPress content, products, orders and customers remain in the database.
+Use **Evpower theme 1.1.0** and **Evpower Core 1.1.4** using the ZIPs under `packages/`. Upload each ZIP in its matching Themes/Plugins screen and choose **Replace current with uploaded**. Existing WordPress content, products, orders and customers remain in the database.
 
 1. Activate **Elementor** and **WooCommerce**. To use your Pro licence, upload the official **Elementor Pro** ZIP from your Elementor account, activate it, and connect the licence privately in WordPress.
 2. Open **Evpower → Elementor & plugins → Prepare Elementor editing**. This converts Evpower marketing pages into individual heading, image, text, button, accordion and container widgets. It creates editable header/footer templates from the current layouts. Existing Elementor pages/designs are skipped rather than replaced. Original WordPress blocks are backed up before conversion.
@@ -22,7 +22,11 @@ Duplicate Account/Cart controls are fixed by preventing WooCommerce’s automati
 
 ### Fix “the content area was not found” when editing the header/footer
 
-Update **Evpower Core to 1.1.3**, clear the Hostinger/LiteSpeed cache, then reopen **Evpower → Elementor & plugins → Edit header with Elementor** (or Edit footer). Confirm Core 1.1.3 on the setup screen's version line. The preview selects the authenticated edited header/footer ID even when Elementor uses a normal page as preview context. It initializes the native Elementor preview for that document and calls `the_content()` with the document's post. Existing templates need no re-conversion or recreation. The public website keeps its normal templates and Pro display conditions. Keep both Elementor and Elementor Pro active.
+Update **Evpower Core to 1.1.4**, clear the Hostinger/LiteSpeed cache, then reopen **Evpower → Elementor & plugins → Edit header with Elementor** (or Edit footer). Confirm Core 1.1.4 on the setup screen's version line. The preview selects the authenticated edited header/footer ID even when Elementor uses a normal page as preview context. It initializes the native Elementor preview for that document and calls `the_content()` with the document's post. Existing templates need no re-conversion or recreation. The public website keeps its normal templates and Pro display conditions. Keep both Elementor and Elementor Pro active.
+
+Core 1.1.4 sends layout previews to WordPress's own `index.php` under the WordPress Address, with a document-specific nonce and Elementor's edit permissions. It binds both the document configuration and the completed editor settings, so document subclasses cannot leave the initial editor using a different preview URL. The signed route runs before later template dispatchers and marks responses as non-cacheable. Unsigned legacy previews remain supported; normal pages are not routed through this layout handler.
+
+If the editor still fails, use **Check header preview / Check footer preview** on the Evpower editing screen. This checks HTTP status, the delivered version marker, native preview state and the requested editing area. Choose **Open editor with diagnostics** to inspect the actual editor iframe, then **Copy Evpower editor report**. Reports contain versions, domains, document IDs and readiness states; they omit query strings, nonce values, cookies and page content. The check is read-only and requires administrator access. No diagnostic details appear to public visitors, and no site/domain settings are changed.
 
 ### Critical error when clicking Prepare Elementor editing
 
@@ -112,6 +116,8 @@ The media browser regression verifies that a regular About page photo opens its 
 The 1.1.2 context regression reproduces an absent editable layout area when an ordinary page is used for header/footer preview. Both layouts then open, edit, save and restore through the real Elementor UI with that page context. All 18 preparation failure/API checks passed. They inject an exception after a document save and verify rollback and successful retry, preserve designs during promotion, and create new published layouts with editable data. The real dashboard also reports a readable preparation failure and retries successfully without a premature layout-mode switch. Local fixtures cover an inaccessible Pro conditions method and promotion failures; these are contract tests rather than execution of the licensed Pro plugin.
 
 The 1.1.3 regression adds a public, record-oriented conditions handler that reproduces **Cannot unset string offsets** when given path strings. The old setup fails that case. Updated preparation succeeds without invoking that editor handler and preserves owner conditions and widget data. Pro display-condition activation is completed through its native Theme Builder UI.
+
+The 1.1.4 regression models a document subclass overriding its preview URL after its parent configuration, a different preview domain, and an early `template_redirect` dispatcher. It demonstrates that the legacy request can be intercepted before `template_include`, then verifies direct-route header/footer editing and saves, diagnostics and clipboard reports, origin preservation, and rejection of guests, missing nonces and non-layout IDs. This fixture models preview lifecycle conflicts; the user's licensed Pro 4.3.3 package was not available for a full end-to-end run.
 
 The 1.0.1 setup regression also runs through the real dashboard: it reproduces the default-post homepage, selects the homepage and Post name options, confirms the hero and six public page routes, and checks that repeated setup preserves settings when those options are not selected.
 

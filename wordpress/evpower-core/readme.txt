@@ -4,7 +4,7 @@ Tags: charging, bookings, woocommerce
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,12 @@ Requests and enquiries are private administrator-managed records. Notifications 
 The locations map displays OpenStreetMap tiles and attribution (https://www.openstreetmap.org/copyright). Leaflet 1.9.4 is bundled locally with its license. The optional Chapa gateway uses https://api.chapa.co for merchant payment initialization and verification, and redirects buyers to hosted Chapa checkout. Merchant credentials stay server-side. No other external service is required by this plugin.
 
 == Changelog ==
+
+= 1.1.4 =
+* Use a signed, permission-checked WordPress front-controller URL for header/footer editor previews.
+* Bind the final editor configuration after document subclasses complete their preview settings.
+* Render previews before later template dispatchers, with no-cache responses and private route markers.
+* Add header/footer preview checks and opt-in editor reports that omit nonce values, cookies and content.
 
 = 1.1.3 =
 * Remove the direct Pro conditions-saving call that could fail with Cannot unset string offsets.

@@ -14,6 +14,7 @@ function evpower_elementor_action_form( $action, $label, $id = 0, $class = 'butt
 }
 function evpower_elementor_admin() {
     if ( ! current_user_can( 'manage_options' ) ) { return; }
+    if ( isset( $_GET['check_preview'] ) && is_scalar( $_GET['check_preview'] ) ) { evpower_elementor_preview_check_admin( absint( wp_unslash( $_GET['check_preview'] ) ) ); return; }
     $active = class_exists( '\Elementor\Plugin' ); $pro = function_exists( 'elementor_theme_do_location' );
     $layouts = get_option( 'evpower_elementor_layouts', array() );
     echo '<div class="wrap" style="max-width:1100px"><h1>Your Evpower website — Elementor &amp; plugins</h1>';
@@ -30,7 +31,7 @@ function evpower_elementor_admin() {
     foreach ( array( 'header', 'footer' ) as $area ) {
         echo '<p><strong>' . esc_html( ucfirst( $area ) ) . ':</strong> ';
         $id = absint( $layouts[ $area ] ?? 0 );
-        if ( $id && get_post( $id ) ) { echo '<a class="button" href="' . esc_url( evpower_elementor_edit_url( $id ) ) . '">Edit ' . esc_html( $area ) . ' with Elementor</a> <a href="' . esc_url( get_edit_post_link( $id ) ) . '">Template status/settings</a>'; }
+        if ( $id && get_post( $id ) ) { echo '<a class="button" href="' . esc_url( evpower_elementor_edit_url( $id ) ) . '">Edit ' . esc_html( $area ) . ' with Elementor</a> <a class="button" href="' . esc_url( wp_nonce_url( add_query_arg( array( 'page' => 'evpower-elementor', 'check_preview' => $id ), admin_url( 'admin.php' ) ), 'evpower_preview_check_' . $id ) ) . '">Check ' . esc_html( $area ) . ' preview</a> <a href="' . esc_url( get_edit_post_link( $id ) ) . '">Template status/settings</a>'; }
         else { echo 'Prepare editing above to create this template.'; }
         echo '</p>';
     }
