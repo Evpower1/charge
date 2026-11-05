@@ -16,6 +16,7 @@ function evpower_admin_page() {
     ?>
     <div class="wrap" style="max-width:1000px">
         <h1>Evpower — your WordPress website</h1>
+        <p><strong>For Elementor editing:</strong> open <a href="<?php echo esc_url( admin_url( 'admin.php?page=evpower-elementor' ) ); ?>">Evpower → Elementor &amp; plugins</a> to prepare pages, edit the header/footer, and install the focused plugin set.</p>
         <p>Edit pages in <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=page' ) ); ?>">Pages</a>. Edit the header, footer, navigation, templates, logo, colours, and fonts in <a href="<?php echo esc_url( admin_url( 'site-editor.php' ) ); ?>">Appearance → Editor</a>.</p>
         <?php if ( isset( $_GET['evpower_created'] ) ) : ?><div class="notice notice-success"><p>Starter content prepared. Existing pages and products were kept. Review the setup checks below, delivery rates, legal policies, and product details before launch.</p></div><?php endif; ?>
         <?php if ( ! $ready ) : ?><div class="notice notice-warning"><p>Install and activate WooCommerce before creating starter content. The Evpower theme uses WooCommerce for products, inventory, cart, checkout, customer accounts, and orders.</p></div><?php endif; ?>

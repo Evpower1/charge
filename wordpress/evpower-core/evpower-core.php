@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Evpower Core
- * Description: Evpower starter pages, charging locations, private booking requests and enquiries, and an optional Chapa gateway for WooCommerce.
- * Version: 1.0.1
+ * Description: Elementor page/header/footer controls, Evpower starter content, charging locations, private requests and enquiries, and optional WooCommerce Chapa payments.
+ * Version: 1.1.0
  * Update URI: https://github.com/Evpower1/charge/tree/main/wordpress/evpower-core
  * Requires at least: 6.7
  * Requires PHP: 8.1
@@ -12,13 +12,14 @@
  */
 defined( 'ABSPATH' ) || exit;
 
-define( 'EVPOWER_CORE_VERSION', '1.0.1' );
+define( 'EVPOWER_CORE_VERSION', '1.1.0' );
 define( 'EVPOWER_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'EVPOWER_CORE_URL', plugin_dir_url( __FILE__ ) );
 require_once EVPOWER_CORE_PATH . 'includes/admin.php';
 require_once EVPOWER_CORE_PATH . 'includes/forms.php';
 require_once EVPOWER_CORE_PATH . 'includes/locations.php';
 require_once EVPOWER_CORE_PATH . 'includes/commerce.php';
+require_once EVPOWER_CORE_PATH . 'includes/elementor.php';
 
 function evpower_private_caps( $create = false ) {
     $caps = array_fill_keys( array( 'edit_post', 'read_post', 'delete_post', 'edit_posts', 'edit_others_posts', 'publish_posts', 'read_private_posts', 'delete_posts', 'delete_private_posts', 'delete_published_posts', 'delete_others_posts', 'edit_private_posts', 'edit_published_posts' ), 'manage_options' );

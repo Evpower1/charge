@@ -13,7 +13,7 @@ add_action( 'after_setup_theme', function () {
 } );
 
 add_action( 'wp_enqueue_scripts', function () {
-    wp_enqueue_style( 'evpower', get_theme_file_uri( 'assets/theme.css' ), array(), '1.0.1' );
+    wp_enqueue_style( 'evpower', get_theme_file_uri( 'assets/theme.css' ), array(), '1.1.0' );
 } );
 
 // Keep setup guidance in the dashboard; visitors never see installation notices.
@@ -38,7 +38,17 @@ add_action( 'admin_notices', function () {
 
 add_action( 'init', function () {
     register_block_pattern_category( 'evpower', array( 'label' => __( 'Evpower pages & sections', 'evpower' ) ) );
+    register_nav_menus( array( 'evpower-primary' => __( 'Evpower main navigation', 'evpower' ) ) );
 } );
+
+// Evpower already provides account/cart controls. Do not auto-insert a second pair.
+add_filter( 'hooked_block_types', function ( $types, $position, $anchor, $context ) {
+    if ( 'core/navigation' !== $anchor || 'after' !== $position ) { return $types; }
+    $header = $context instanceof WP_Block_Template && 'evpower' === $context->theme && 'header' === $context->area;
+    $pattern = is_array( $context ) && 'evpower/header' === ( $context['name'] ?? $context['slug'] ?? '' );
+    if ( $header || $pattern ) { $types = array_values( array_diff( $types, array( 'woocommerce/customer-account', 'woocommerce/mini-cart' ) ) ); }
+    return $types;
+}, 20, 4 );
 
 /** Pattern URLs work on subdirectory installs and staging sites. */
 function evpower_url( $path = '/' ) {

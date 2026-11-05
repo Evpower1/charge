@@ -1,6 +1,24 @@
 # Evpower for WordPress
 
-This is a separate, installable WordPress version of Evpower. It uses the native WordPress block/Site Editor and WooCommerce; no paid page builder is required. The existing Next.js application remains in the repository and is not converted by uploading these packages.
+This is a separate, installable WordPress version of Evpower, with Elementor editing, Elementor Pro Theme Builder support, the WordPress block editor, and WooCommerce. The existing Next.js application remains in the repository and is not converted by uploading these packages.
+
+## Elementor: the owner workflow
+
+Update both the **Evpower theme** and **Evpower Core** to **1.1.0** using the ZIPs under `packages/`. Upload each ZIP in its matching Themes/Plugins screen and choose **Replace current with uploaded**. Existing WordPress content, products, orders and customers remain in the database.
+
+1. Activate **Elementor** and **WooCommerce**. To use your Pro licence, upload the official **Elementor Pro** ZIP from your Elementor account, activate it, and connect the licence privately in WordPress.
+2. Open **Evpower → Elementor & plugins → Prepare Elementor editing**. This converts Evpower marketing pages into individual heading, image, text, button, accordion and container widgets. It creates editable header/footer templates from the current layouts. Existing Elementor pages/designs are skipped rather than replaced. Original WordPress blocks are backed up before conversion.
+3. Use the page/header/footer **Edit with Elementor** buttons on that screen. Change text, replace photos, add/remove/move sections, and use Elementor’s responsive controls. Theme photos are imported into your Media Library so you can manage their alt text and replace them normally.
+4. With Pro active, use **Templates → Theme Builder** for Header, Footer, Single, Archive and WooCommerce designs. The theme honours published display conditions. New Evpower header/footer presets default to the entire site; adjust conditions in Pro as needed. A template created before Pro activation can be promoted by running Prepare again without losing its design.
+5. Use **Appearance → Menus** for navigation link names, destinations and order. The Elementor **Evpower Navigation** widget controls its appearance. **Site Identity** controls the logo/text logo; **Account & Cart** gives you one icon/link for each with optional labels.
+
+Elementor Free can edit the pages and assigned header/footer templates through Evpower while Pro is inactive; no separate header-builder plugin is needed. Matching Pro Theme Builder locations take priority over fallback layouts. The owner can choose **Use WordPress header & footer** or **Use Elementor header & footer**. Individual converted pages offer **Restore original WordPress blocks**. Re-running preparation keeps existing Elementor edits and customized global styles. Elementor’s own history/revisions remain available.
+
+Products, categories, prices, stock, delivery, checkout, customer accounts and orders remain in WooCommerce. Conversion leaves Shop/Cart/Checkout/My Account alone; use Pro’s product/archive templates for their visual layout. Keep the included Chapa gateway on classic Checkout as described below. Dynamic blocks from other plugins are preserved in a dedicated WordPress Block widget rather than discarded.
+
+**Focused plugin list:** Elementor + your Elementor Pro, WooCommerce and Evpower Core are the essentials. The dashboard provides official installer/activation links for **Yoast SEO** (optional SEO tools), **WP Mail SMTP** (optional reliable email delivery), and **LiteSpeed Cache** (optional on compatible Hostinger/LiteSpeed hosting). Use one SEO plugin and one page-cache plugin. Credentials and licences stay in their private plugin settings. Third-party plugins are not bundled or silently installed by the ZIPs.
+
+Duplicate Account/Cart controls are fixed by preventing WooCommerce’s automatic header insertion when Evpower supplies those controls. Explicit controls in existing header blocks are normalized to a single pair when prepared for Elementor. Other navigation links and layouts are retained.
 
 ## Install into your existing Hostinger WordPress site
 
@@ -27,7 +45,8 @@ Then open **Settings → Reading**, choose **A static page → Home**, and save.
 
 | What to change | Where in WordPress |
 | --- | --- |
-| Page text, images, buttons, and sections | **Pages → choose page → Edit** |
+| Elementor pages/header/footer | **Evpower → Elementor & plugins → Edit with Elementor** |
+| Original block-editor page content | **Pages → choose page → Edit** |
 | Add/reorder/remove sections | Block inserter (+), **Patterns → Evpower**, and List View |
 | Header, footer, navigation, page templates | **Appearance → Editor** |
 | Colours, typography, spacing | **Appearance → Editor → Styles**, or individual block settings |
@@ -65,6 +84,8 @@ Testing used a mocked provider. A merchant sandbox transaction and a real hostin
 ## Rebuild and validate
 
 Validated on WordPress **7.1.4**, WooCommerce **11.2.1**, PHP **8.3**, and MariaDB **11.4**. All 45 integration checks and the full browser suite passed, including mobile layouts/navigation, map filters, requests, cart/checkout, protected receipts, native block validation, and saving a real WordPress page edit. Test map tiles and Chapa responses were simulated; no real email or payment was sent.
+
+Elementor integration uses the official stable **Elementor 4.3.6** release. All 24 Elementor integration checks and the Elementor browser suite passed, covering widget conversion, Media Library ownership, duplicate prevention, permissions, retaining owner edits, WordPress fallback layouts, responsive pages (including Full Width), and publishing actual Elementor page/header/footer edits. Pro’s public location API and display-condition exclusions are contract-tested with a local fixture; a licensed Pro ZIP is not bundled and was not available for a full Pro-plugin end-to-end test.
 
 The 1.0.1 setup regression also runs through the real dashboard: it reproduces the default-post homepage, selects the homepage and Post name options, confirms the hero and six public page routes, and checks that repeated setup preserves settings when those options are not selected.
 

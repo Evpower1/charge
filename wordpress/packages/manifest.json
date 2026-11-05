@@ -1,10 +1,10 @@
 {
   "evpower.zip": {
-    "sha256": "fb4e7675c932bd07fa255b434c216f839386cd3e9c0e604fdb3f9dc96c23ac64",
-    "bytes": 1224863
+    "sha256": "1845ccb63a3e3a3c77b93ecce252a00060ffde0c49166833b8e6761c23e18f31",
+    "bytes": 1225830
   },
   "evpower-core.zip": {
-    "sha256": "8438a3c30d4dc419b427cd28f62d512057b3d824978e8a82ecacdf60cd03e328",
-    "bytes": 77815
+    "sha256": "75d851c422284b8811a67fd008930e01556bf92ead68d1458373ae1e4017188c",
+    "bytes": 93594
   }
 }
