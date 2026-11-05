@@ -20,15 +20,18 @@ add_action( 'elementor/theme/register_locations', function ( $manager ) { $manag
 add_action( 'elementor/page_templates/header-footer/before_content', function () { if ( 'evpower' === get_template() ) { echo '<main id="content" class="ep-main">'; } } );
 add_action( 'elementor/page_templates/header-footer/after_content', function () { if ( 'evpower' === get_template() ) { echo '</main>'; } } );
 
-/** Header/footer editing must not depend on a site's saved Single block template. */
-function evpower_elementor_layout_preview( $template ) {
-    if ( 'evpower' !== get_template() || ! class_exists( '\Elementor\Plugin' ) || ! is_singular( 'elementor_library' ) ) { return $template; }
-    $id = get_queried_object_id();
-    if ( ! \Elementor\Plugin::$instance->preview->is_preview_mode( $id ) ) { return $template; }
-    $layouts = array_map( 'absint', get_option( 'evpower_elementor_layouts', array() ) );
+/** The edited document can differ from Pro's selected preview page. */
+function evpower_elementor_layout_preview_id() {
+    if ( 'evpower' !== get_template() || ! class_exists( '\Elementor\Plugin' ) || ! isset( $_GET['elementor-preview'] ) || ! is_scalar( $_GET['elementor-preview'] ) ) { return 0; }
+    $id = absint( wp_unslash( $_GET['elementor-preview'] ) );
+    if ( ! $id || 'elementor_library' !== get_post_type( $id ) || ! \Elementor\Plugin::$instance->preview->is_preview_mode( $id ) ) { return 0; }
+    $saved = get_option( 'evpower_elementor_layouts', array() );
+    $layouts = is_array( $saved ) ? array_map( 'absint', $saved ) : array();
     $type = get_post_meta( $id, '_elementor_template_type', true );
-    if ( ! in_array( $id, $layouts, true ) && ! in_array( $type, array( 'header', 'footer' ), true ) ) { return $template; }
-    return EVPOWER_CORE_PATH . 'templates/elementor-preview.php';
+    return in_array( $id, $layouts, true ) || in_array( $type, array( 'header', 'footer' ), true ) ? $id : 0;
+}
+function evpower_elementor_layout_preview( $template ) {
+    return evpower_elementor_layout_preview_id() ? EVPOWER_CORE_PATH . 'templates/elementor-preview.php' : $template;
 }
 add_filter( 'template_include', 'evpower_elementor_layout_preview', 100 );
 
@@ -82,7 +85,7 @@ add_action( 'wp_enqueue_scripts', function () {
 
 // Use Pro's selected Single/Archive templates instead of rendering a second layout.
 add_filter( 'template_include', function ( $template ) {
-    if ( 'evpower' !== get_template() || ! function_exists( 'elementor_theme_do_location' ) || is_singular( 'elementor_library' ) || 'elementor_canvas' === get_post_meta( get_queried_object_id(), '_wp_page_template', true ) ) { return $template; }
+    if ( 'evpower' !== get_template() || ! function_exists( 'elementor_theme_do_location' ) || evpower_elementor_layout_preview_id() || is_singular( 'elementor_library' ) || 'elementor_canvas' === get_post_meta( get_queried_object_id(), '_wp_page_template', true ) ) { return $template; }
     $location = is_singular() ? 'single' : ( is_archive() || is_home() || is_search() ? 'archive' : '' );
     if ( ! $location ) { return $template; }
     ob_start(); $done = elementor_theme_do_location( $location ); $html = ob_get_clean();

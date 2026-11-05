@@ -17,6 +17,7 @@ function evpower_elementor_admin() {
     $active = class_exists( '\Elementor\Plugin' ); $pro = function_exists( 'elementor_theme_do_location' );
     $layouts = get_option( 'evpower_elementor_layouts', array() );
     echo '<div class="wrap" style="max-width:1100px"><h1>Your Evpower website — Elementor &amp; plugins</h1>';
+    echo '<p>Evpower Core ' . esc_html( EVPOWER_CORE_VERSION ) . ' · Elementor ' . esc_html( defined( 'ELEMENTOR_VERSION' ) ? ELEMENTOR_VERSION : 'inactive' ) . ' · Pro ' . esc_html( defined( 'ELEMENTOR_PRO_VERSION' ) ? ELEMENTOR_PRO_VERSION : 'inactive' ) . ' · PHP ' . esc_html( PHP_VERSION ) . '</p>';
     if ( isset( $_GET['done'] ) ) { echo '<div class="notice notice-success"><p>Settings saved. Existing Elementor designs are kept. Clear your page cache to see the latest design.</p></div>'; }
     echo '<p>Edit page content, text, images, buttons, sections, and mobile layouts with Elementor. Use the controls below for a single header and footer across the site.</p>';
     if ( ! $active ) { echo '<div class="notice notice-warning"><p>Install and activate Elementor below before preparing the editor.</p></div>'; }
@@ -72,7 +73,7 @@ add_action( 'admin_post_evpower_elementor_action', function () {
     if ( ! current_user_can( 'manage_options' ) ) { wp_die( 'Administrator access required.', '', array( 'response' => 403 ) ); }
     check_admin_referer( 'evpower_elementor_action' );
     $task = sanitize_key( wp_unslash( $_POST['task'] ?? '' ) ); $id = absint( $_POST['post_id'] ?? 0 );
-    if ( 'prepare' === $task ) { $result = evpower_prepare_elementor(); update_option( 'evpower_header_footer_mode', 'elementor', false ); }
+    if ( 'prepare' === $task ) { $result = evpower_prepare_elementor(); if ( ! is_wp_error( $result ) ) { update_option( 'evpower_header_footer_mode', 'elementor', false ); } }
     elseif ( 'page' === $task ) { $result = evpower_enable_elementor_page( $id ); }
     elseif ( 'restore' === $task && current_user_can( 'edit_post', $id ) && 'page' === get_post_type( $id ) ) {
         $backup = get_post_meta( $id, '_evpower_before_elementor', true );
@@ -85,7 +86,7 @@ add_action( 'admin_post_evpower_elementor_action', function () {
     }
     elseif ( in_array( $task, array( 'layouts-elementor', 'layouts-wordpress' ), true ) ) { update_option( 'evpower_header_footer_mode', 'layouts-wordpress' === $task ? 'wordpress' : 'elementor', false ); }
     else { wp_die( 'Invalid editor action.', '', array( 'response' => 400 ) ); }
-    if ( isset( $result ) && is_wp_error( $result ) ) { wp_die( esc_html( $result->get_error_message() ) ); }
+    if ( isset( $result ) && is_wp_error( $result ) ) { wp_die( '<p>' . esc_html( $result->get_error_message() ) . '</p><p><a href="' . esc_url( admin_url( 'admin.php?page=evpower-elementor' ) ) . '">Return to Evpower editing</a></p>', 'Evpower editor setup', array( 'response' => 400, 'back_link' => true ) ); }
     do_action( 'litespeed_purge_all' );
     wp_safe_redirect( admin_url( 'admin.php?page=evpower-elementor&done=1' ) ); exit;
 } );

@@ -61,10 +61,14 @@ try {
     ev_builder_check( 'original-template.php' === evpower_elementor_layout_preview( 'original-template.php' ), 'Anonymous layout requests keep the normal site template' );
     wp_set_current_user( get_user_by( 'login', 'evpower-test-admin' )->ID );
     $_GET['elementor-preview'] = (string) $layouts['footer'];
-    ev_builder_check( 'original-template.php' === evpower_elementor_layout_preview( 'original-template.php' ), 'A mismatched preview ID cannot replace the queried template' );
+    ev_builder_check( (int) $layouts['footer'] === evpower_elementor_layout_preview_id(), 'The authenticated edited document takes precedence over the queried preview object' );
     unset( $_GET['elementor-preview'] );
     ev_builder_check( 'original-template.php' === evpower_elementor_layout_preview( 'original-template.php' ), 'Normal library views keep the original site template' );
     $GLOBALS['wp_query'] = new WP_Query( array( 'page_id' => $home_id ) );
+    $_GET['elementor-preview'] = (string) $layouts['header'];
+    ev_builder_check( EVPOWER_CORE_PATH . 'templates/elementor-preview.php' === evpower_elementor_layout_preview( 'original-template.php' ), 'A normal page used as context does not hide the header editing area' );
+    $_GET['elementor-preview'] = array( (string) $layouts['header'] );
+    ev_builder_check( 0 === evpower_elementor_layout_preview_id(), 'Malformed preview parameters cannot select a layout' );
     $_GET['elementor-preview'] = (string) $home_id;
     ev_builder_check( 'original-template.php' === evpower_elementor_layout_preview( 'original-template.php' ), 'Ordinary Elementor page editing keeps its selected layout' );
 } finally {

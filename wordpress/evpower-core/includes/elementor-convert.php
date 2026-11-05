@@ -153,23 +153,55 @@ function evpower_enable_elementor_page( $id ) {
     $post = get_post( $id );
     $backup = array( 'content' => $post->post_content, 'template' => get_post_meta( $id, '_wp_page_template', true ) );
     update_post_meta( $id, '_evpower_before_elementor', $backup );
-    $elements = evpower_blocks_to_elementor( parse_blocks( $post->post_content ) );
-    if ( (int) get_option( 'page_on_front' ) !== (int) $id ) { array_unshift( $elements, evpower_element( 'container', array( '_css_classes' => 'ep-page-heading', 'content_width' => 'full' ), array( evpower_element( 'heading', array( 'title' => esc_html( get_the_title( $id ) ), 'header_size' => 'h1' ) ) ) ) ); }
-    update_post_meta( $id, '_elementor_edit_mode', 'builder' );
-    $document = \Elementor\Plugin::$instance->documents->get( $id );
-    if ( ! $document || ! $document->save( array( 'elements' => $elements ) ) ) { delete_post_meta( $id, '_elementor_edit_mode' ); return new WP_Error( 'save', 'Elementor could not save this page. The original content was kept.' ); }
+    $previous = array();
+    foreach ( array( '_elementor_edit_mode', '_elementor_data' ) as $key ) { $previous[ $key ] = metadata_exists( 'post', $id, $key ) ? get_post_meta( $id, $key, true ) : null; }
+    $failure = null;
+    try {
+        $elements = evpower_blocks_to_elementor( parse_blocks( $post->post_content ) );
+        if ( (int) get_option( 'page_on_front' ) !== (int) $id ) { array_unshift( $elements, evpower_element( 'container', array( '_css_classes' => 'ep-page-heading', 'content_width' => 'full' ), array( evpower_element( 'heading', array( 'title' => esc_html( get_the_title( $id ) ), 'header_size' => 'h1' ) ) ) ) ); }
+        update_post_meta( $id, '_elementor_edit_mode', 'builder' );
+        $document = \Elementor\Plugin::$instance->documents->get( $id );
+        if ( ! $document || ! $document->save( array( 'elements' => $elements ) ) ) { $failure = new WP_Error( 'save', 'Elementor could not save this page. The original content was kept.' ); }
+    } catch ( \Throwable $error ) { $failure = evpower_elementor_prepare_error( $error ); }
+    if ( $failure ) {
+        foreach ( $previous as $key => $value ) { if ( null === $value ) { delete_post_meta( $id, $key ); } else { update_post_meta( $id, $key, wp_slash( $value ) ); } }
+        wp_update_post( array( 'ID' => $id, 'post_content' => wp_slash( $backup['content'] ) ) );
+        update_post_meta( $id, '_wp_page_template', $backup['template'] );
+        return $failure;
+    }
     return $id;
+}
+
+function evpower_elementor_prepare_error( \Throwable $error ) {
+    return new WP_Error( 'elementor_prepare', 'Elementor preparation stopped: ' . $error->getMessage() . ' (' . wp_basename( $error->getFile() ) . ':' . $error->getLine() . '). Copy these details when requesting support. Original WordPress blocks remain available.' );
+}
+
+function evpower_elementor_default_conditions( $id ) {
+    update_post_meta( $id, '_elementor_conditions', array( 'include/general' ) );
+    if ( ! class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) { return; }
+    $module = \ElementorPro\Modules\ThemeBuilder\Module::instance();
+    if ( ! is_callable( array( $module, 'get_conditions_manager' ) ) ) { return; }
+    $manager = $module->get_conditions_manager();
+    // Check visibility as well as existence before using the optional Pro API.
+    if ( is_callable( array( $manager, 'save_conditions' ) ) ) { $manager->save_conditions( $id, array( 'include/general' ) ); }
 }
 
 function evpower_prepare_elementor() {
     if ( ! current_user_can( 'manage_options' ) || ! class_exists( '\Elementor\Plugin' ) || 'evpower' !== get_template() ) { return new WP_Error( 'elementor', 'Activate Elementor and the Evpower theme first.' ); }
+    if ( ! class_exists( 'DOMDocument' ) ) { return new WP_Error( 'php_dom', 'Elementor preparation needs the PHP DOM/XML extension. Enable it in Hostinger PHP extensions, then retry. No pages were converted.' ); }
+    try { return evpower_prepare_elementor_documents(); } catch ( \Throwable $error ) { return evpower_elementor_prepare_error( $error ); }
+}
+
+function evpower_prepare_elementor_documents() {
     $kit = \Elementor\Plugin::$instance->kits_manager->get_active_kit();
     if ( $kit ) {
         $colors = $kit->get_settings( 'system_colors' );
         $defaults = array( 'primary' => '#6EC1E4', 'secondary' => '#54595F', 'text' => '#7A7A7A', 'accent' => '#61CE70' );
-        $untouched = count( $colors ?: array() ) === 4;
-        foreach ( $colors ?: array() as $color ) { if ( ! isset( $defaults[ $color['_id'] ] ) || 0 !== strcasecmp( $color['color'] ?? '', $defaults[ $color['_id'] ] ) ) { $untouched = false; } }
-        foreach ( $kit->get_settings( 'system_typography' ) ?: array() as $type ) { if ( ! in_array( $type['typography_font_family'] ?? '', array( 'Roboto', 'Roboto Slab', '' ), true ) ) { $untouched = false; } }
+        $untouched = is_array( $colors ) && count( $colors ) === 4;
+        foreach ( is_array( $colors ) ? $colors : array() as $color ) { if ( ! isset( $defaults[ $color['_id'] ] ) || 0 !== strcasecmp( $color['color'] ?? '', $defaults[ $color['_id'] ] ) ) { $untouched = false; } }
+        $typography = $kit->get_settings( 'system_typography' );
+        if ( ! is_array( $typography ) ) { $untouched = false; }
+        foreach ( is_array( $typography ) ? $typography : array() as $type ) { if ( ! in_array( $type['typography_font_family'] ?? '', array( 'Roboto', 'Roboto Slab', '' ), true ) ) { $untouched = false; } }
         if ( $untouched ) {
             $kit->save( array( 'settings' => array( 'system_colors' => array(
                 array( '_id' => 'primary', 'title' => 'Primary', 'color' => '#183330' ), array( '_id' => 'secondary', 'title' => 'Secondary', 'color' => '#10292e' ), array( '_id' => 'text', 'title' => 'Text', 'color' => '#737e79' ), array( '_id' => 'accent', 'title' => 'Accent', 'color' => '#c4f06b' ),
@@ -192,28 +224,32 @@ function evpower_prepare_elementor() {
             // Promote only our fallback section when Pro becomes available. Keep its design.
             $id = (int) $layouts[ $area ];
             if ( 'section' === get_post_meta( $id, '_elementor_template_type', true ) && \Elementor\Plugin::$instance->documents->get_document_type( $area, false ) ) {
-                update_post_meta( $id, '_elementor_template_type', $area );
-                $promoted = \Elementor\Plugin::$instance->documents->get( $id, false );
-                if ( $promoted ) { $promoted->save( array() ); }
-                update_post_meta( $id, '_elementor_conditions', array( 'include/general' ) );
-                if ( class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) { $manager = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager(); if ( method_exists( $manager, 'save_conditions' ) ) { $manager->save_conditions( $id, array( 'include/general' ) ); } }
+                $conditions = metadata_exists( 'post', $id, '_elementor_conditions' ) ? get_post_meta( $id, '_elementor_conditions', true ) : null;
+                $terms = wp_get_object_terms( $id, 'elementor_library_type', array( 'fields' => 'ids' ) );
+                try {
+                    update_post_meta( $id, '_elementor_template_type', $area );
+                    $promoted = \Elementor\Plugin::$instance->documents->get( $id, false );
+                    if ( ! $promoted || ! $promoted->save( array() ) ) { throw new \RuntimeException( 'Elementor Pro could not prepare the ' . $area . ' document.' ); }
+                    evpower_elementor_default_conditions( $id );
+                } catch ( \Throwable $error ) {
+                    update_post_meta( $id, '_elementor_template_type', 'section' );
+                    if ( null === $conditions ) { delete_post_meta( $id, '_elementor_conditions' ); } else { update_post_meta( $id, '_elementor_conditions', $conditions ); }
+                    if ( ! is_wp_error( $terms ) ) { wp_set_object_terms( $id, $terms, 'elementor_library_type' ); }
+                    return evpower_elementor_prepare_error( $error );
+                }
             }
             continue;
         }
         $template = get_block_template( get_stylesheet() . '//' . $area, 'wp_template_part' );
         if ( ! $template ) { continue; }
         $type = \Elementor\Plugin::$instance->documents->get_document_type( $area, false ) ? $area : 'section';
-        $document = \Elementor\Plugin::$instance->documents->create( $type, array( 'post_title' => 'Evpower ' . ucfirst( $area ), 'post_status' => 'publish' ) );
+        $document = \Elementor\Plugin::$instance->documents->create( $type, array( 'post_title' => 'Evpower ' . ucfirst( $area ), 'post_status' => 'draft' ) );
         if ( is_wp_error( $document ) ) { return $document; }
-        if ( ! $document->save( array( 'elements' => evpower_blocks_to_elementor( parse_blocks( $template->content ), $area ) ) ) ) { return new WP_Error( 'save', 'Could not prepare the Elementor ' . $area . '.' ); }
+        if ( ! $document || ! $document->save( array( 'elements' => evpower_blocks_to_elementor( parse_blocks( $template->content ), $area ) ) ) ) { return new WP_Error( 'save', 'Could not prepare the Elementor ' . $area . '.' ); }
         $id = $document->get_main_id(); $layouts[ $area ] = $id;
-        if ( in_array( $type, array( 'header', 'footer' ), true ) ) {
-            update_post_meta( $id, '_elementor_conditions', array( 'include/general' ) );
-            if ( class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) {
-                $manager = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager();
-                if ( method_exists( $manager, 'save_conditions' ) ) { $manager->save_conditions( $id, array( 'include/general' ) ); }
-            }
-        }
+        if ( in_array( $type, array( 'header', 'footer' ), true ) ) { evpower_elementor_default_conditions( $id ); }
+        $published = wp_update_post( array( 'ID' => $id, 'post_status' => 'publish' ), true );
+        if ( is_wp_error( $published ) ) { return $published; }
         update_option( 'evpower_elementor_layouts', $layouts, false );
     }
     \Elementor\Plugin::$instance->files_manager->clear_cache();

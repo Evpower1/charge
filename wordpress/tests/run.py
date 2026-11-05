@@ -65,10 +65,13 @@ docker('exec', 'evpower-wp-test', 'chown', '-R', 'www-data:www-data', '/var/www/
 docker('exec', 'evpower-wp-test', 'cp', '/test/wp-cli.phar', '/usr/local/bin/evpower-wp-cli.phar')
 docker('exec', 'evpower-wp-test', 'chmod', '644', '/usr/local/bin/evpower-wp-cli.phar')
 print(docker('exec', '--user', 'www-data', 'evpower-wp-test', 'php', '/usr/local/bin/evpower-wp-cli.phar', '--path=/var/www/html', '--user=evpower-test-admin', 'eval-file', '/test-scripts/elementor.integration.php'))
+print(docker('exec', '--user', 'www-data', 'evpower-wp-test', 'php', '/usr/local/bin/evpower-wp-cli.phar', '--path=/var/www/html', '--user=evpower-test-admin', 'eval-file', '/test-scripts/elementor-prepare.integration.php'))
 fixtures = TEMP / 'elementor-fixtures.json'
 fixtures.write_text(docker('exec', 'evpower-wp-test', 'cat', '/tmp/evpower-elementor-fixtures.json'))
 fixtures.chmod(0o600)
 subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-browser.py'))], cwd=ROOT, check=True)
 subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-preview-browser.py'))], cwd=ROOT, check=True)
 subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-media-browser.py'))], cwd=ROOT, check=True)
+subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-context-browser.py'))], cwd=ROOT, check=True)
+subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-prepare-browser.py'))], cwd=ROOT, check=True)
 print('WordPress integration and browser checks passed. Stop only these test servers with: python wordpress/tests/runtime.py stop')
