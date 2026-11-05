@@ -19,7 +19,12 @@ function evpower_elementor_admin() {
     $layouts = get_option( 'evpower_elementor_layouts', array() );
     echo '<div class="wrap" style="max-width:1100px"><h1>Your Evpower website — Elementor &amp; plugins</h1>';
     echo '<p>Evpower Core ' . esc_html( EVPOWER_CORE_VERSION ) . ' · Elementor ' . esc_html( defined( 'ELEMENTOR_VERSION' ) ? ELEMENTOR_VERSION : 'inactive' ) . ' · Pro ' . esc_html( defined( 'ELEMENTOR_PRO_VERSION' ) ? ELEMENTOR_PRO_VERSION : 'inactive' ) . ' · PHP ' . esc_html( PHP_VERSION ) . '</p>';
-    if ( isset( $_GET['done'] ) ) { echo '<div class="notice notice-success"><p>Settings saved. Existing Elementor designs are kept. Clear your page cache to see the latest design.</p></div>'; }
+    if ( isset( $_GET['done'] ) ) {
+        $notice = 'Settings saved. Existing Elementor designs are kept.';
+        if ( 'design' === $_GET['done'] ) { $notice = 'Simple header and light footer applied. Your previous layout is backed up below.'; }
+        if ( 'restore-design' === $_GET['done'] ) { $notice = 'Previous header and footer restored.'; }
+        echo '<div class="notice notice-success"><p>' . esc_html( $notice ) . ' Clear your page cache to see the latest design.</p></div>';
+    }
     echo '<p>Edit page content, text, images, buttons, sections, and mobile layouts with Elementor. Use the controls below for a single header and footer across the site.</p>';
     if ( ! $active ) { echo '<div class="notice notice-warning"><p>Install and activate Elementor below before preparing the editor.</p></div>'; }
     if ( ! $pro ) { echo '<div class="notice notice-info"><p>Elementor Pro is not active. You can edit Evpower pages, headers and footers with Elementor now. To use your Pro Theme Builder, upload the official Elementor Pro ZIP in Plugins → Add New → Upload Plugin, activate it, and connect your licence privately in WordPress. No additional header/footer plugin is needed.</p></div>'; }
@@ -28,6 +33,12 @@ function evpower_elementor_admin() {
     if ( $active ) { evpower_elementor_action_form( 'prepare', 'Prepare Elementor editing', 0, 'button button-primary' ); }
     echo '<p>If the starter pages are missing, first run <a href="' . esc_url( admin_url( 'admin.php?page=evpower' ) ) . '">Evpower → Setup &amp; help</a>.</p>';
     echo '<h2>2. Header, footer &amp; navigation</h2>';
+    if ( $active && ! empty( $layouts['header'] ) && ! empty( $layouts['footer'] ) ) {
+        echo '<div class="card" style="max-width:780px;margin-bottom:20px"><h3>Simple header &amp; light footer</h3><p>Apply the new Evpower design: three navigation links, Sign in, one Cart icon, a green Book a charge button, and a light four-column footer. This replaces only the two assigned layouts. Their current designs are backed up; pages, products, orders and Pro display conditions stay as they are.</p>';
+        evpower_elementor_action_form( 'simple-design', 'Apply simple header & footer', 0, 'button button-primary' );
+        if ( get_option( 'evpower_elementor_design_backups' ) ) { evpower_elementor_action_form( 'restore-design', 'Restore previous header & footer' ); }
+        echo '</div>';
+    }
     foreach ( array( 'header', 'footer' ) as $area ) {
         echo '<p><strong>' . esc_html( ucfirst( $area ) ) . ':</strong> ';
         $id = absint( $layouts[ $area ] ?? 0 );
@@ -75,6 +86,7 @@ add_action( 'admin_post_evpower_elementor_action', function () {
     check_admin_referer( 'evpower_elementor_action' );
     $task = sanitize_key( wp_unslash( $_POST['task'] ?? '' ) ); $id = absint( $_POST['post_id'] ?? 0 );
     if ( 'prepare' === $task ) { $result = evpower_prepare_elementor(); if ( ! is_wp_error( $result ) ) { update_option( 'evpower_header_footer_mode', 'elementor', false ); } }
+    elseif ( in_array( $task, array( 'simple-design', 'restore-design' ), true ) ) { $result = evpower_elementor_apply_simple_design( 'restore-design' === $task ); }
     elseif ( 'page' === $task ) { $result = evpower_enable_elementor_page( $id ); }
     elseif ( 'restore' === $task && current_user_can( 'edit_post', $id ) && 'page' === get_post_type( $id ) ) {
         $backup = get_post_meta( $id, '_evpower_before_elementor', true );
@@ -89,5 +101,6 @@ add_action( 'admin_post_evpower_elementor_action', function () {
     else { wp_die( 'Invalid editor action.', '', array( 'response' => 400 ) ); }
     if ( isset( $result ) && is_wp_error( $result ) ) { wp_die( '<p>' . esc_html( $result->get_error_message() ) . '</p><p><a href="' . esc_url( admin_url( 'admin.php?page=evpower-elementor' ) ) . '">Return to Evpower editing</a></p>', 'Evpower editor setup', array( 'response' => 400, 'back_link' => true ) ); }
     do_action( 'litespeed_purge_all' );
-    wp_safe_redirect( admin_url( 'admin.php?page=evpower-elementor&done=1' ) ); exit;
+    $done = 'simple-design' === $task ? 'design' : ( 'restore-design' === $task ? 'restore-design' : '1' );
+    wp_safe_redirect( admin_url( 'admin.php?page=evpower-elementor&done=' . $done ) ); exit;
 } );

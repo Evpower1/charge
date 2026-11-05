@@ -4,7 +4,7 @@ Tags: charging, bookings, woocommerce
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.1.5
+Stable tag: 1.2.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,13 @@ Requests and enquiries are private administrator-managed records. Notifications 
 The locations map displays OpenStreetMap tiles and attribution (https://www.openstreetmap.org/copyright). Leaflet 1.9.4 is bundled locally with its license. The optional Chapa gateway uses https://api.chapa.co for merchant payment initialization and verification, and redirects buyers to hosted Chapa checkout. Merchant credentials stay server-side. No other external service is required by this plugin.
 
 == Changelog ==
+
+= 1.2.0 =
+* Add an explicit simple-header/light-footer preset action with five layout backups, restoration and save-failure rollback.
+* Keep existing document IDs, Pro display conditions, pages and owner menus during layout replacement.
+* Add an editable lightning wordmark/accent and independent account/cart visibility controls.
+* Use a dedicated three-link menu, visible mobile account/cart/booking actions and Evpower contact links.
+* Retain all earlier authenticated header/footer preview fixes.
 
 = 1.1.5 =
 * Recover the native editing container when content filters clear a header/footer preview or change the global post.

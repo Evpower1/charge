@@ -48,8 +48,9 @@ async def main():
             await page.set_viewport_size({'width':390,'height':844})
             await page.goto(BASE + '/', wait_until='networkidle')
             await page.get_by_role('button', name='Open menu', exact=True).click()
-            await page.locator('.is-menu-open').get_by_role('link', name='Contact Us', exact=True).click()
-            await expect(page.locator('main h1')).to_have_text('Contact Us')
+            simple = await page.locator('header .ep-header-simple').count() > 0
+            await page.locator('.is-menu-open').get_by_role('link', name='Services' if simple else 'Contact Us', exact=True).click()
+            await expect(page.locator('main h1')).to_have_text('Our Services' if simple else 'Contact Us')
             print('PASS: native mobile navigation opens and follows a page link')
 
             await page.goto(BASE + '/locations/', wait_until='networkidle')

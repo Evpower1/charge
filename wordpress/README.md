@@ -4,7 +4,7 @@ This is a separate, installable WordPress version of Evpower, with Elementor edi
 
 ## Elementor: the owner workflow
 
-Use **Evpower theme 1.1.0** and **Evpower Core 1.1.5** using the ZIPs under `packages/`. Upload each ZIP in its matching Themes/Plugins screen and choose **Replace current with uploaded**. Existing WordPress content, products, orders and customers remain in the database.
+Use **Evpower theme 1.2.0** and **Evpower Core 1.2.0** using the ZIPs under `packages/`. Upload each ZIP in its matching Themes/Plugins screen and choose **Replace current with uploaded**. Existing WordPress content, products, orders and customers remain in the database.
 
 1. Activate **Elementor** and **WooCommerce**. To use your Pro licence, upload the official **Elementor Pro** ZIP from your Elementor account, activate it, and connect the licence privately in WordPress.
 2. Open **Evpower → Elementor & plugins → Prepare Elementor editing**. This converts Evpower marketing pages into individual heading, image, text, button, accordion and container widgets. It creates editable header/footer templates from the current layouts. Existing Elementor pages/designs are skipped rather than replaced. Original WordPress blocks are backed up before conversion.
@@ -20,9 +20,17 @@ Products, categories, prices, stock, delivery, checkout, customer accounts and o
 
 Duplicate Account/Cart controls are fixed by preventing WooCommerce’s automatic header insertion when Evpower supplies those controls. Explicit controls in existing header blocks are normalized to a single pair when prepared for Elementor. Other navigation links and layouts are retained.
 
+### Apply the simple header and light footer
+
+After replacing **both** ZIPs with version **1.2.0**, open **Evpower → Elementor & plugins → Apply simple header & footer**. This explicitly replaces the two assigned Elementor layouts with the new reference-inspired design: an Evpower lightning wordmark, **Services / Shop / Find stations**, **Sign in**, one **Cart** icon, a lime **Book a charge** button, and a light four-column footer with Evpower's phone, WhatsApp and email. Account/orders and Cart links remain in the footer. Cart, Sign in and the booking button remain visible on small screens; the three navigation links use WordPress's mobile menu.
+
+The action keeps template IDs, publication status and Pro display conditions, and leaves page content, shop data and existing owner menus intact. It uses a separate **Evpower simple menu**, editable in **Appearance → Menus**. The five most recent layout replacements are backed up; **Restore previous header & footer** restores the latest one. A failed save restores both prior layouts. Uploading an update or clicking Prepare does not overwrite an existing Elementor design.
+
+Use **Edit header/footer with Elementor** afterward to change individual elements. Site Identity has an optional lightning mark, editable accent ending/colour and a normal image logo picker. The Account & Cart widget can show either link independently. Text, footer links and the booking button remain native editable widgets. New WordPress block layouts use the same design; saved owner-customized Site Editor templates are preserved.
+
 ### Fix “the content area was not found” when editing the header/footer
 
-Update **Evpower Core to 1.1.5**, clear the Hostinger/LiteSpeed cache, then reopen **Evpower → Elementor & plugins → Edit header with Elementor** (or Edit footer). Confirm Core 1.1.5 on the setup screen's version line. The preview selects the authenticated edited header/footer ID even when Elementor uses a normal page as preview context. It initializes the native Elementor preview for that document and calls `the_content()` with the document's post. Existing templates need no re-conversion or recreation. The public website keeps its normal templates and Pro display conditions. Keep both Elementor and Elementor Pro active.
+Update **Evpower Core to 1.2.0**, clear the Hostinger/LiteSpeed cache, then reopen **Evpower → Elementor & plugins → Edit header with Elementor** (or Edit footer). Confirm Core 1.2.0 on the setup screen's version line. The preview selects the authenticated edited header/footer ID even when Elementor uses a normal page as preview context. It initializes the native Elementor preview for that document and calls `the_content()` with the document's post. Existing templates need no re-conversion or recreation. The public website keeps its normal templates and Pro display conditions. Keep both Elementor and Elementor Pro active.
 
 Core 1.1.4 sends layout previews to WordPress's own `index.php` under the WordPress Address, with a document-specific nonce and Elementor's edit permissions. It binds both the document configuration and the completed editor settings, so document subclasses cannot leave the initial editor using a different preview URL. The signed route runs before later template dispatchers and marks responses as non-cacheable. Unsigned legacy previews remain supported; normal pages are not routed through this layout handler.
 
@@ -106,6 +114,8 @@ Testing used a mocked provider. A merchant sandbox transaction and a real hostin
 - WordPress’s normal page/post sitemap remains available. Install a compatible SEO plugin if you need additional SEO controls; the built-in description output yields to Yoast, Rank Math, and All in One SEO. Other integrations can disable it with the `evpower_output_meta_description` filter.
 
 ## Rebuild and validate
+
+Version **1.2.0** also passed 30 focused layout checks for authorization, partial-save rollback, backups/restoration, unchanged pages/menus and native block settings. Actual dashboard apply/restore actions and Elementor header/footer publish operations passed, with the Cart/Sign in/booking controls checked at **320, 390, 768, 899, 900, 990 and 1440px**. Native WordPress layouts passed at four widths, and footer paragraphs respect owner typography/colour controls. Existing Elementor page/header/footer saves and Full Width layouts also passed. Elementor Free 4.3.6 was used locally; paid Pro conditions remain API-contract checks, not an end-to-end test with a licensed Pro ZIP or the hosted site.
 
 Validated on WordPress **7.1.4**, WooCommerce **11.2.1**, PHP **8.3**, and MariaDB **11.4**. All 45 integration checks and the full browser suite passed, including mobile layouts/navigation, map filters, requests, cart/checkout, protected receipts, native block validation, and saving a real WordPress page edit. Test map tiles and Chapa responses were simulated; no real email or payment was sent.
 

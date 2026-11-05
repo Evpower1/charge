@@ -1,6 +1,7 @@
 <?php
 defined( 'ABSPATH' ) || exit;
 require_once EVPOWER_CORE_PATH . 'includes/elementor-convert.php';
+require_once EVPOWER_CORE_PATH . 'includes/elementor-design.php';
 require_once EVPOWER_CORE_PATH . 'includes/elementor-admin.php';
 require_once EVPOWER_CORE_PATH . 'includes/elementor-preview-route.php';
 require_once EVPOWER_CORE_PATH . 'includes/elementor-diagnostics.php';

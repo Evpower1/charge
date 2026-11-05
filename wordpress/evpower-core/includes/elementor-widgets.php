@@ -11,9 +11,12 @@ class Evpower_Elementor_Identity extends \Elementor\Widget_Base {
         $this->start_controls_section( 'identity', array( 'label' => 'Site identity' ) );
         $this->add_control( 'title', array( 'label' => 'Text logo (leave blank for site title)', 'type' => \Elementor\Controls_Manager::TEXT, 'default' => '' ) );
         $this->add_control( 'logo', array( 'label' => 'Logo image (optional)', 'type' => \Elementor\Controls_Manager::MEDIA ) );
+        $this->add_control( 'show_mark', array( 'label' => 'Lightning mark with text logo', 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => '' ) );
+        $this->add_control( 'accent_tail', array( 'label' => 'Accent ending of text logo', 'type' => \Elementor\Controls_Manager::TEXT, 'default' => '', 'description' => 'For example: power. Leave blank for one colour.' ) );
         $this->end_controls_section();
         $this->start_controls_section( 'style', array( 'label' => 'Appearance', 'tab' => \Elementor\Controls_Manager::TAB_STYLE ) );
         $this->add_control( 'color', array( 'label' => 'Colour', 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => array( '{{WRAPPER}} .ep-identity-link' => 'color: {{VALUE}}' ) ) );
+        $this->add_control( 'accent_color', array( 'label' => 'Accent colour', 'type' => \Elementor\Controls_Manager::COLOR, 'selectors' => array( '{{WRAPPER}} .ep-brand-accent' => 'color: {{VALUE}}', '{{WRAPPER}} .ep-brand-mark' => 'background-color: {{VALUE}}' ) ) );
         $this->add_group_control( \Elementor\Group_Control_Typography::get_type(), array( 'name' => 'type', 'selector' => '{{WRAPPER}} .ep-identity-link' ) );
         $this->add_responsive_control( 'logo_width', array( 'label' => 'Logo width', 'type' => \Elementor\Controls_Manager::SLIDER, 'range' => array( 'px' => array( 'min' => 20, 'max' => 350 ) ), 'selectors' => array( '{{WRAPPER}} img' => 'width: {{SIZE}}{{UNIT}}' ) ) );
         $this->end_controls_section();
@@ -25,6 +28,7 @@ class Evpower_Elementor_Identity extends \Elementor\Widget_Base {
         $title = $s['title'] ?: get_bloginfo( 'name' );
         echo '<a class="ep-identity-link" href="' . esc_url( home_url( '/' ) ) . '">';
         if ( $logo ) { echo '<img src="' . esc_url( $logo ) . '" alt="' . esc_attr( $title ) . '">'; }
+        elseif ( function_exists( 'evpower_simple_wordmark' ) && ( 'yes' === $s['show_mark'] || $s['accent_tail'] ) ) { echo evpower_simple_wordmark( $title, $s['accent_tail'], 'yes' === $s['show_mark'] ); }
         else { echo esc_html( $title ); }
         echo '</a>';
     }
@@ -75,8 +79,12 @@ class Evpower_Elementor_Shop_Actions extends \Elementor\Widget_Base {
     public function get_categories() { return array( 'evpower' ); }
     protected function register_controls() {
         $this->start_controls_section( 'links', array( 'label' => 'Account & cart' ) );
+        $this->add_control( 'show_account', array( 'label' => 'Show account link', 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes' ) );
+        $this->add_control( 'show_cart', array( 'label' => 'Show cart link', 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes' ) );
+        $this->add_control( 'account_icon', array( 'label' => 'Account icon', 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'user', 'options' => array( 'user' => 'Person', 'signin' => 'Sign in arrow' ) ) );
         $this->add_control( 'account_label', array( 'label' => 'Account label', 'type' => \Elementor\Controls_Manager::TEXT, 'default' => 'Account' ) );
         $this->add_control( 'cart_label', array( 'label' => 'Cart label', 'type' => \Elementor\Controls_Manager::TEXT, 'default' => 'Cart' ) );
+        $this->add_control( 'cart_show_label', array( 'label' => 'Show cart label', 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes' ) );
         $this->add_control( 'show_labels', array( 'label' => 'Show labels', 'type' => \Elementor\Controls_Manager::SWITCHER, 'default' => 'yes' ) );
         $this->add_responsive_control( 'label_display', array( 'label' => 'Label visibility on device', 'type' => \Elementor\Controls_Manager::SELECT, 'default' => 'inline', 'mobile_default' => 'none', 'options' => array( 'inline' => 'Show', 'none' => 'Hide' ), 'selectors' => array( '{{WRAPPER}} .ep-builder-shop-links a span' => 'display: {{VALUE}}' ) ) );
         $this->end_controls_section();
@@ -90,11 +98,13 @@ class Evpower_Elementor_Shop_Actions extends \Elementor\Widget_Base {
         $account = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/account/' );
         $cart = function_exists( 'wc_get_cart_url' ) ? wc_get_cart_url() : home_url( '/cart/' );
         $icons = array( 'account' => '<circle cx="12" cy="7" r="3"/><path d="M5 21v-3a7 7 0 0 1 14 0v3"/>', 'cart' => '<path d="M2 3h3l3 13h11l3-9H6"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>' );
+        if ( 'signin' === $s['account_icon'] ) { $icons['account'] = '<path d="M14 4h6v16h-6M3 12h12m-5-5 5 5-5 5"/>'; }
         echo '<div class="ep-builder-shop-links">';
         foreach ( array( 'account' => $account, 'cart' => $cart ) as $key => $url ) {
+            if ( 'yes' !== $s[ 'show_' . $key ] ) { continue; }
             $label = $s[ $key . '_label' ] ?: ucfirst( $key );
             echo '<a href="' . esc_url( $url ) . '" aria-label="' . esc_attr( $label ) . '"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">' . $icons[ $key ] . '</svg>';
-            if ( 'yes' === $s['show_labels'] ) { echo '<span>' . esc_html( $label ) . '</span>'; }
+            if ( 'yes' === $s['show_labels'] && ( 'cart' !== $key || 'yes' === $s['cart_show_label'] ) ) { echo '<span>' . esc_html( $label ) . '</span>'; }
             echo '</a>';
         }
         echo '</div>';

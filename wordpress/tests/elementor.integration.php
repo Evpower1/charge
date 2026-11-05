@@ -25,7 +25,8 @@ $header = do_blocks( '<!-- wp:template-part {"slug":"header","tagName":"header"}
 ev_builder_check( ! str_contains( $header, 'wp-block-woocommerce-customer-account' ) && ! str_contains( $header, 'wp-block-woocommerce-mini-cart' ), 'WooCommerce automatic header insertion does not add a second Account or Cart' );
 update_option( 'evpower_header_footer_mode', 'elementor' );
 $header = evpower_elementor_area( 'header' );
-ev_builder_check( 1 === substr_count( $header, 'aria-label="Account"' ) && 1 === substr_count( $header, 'aria-label="Cart"' ), 'Elementor header contains exactly one Account and one Cart control' );
+$simple_header = str_contains( $header, 'ep-header-simple' );
+ev_builder_check( $simple_header ? ( 1 === substr_count( $header, 'aria-label="Sign in"' ) && 1 === substr_count( $header, 'aria-label="Cart"' ) ) : ( 1 === substr_count( $header, 'aria-label="Account"' ) && 1 === substr_count( $header, 'aria-label="Cart"' ) ), 'Elementor header has exactly the account/cart controls chosen for its layout' );
 ev_builder_check( str_contains( evpower_elementor_area( 'footer' ), 'info@evpower.et' ), 'Footer renders the editable Elementor template' );
 
 $home_id = $pages['home'];

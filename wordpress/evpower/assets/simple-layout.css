@@ -1,0 +1,99 @@
+/* Slim header and light footer. These classes leave older saved layouts alone. */
+.ep-header-simple,.ep-footer-light{--ep-layout-accent:#a4ea20;--ep-layout-ink:#101e31;--ep-layout-muted:#526379;--ep-layout-paper:#f6f8f0;color:var(--ep-layout-ink)}
+.ep-header-simple{background:var(--ep-layout-paper);border-bottom:1px solid #101e3110}
+.ep-header-simple .ep-container,.ep-footer-light .ep-container{width:min(calc(100% - 48px),1328px)}
+.ep-header-simple .ep-header-inner{min-height:68px;padding-block:0;gap:28px;flex-direction:row;flex-wrap:nowrap}
+.ep-header-simple .ep-identity-link,.ep-brand-simple .wp-block-site-title,.ep-footer-light .ep-identity-link{font-family:var(--wp--preset--font-family--manrope);font-size:24px;font-weight:800;letter-spacing:-.055em;line-height:1;color:var(--ep-layout-ink)}
+.ep-wordmark-simple a,.ep-identity-link:has(.ep-brand-name){display:inline-flex;align-items:center;gap:9px;text-decoration:none}
+.ep-brand-name{display:inline;white-space:nowrap}
+.ep-brand-accent{color:var(--ep-layout-accent,#a4ea20)}
+.ep-brand-mark{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:var(--ep-layout-accent,#a4ea20);color:#101e31;box-shadow:0 3px 24px #a4ea2025}
+.ep-brand-mark svg{width:22px;height:22px}
+.ep-brand-simple:has(.custom-logo-link) .wp-block-site-title{display:none}
+.ep-brand-simple .custom-logo{width:auto;max-width:155px;max-height:44px;object-fit:contain}
+.ep-header-simple .ep-navigation{color:var(--ep-layout-muted);font-size:13px;font-weight:600}
+.ep-header-simple .wp-block-navigation__container{gap:32px}
+.ep-header-simple .ep-navigation a:hover,.ep-footer-light a:hover{color:var(--ep-layout-ink);text-decoration:underline;text-underline-offset:4px}
+.ep-header-simple .ep-header-actions{gap:18px;width:auto;flex-direction:row;flex-shrink:0}
+:where(.ep-header-simple) .ep-header-actions>.e-con{width:auto;flex:0 0 auto}
+.ep-header-simple .ep-header-actions .wp-block-buttons{display:flex}
+.ep-header-simple .ep-header-actions .wp-element-button,.ep-header-simple .ep-header-actions .elementor-button{background:var(--ep-layout-accent);color:var(--ep-layout-ink);border-radius:14px;padding:10px 16px;font-size:13px;font-weight:700;line-height:1.55;white-space:nowrap}
+.ep-header-simple .ep-signin{margin:0;color:var(--ep-layout-ink);font-size:13px;font-weight:600;white-space:nowrap}
+.ep-header-simple .ep-signin a{display:inline-flex;align-items:center;gap:7px;min-height:44px}
+.ep-header-simple .ep-builder-shop-links{font-size:13px;font-weight:600;gap:14px;color:inherit}
+.ep-signin:not(.elementor-widget){display:inline-flex;align-items:center;gap:14px}
+.ep-signin:not(.elementor-widget) a:before{content:"";display:inline-block;width:18px;height:18px;background:currentColor;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 4h6v16h-6M3 12h12m-5-5 5 5-5 5'/%3E%3C/svg%3E") center/contain no-repeat}
+.ep-signin:not(.elementor-widget) .ep-cart-link:before{mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 3h3l3 13h11l3-9H6'/%3E%3Ccircle cx='9' cy='21' r='1'/%3E%3Ccircle cx='19' cy='21' r='1'/%3E%3C/svg%3E")}
+.ep-signin:not(.elementor-widget) .ep-cart-link span{display:none}
+.ep-footer-light.ep-footer{padding:56px 0 0;background:var(--ep-layout-paper);color:var(--ep-layout-ink);border-top:1px solid #101e3110}
+.ep-footer-light .ep-footer-grid{grid-template-columns:1fr 1fr 1fr 1.25fr;gap:48px;padding-bottom:52px}
+.ep-footer-light .ep-footer-brand{gap:14px}
+.ep-footer-light .ep-footer-brand>p{margin-top:16px}
+.ep-footer-light .ep-footer-brand p{font-size:13px;line-height:1.8;color:var(--ep-layout-muted)}
+.ep-footer-light .ep-footer-links{gap:10px}
+.ep-footer-light h3{font-family:var(--wp--preset--font-family--manrope);font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--ep-layout-ink);margin:0 0 12px}
+.ep-footer-light .elementor-heading-title{font-size:15px;font-weight:800;letter-spacing:-.02em}
+.ep-footer-light .ep-footer-links p{font-size:13px;line-height:1.7;color:var(--ep-layout-muted);margin:0 0 8px}
+.ep-footer-light .ep-footer-links .elementor-widget-text-editor p{margin:0}
+.ep-footer-light .elementor-widget-text-editor{font-size:13px;line-height:1.7}
+.ep-footer-light :where(.ep-footer-brand) .elementor-widget-text-editor{line-height:1.8}
+.ep-footer-light .elementor-widget-text-editor p{color:inherit;font-size:inherit;line-height:inherit}
+.ep-footer-light .ep-footer-contact [class*="ep-contact-"]{position:relative;padding-left:25px}
+.ep-footer-light [class*="ep-contact-"]:before{content:"";position:absolute;left:0;top:3px;width:16px;height:16px;background:var(--ep-layout-accent);mask-position:center;mask-size:contain;mask-repeat:no-repeat}
+.ep-footer-light .ep-contact-phone:before{mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 3 3 4-2 3a16 16 0 0 0 7 7l3-2 4 3-1 3C10 23 1 14 3 4Z'/%3E%3C/svg%3E")}
+.ep-footer-light .ep-contact-email:before{mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='1'/%3E%3Cpath d='m3 6 9 7 9-7'/%3E%3C/svg%3E")}
+.ep-footer-light .ep-contact-location:before{mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7'%3E%3Cpath d='M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E")}
+.ep-footer-light .ep-contact-whatsapp:before{mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 11.5a9 9 0 0 1-13 8L3 21l1.5-5A9 9 0 1 1 21 11.5Z'/%3E%3Cpath d='m8 7 2 3-1 1 3 3 1-1 3 2'/%3E%3C/svg%3E")}
+.ep-footer-light .ep-contact-phone a{white-space:nowrap}
+.ep-footer-light .ep-footer-bottom{width:100%;padding:22px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-top:1px solid #101e311c;text-align:center;font-size:11px;color:var(--ep-layout-muted)}
+.ep-footer-light .ep-footer-bottom p{margin:0}
+.ep-footer-light :where(.ep-footer-bottom) .elementor-widget-text-editor{width:auto;font-size:11px}
+.ep-footer-light .ep-footer-legal{font-size:10px}
+.ep-footer-light .ep-footer-legal span{margin-inline:6px}
+@media(min-width:900px){
+    .ep-header-simple .ep-navigation .wp-block-navigation__responsive-container:not(.is-menu-open){display:block!important}
+    .ep-header-simple .ep-navigation .wp-block-navigation__responsive-container-open{display:none!important}
+    .ep-header-simple .ep-navigation,:where(.ep-header-simple) .ep-header-inner>.elementor-widget-evpower-navigation{order:0;flex:1;width:auto;margin-left:0}
+}
+@media(max-width:1024px){
+    .ep-footer-light .ep-footer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:36px}
+}
+@media(max-width:899px){
+    .ep-header-simple .ep-header-inner{min-height:68px;gap:16px}
+    .ep-header-simple .ep-header-inner>.ep-navigation,:where(.ep-header-simple) .ep-header-inner>.elementor-widget-evpower-navigation{order:3;flex:0 0 32px;width:32px;min-width:32px}
+    .ep-header-simple .ep-header-actions{margin-left:auto;gap:14px}
+    .ep-header-simple .ep-navigation .wp-block-navigation__responsive-container:not(.is-menu-open){display:none!important}
+    .ep-header-simple .ep-navigation .wp-block-navigation__responsive-container-open{display:flex!important;align-items:center;justify-content:center;min-width:44px;min-height:44px}
+    .ep-header-simple .is-menu-open{background:var(--ep-layout-paper);color:var(--ep-layout-ink)}
+    .ep-header-simple .is-menu-open .wp-block-navigation__container{gap:24px;font-size:20px}
+    .ep-header-simple .ep-header-actions>.elementor-element:has(.elementor-button){display:flex}
+}
+@media(max-width:767px){
+    .ep-header-simple .ep-container,.ep-footer-light .ep-container{width:calc(100% - 32px)}
+    .ep-header-simple .ep-header-inner{gap:8px}
+    .ep-header-simple .ep-header-inner .ep-identity-link,.ep-header-simple .ep-brand .wp-block-site-title{font-size:21px}
+    .ep-header-simple .ep-brand-mark{width:32px;height:32px}
+    .ep-header-simple .ep-header-actions{gap:8px}
+    .ep-header-simple .ep-signin a{min-width:24px;justify-content:center}
+    .ep-header-simple .ep-builder-shop-links,.ep-header-simple .ep-signin:not(.elementor-widget){gap:8px}
+    .ep-header-simple .ep-signin a span{display:none}
+    .ep-header-simple .ep-header-actions .wp-element-button,.ep-header-simple .ep-header-actions .elementor-button{padding:10px 12px;font-size:12px;border-radius:12px}
+    .ep-header-simple .ep-navigation .wp-block-navigation__responsive-container-open{min-width:32px}
+    .ep-header-simple .ep-brand-simple .custom-logo,.ep-header-simple .ep-identity-link img{max-width:128px;max-height:40px}
+    .ep-footer-light.ep-footer{padding-top:40px}
+    .ep-footer-light .ep-footer-grid{gap:28px 18px;padding-bottom:36px}
+    .ep-footer-light .ep-footer-brand,.ep-footer-light .ep-footer-contact{grid-column:1/-1}
+    .ep-footer-light .ep-footer-brand p{max-width:270px}
+    .ep-footer-light h3{margin:0 0 8px}
+}
+@media(max-width:370px){
+    .ep-header-simple .ep-container{width:calc(100% - 24px)}
+    .ep-header-simple .ep-header-inner{gap:5px}
+    .ep-header-simple .ep-header-inner .ep-identity-link,.ep-header-simple .ep-brand .wp-block-site-title{font-size:17px;gap:6px}
+    .ep-header-simple .ep-brand-mark{width:26px;height:26px}
+    .ep-header-simple .ep-brand-mark svg{width:19px;height:19px}
+    .ep-header-simple .ep-header-actions{gap:5px}
+    .ep-header-simple .ep-signin a{min-width:22px}
+    .ep-header-simple .ep-builder-shop-links,.ep-header-simple .ep-signin:not(.elementor-widget){gap:5px}
+    .ep-header-simple .ep-header-actions .wp-element-button,.ep-header-simple .ep-header-actions .elementor-button{padding-inline:9px;font-size:11px}
+}

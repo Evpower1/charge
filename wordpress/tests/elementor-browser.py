@@ -17,6 +17,10 @@ async def main():
         public = await browser.new_context(viewport={'width':1440,'height':1000})
         await public.route('https://tile.openstreetmap.org/**', lambda r: r.fulfill(status=200, content_type='image/png', body=bytes.fromhex('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000b49444154789c636000020000050001a5f645400000000049454e44ae426082')))
         visitor = await public.new_page()
+        async def check_header_controls():
+            simple = await visitor.locator('header .ep-header-simple').count() > 0
+            assert await visitor.locator('header a[aria-label="Sign in"]' if simple else 'header a[aria-label="Account"]').count() == 1
+            assert await visitor.locator('header a[aria-label="Cart"]').count() == 1
         errors = []
         visitor.on('pageerror', lambda error: errors.append(str(error)))
         if not os.environ.get('EVPOWER_TEST_EDITOR_ONLY'):
@@ -27,9 +31,8 @@ async def main():
                     assert response.status == 200, path
                     assert await visitor.locator('main h1').count() == 1, path
                     assert not await visitor.evaluate('document.documentElement.scrollWidth > innerWidth'), (path,width)
-                    assert await visitor.locator('header a[aria-label="Account"]').count() == 1, path
-                    assert await visitor.locator('header a[aria-label="Cart"]').count() == 1, path
-                print(f'PASS: Elementor pages and one Account/Cart pair at {width}px')
+                    await check_header_controls()
+                print(f'PASS: Elementor pages and chosen account/cart controls at {width}px')
             await visitor.set_viewport_size({'width':1440,'height':1000})
             await visitor.goto(BASE + '/', wait_until='networkidle')
             await expect(visitor.locator('.ep-hero h1')).to_have_css('color','rgb(255, 255, 255)')
@@ -37,8 +40,9 @@ async def main():
             await visitor.set_viewport_size({'width':390,'height':844})
             await visitor.screenshot(path=str(TEMP / 'elementor-mobile.png'), full_page=True)
             await visitor.get_by_role('button', name='Open menu', exact=True).click()
-            await visitor.locator('.is-menu-open').get_by_role('link', name='Contact Us', exact=True).click()
-            await expect(visitor.locator('main h1')).to_have_text('Contact Us')
+            simple = await visitor.locator('header .ep-header-simple').count() > 0
+            await visitor.locator('.is-menu-open').get_by_role('link', name='Services' if simple else 'Contact Us', exact=True).click()
+            await expect(visitor.locator('main h1')).to_have_text('Our Services' if simple else 'Contact Us')
             print('PASS: accessible mobile navigation and preserved readable hero styling')
 
         admin = await browser.new_context(viewport={'width':1600,'height':1100})
@@ -66,8 +70,7 @@ async def main():
                 await visitor.goto(BASE + '/', wait_until='networkidle')
                 await expect(visitor.locator('main h1')).to_contain_text('A better way')
                 await expect(visitor.locator('header .ep-identity-link')).to_have_text('Evpower')
-                await expect(visitor.locator('header a[aria-label="Account"]')).to_have_count(1)
-                await expect(visitor.locator('header a[aria-label="Cart"]')).to_have_count(1)
+                await check_header_controls()
                 await expect(visitor.locator('footer .elementor')).to_have_count(1)
                 assert not await visitor.evaluate('document.documentElement.scrollWidth > innerWidth')
             print('PASS: Elementor Full Width preserves the editable header/footer on desktop and mobile')
@@ -148,7 +151,7 @@ async def main():
             print('PASS: the footer is globally editable and publishable in Elementor')
         finally:
             await edit_control(title, original)
-            await publish_and_check('/', 'footer', 'Explore')
+            await publish_and_check('/', 'footer', original)
         assert not errors, errors
         print('PASS: no browser JavaScript exceptions')
         await browser.close()

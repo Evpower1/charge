@@ -32,7 +32,7 @@ async def main():
             await page.locator('#wp-submit').click()
             await page.wait_for_url('**/wp-admin/**')
             await page.goto(BASE+'/wp-admin/admin.php?page=evpower-elementor',wait_until='domcontentloaded')
-            await expect(page.get_by_text('Evpower Core 1.1.5',exact=False)).to_be_visible()
+            await expect(page.get_by_text('Evpower Core 1.2.0',exact=False)).to_be_visible()
             await page.get_by_role('button',name='Prepare Elementor editing',exact=True).click()
             await expect(page.get_by_text('Elementor preparation stopped:',exact=False)).to_be_visible()
             await expect(page.get_by_text('LOCAL_PREPARATION_BUTTON_FAILURE',exact=False)).to_be_visible()

@@ -9,12 +9,37 @@ add_action( 'after_setup_theme', function () {
     add_theme_support( 'wc-product-gallery-slider' );
     add_theme_support( 'editor-styles' );
     add_editor_style( 'assets/theme.css' );
+    add_editor_style( 'assets/simple-layout.css' );
     load_theme_textdomain( 'evpower', get_template_directory() . '/languages' );
 } );
 
 add_action( 'wp_enqueue_scripts', function () {
-    wp_enqueue_style( 'evpower', get_theme_file_uri( 'assets/theme.css' ), array(), '1.1.0' );
+    wp_enqueue_style( 'evpower', get_theme_file_uri( 'assets/theme.css' ), array(), '1.2.0' );
 } );
+
+// Load the layout defaults after Elementor's defaults; individual editor controls win.
+add_action( 'wp_enqueue_scripts', function () {
+    $dependencies = array( 'evpower' );
+    if ( wp_style_is( 'evpower-elementor', 'enqueued' ) ) { $dependencies[] = 'evpower-elementor'; }
+    wp_enqueue_style( 'evpower-simple-layout', get_theme_file_uri( 'assets/simple-layout.css' ), $dependencies, '1.2.0' );
+}, 30 );
+
+function evpower_simple_wordmark( $title, $accent = 'power', $mark = true ) {
+    $html = $mark ? '<span class="ep-brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M13.3 2.8a1.5 1.5 0 0 0-2.5-.4L4.4 10a1.5 1.5 0 0 0 1.1 2.5h4l-1.3 6.7a1.5 1.5 0 0 0 2.5 1.4l8.9-9a1.5 1.5 0 0 0-1.1-2.6h-5.8l.6-6.2Z"/></svg></span>' : '';
+    $text = esc_html( $title );
+    if ( $accent && strlen( $title ) > strlen( $accent ) && str_ends_with( strtolower( $title ), strtolower( $accent ) ) ) {
+        $text = esc_html( substr( $title, 0, -strlen( $accent ) ) ) . '<span class="ep-brand-accent">' . esc_html( substr( $title, -strlen( $accent ) ) ) . '</span>';
+    }
+    return $html . '<span class="ep-brand-name">' . $text . '</span>';
+}
+
+add_filter( 'render_block_core/site-title', function ( $html, $block ) {
+    if ( ! str_contains( $block['attrs']['className'] ?? '', 'ep-wordmark-simple' ) ) { return $html; }
+    $wordmark = evpower_simple_wordmark( get_bloginfo( 'name' ) );
+    // Keep native heading level, link choices and the owner's block styles/attributes.
+    $pattern = str_contains( $html, '<a ' ) ? '/(<a\b[^>]*>).*?(<\/a>)/s' : '/(^<[^>]+>).*?(<\/[^>]+>$)/s';
+    return preg_replace_callback( $pattern, function ( $match ) use ( $wordmark ) { return $match[1] . $wordmark . $match[2]; }, $html, 1 );
+}, 10, 2 );
 
 // Keep setup guidance in the dashboard; visitors never see installation notices.
 add_action( 'admin_notices', function () {
