@@ -75,4 +75,5 @@ subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-me
 subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-context-browser.py'))], cwd=ROOT, check=True)
 subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-prepare-browser.py'))], cwd=ROOT, check=True)
 subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-direct-preview-browser.py'))], cwd=ROOT, check=True)
+subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-content-preview-browser.py'))], cwd=ROOT, check=True)
 print('WordPress integration and browser checks passed. Stop only these test servers with: python wordpress/tests/runtime.py stop')

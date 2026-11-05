@@ -56,6 +56,34 @@ function evpower_elementor_direct_preview_id() {
     return $document && $document->is_editable_by_current_user() ? $id : 0;
 }
 
+/** Content filters may clear a theme-part preview or restore a different global post. */
+function evpower_elementor_preview_markup( $layout ) {
+    $GLOBALS['post'] = $layout;
+    setup_postdata( $layout );
+    ob_start();
+    try { the_content(); } finally { $html = ob_get_clean(); }
+    $post_after = (int) get_the_ID();
+    $GLOBALS['post'] = $layout;
+    setup_postdata( $layout );
+    $tags = new WP_HTML_Tag_Processor( $html );
+    while ( $tags->next_tag() ) {
+        if ( $tags->has_class( 'elementor' ) && (string) $tags->get_attribute( 'data-elementor-id' ) === (string) $layout->ID ) {
+            return array( 'html' => $html, 'source' => 'filtered', 'post_after' => $post_after );
+        }
+    }
+    // Match Elementor Preview::builder_wrapper, outside the content filter pipeline.
+    // The editor fills this empty container from the existing saved document data.
+    $document = \Elementor\Plugin::$instance->documents->get( $layout->ID );
+    if ( ! $document ) { wp_die( 'Layout document unavailable.', '', array( 'response' => 403 ) ); }
+    $attributes = $document->get_container_attributes();
+    if ( ! is_array( $attributes ) ) { $attributes = array(); }
+    $attributes['data-elementor-id'] = $layout->ID;
+    if ( empty( $attributes['data-elementor-type'] ) ) { $attributes['data-elementor-type'] = $document->get_name(); }
+    $classes = is_string( $attributes['class'] ?? null ) ? $attributes['class'] : '';
+    $attributes['class'] = implode( ' ', array_unique( array_filter( preg_split( '/\s+/', $classes . ' elementor elementor-' . $layout->ID ) ) ) );
+    return array( 'html' => '<div ' . \Elementor\Utils::render_html_attributes( $attributes ) . '></div>', 'source' => 'direct', 'post_after' => $post_after );
+}
+
 add_action( 'template_redirect', function () {
     if ( ! isset( $_GET['evpower-layout-preview'] ) ) { return; }
     $id = evpower_elementor_direct_preview_id();

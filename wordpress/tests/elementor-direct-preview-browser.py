@@ -45,6 +45,7 @@ async def main():
                 report = await page.locator('#evpower-preview-report').input_value()
                 assert 'HTTP status: 200' in report and 'Requested editing area: found' in report
                 assert 'WordPress preview authorization: authorized' in report
+                assert 'Editing wrapper source: filtered' in report
                 assert 'ep_preview_nonce' not in report and 'preview_nonce' not in report and '_wpnonce' not in report
                 await page.get_by_role('button',name='Copy report',exact=True).click()
                 await expect(page.get_by_role('button',name='Report copied',exact=True)).to_be_visible()
@@ -53,6 +54,7 @@ async def main():
                 frame = page.frame_locator('#elementor-preview-iframe')
                 target_id = FIXTURES['layouts'][area]
                 await expect(frame.locator('.elementor-edit-area-active[data-elementor-id="'+str(target_id)+'"]')).to_be_visible(timeout=30000)
+                await expect(frame.locator('.elementor[data-elementor-id="'+str(target_id)+'"]')).to_have_count(1)
                 src = await page.locator('#elementor-preview-iframe').get_attribute('src')
                 parsed = urlparse(src); args = parse_qs(parsed.query)
                 assert parsed.scheme+'://'+parsed.netloc == BASE and parsed.path == '/index.php'

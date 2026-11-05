@@ -15,7 +15,8 @@ if ( ! $evpower_preview->is_preview() || (int) $evpower_preview->get_post_id() !
 <html <?php language_attributes(); ?>>
 <head><meta charset="<?php bloginfo( 'charset' ); ?>"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="evpower-layout-preview" content="<?php echo esc_attr( EVPOWER_CORE_VERSION ); ?>"><meta name="evpower-preview-state" content="<?php echo $evpower_preview->is_preview() && (int) $evpower_preview->get_post_id() === $evpower_layout->ID ? 'active' : 'inactive'; ?>"><?php wp_head(); ?></head>
 <body <?php body_class(); ?>><?php wp_body_open(); ?>
-<main id="content" class="ep-elementor-layout-preview"><?php $GLOBALS['post'] = $evpower_layout; setup_postdata( $evpower_layout ); the_content(); ?></main>
+<main id="content" class="ep-elementor-layout-preview"><?php $evpower_markup = evpower_elementor_preview_markup( $evpower_layout ); echo $evpower_markup['html']; ?></main>
+<meta name="evpower-preview-wrapper-source" content="<?php echo esc_attr( $evpower_markup['source'] ); ?>"><meta name="evpower-preview-post-after-content" content="<?php echo absint( $evpower_markup['post_after'] ); ?>">
 <?php wp_footer(); ?></body></html>
 <?php
 if ( $evpower_original_post instanceof WP_Post ) { $GLOBALS['post'] = $evpower_original_post; setup_postdata( $evpower_original_post ); } else { wp_reset_postdata(); }

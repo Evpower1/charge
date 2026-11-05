@@ -10,6 +10,8 @@
     const inspect = (doc, report) => {
         report['Server preview marker'] = doc.querySelector('meta[name="evpower-layout-preview"]')?.content || 'missing';
         report['Native preview state'] = doc.querySelector('meta[name="evpower-preview-state"]')?.content || 'unknown';
+        report['Editing wrapper source'] = doc.querySelector('meta[name="evpower-preview-wrapper-source"]')?.content || 'unknown';
+        report['Post after content filters'] = doc.querySelector('meta[name="evpower-preview-post-after-content"]')?.content || 'unknown';
         report['Delivered document IDs'] = [...doc.querySelectorAll('.elementor[data-elementor-id]')].map(el => el.getAttribute('data-elementor-id')).filter((id, i, all) => all.indexOf(id) === i).slice(0, 20).join(', ') || 'none';
         report['Requested editing area'] = doc.querySelector('.elementor[data-elementor-id="' + config.documentId + '"]') ? 'found' : 'missing';
     };
