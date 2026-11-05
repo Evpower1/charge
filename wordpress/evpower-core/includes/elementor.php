@@ -20,6 +20,18 @@ add_action( 'elementor/theme/register_locations', function ( $manager ) { $manag
 add_action( 'elementor/page_templates/header-footer/before_content', function () { if ( 'evpower' === get_template() ) { echo '<main id="content" class="ep-main">'; } } );
 add_action( 'elementor/page_templates/header-footer/after_content', function () { if ( 'evpower' === get_template() ) { echo '</main>'; } } );
 
+/** Header/footer editing must not depend on a site's saved Single block template. */
+function evpower_elementor_layout_preview( $template ) {
+    if ( 'evpower' !== get_template() || ! class_exists( '\Elementor\Plugin' ) || ! is_singular( 'elementor_library' ) ) { return $template; }
+    $id = get_queried_object_id();
+    if ( ! \Elementor\Plugin::$instance->preview->is_preview_mode( $id ) ) { return $template; }
+    $layouts = array_map( 'absint', get_option( 'evpower_elementor_layouts', array() ) );
+    $type = get_post_meta( $id, '_elementor_template_type', true );
+    if ( ! in_array( $id, $layouts, true ) && ! in_array( $type, array( 'header', 'footer' ), true ) ) { return $template; }
+    return EVPOWER_CORE_PATH . 'templates/elementor-preview.php';
+}
+add_filter( 'template_include', 'evpower_elementor_layout_preview', 100 );
+
 function evpower_is_elementor_page( $id = null ) {
     $id = $id ?: get_queried_object_id();
     return class_exists( '\Elementor\Plugin' ) && evpower_has_elementor_data( $id );

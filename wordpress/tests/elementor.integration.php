@@ -51,6 +51,28 @@ wp_set_current_user( 0 );
 ev_builder_check( is_wp_error( evpower_prepare_elementor() ) && $layout_ids === get_option( 'evpower_elementor_layouts' ), 'Anonymous users cannot convert pages or replace site layouts' );
 wp_set_current_user( get_user_by( 'login', 'evpower-test-admin' )->ID );
 
+$original_query = $GLOBALS['wp_query'];
+$original_preview = $_GET['elementor-preview'] ?? null;
+try {
+    $GLOBALS['wp_query'] = new WP_Query( array( 'post_type' => 'elementor_library', 'p' => $layouts['header'] ) );
+    $_GET['elementor-preview'] = (string) $layouts['header'];
+    ev_builder_check( EVPOWER_CORE_PATH . 'templates/elementor-preview.php' === evpower_elementor_layout_preview( 'original-template.php' ), 'Authenticated layout editing uses the dedicated the_content preview' );
+    wp_set_current_user( 0 );
+    ev_builder_check( 'original-template.php' === evpower_elementor_layout_preview( 'original-template.php' ), 'Anonymous layout requests keep the normal site template' );
+    wp_set_current_user( get_user_by( 'login', 'evpower-test-admin' )->ID );
+    $_GET['elementor-preview'] = (string) $layouts['footer'];
+    ev_builder_check( 'original-template.php' === evpower_elementor_layout_preview( 'original-template.php' ), 'A mismatched preview ID cannot replace the queried template' );
+    unset( $_GET['elementor-preview'] );
+    ev_builder_check( 'original-template.php' === evpower_elementor_layout_preview( 'original-template.php' ), 'Normal library views keep the original site template' );
+    $GLOBALS['wp_query'] = new WP_Query( array( 'page_id' => $home_id ) );
+    $_GET['elementor-preview'] = (string) $home_id;
+    ev_builder_check( 'original-template.php' === evpower_elementor_layout_preview( 'original-template.php' ), 'Ordinary Elementor page editing keeps its selected layout' );
+} finally {
+    $GLOBALS['wp_query'] = $original_query;
+    if ( null === $original_preview ) { unset( $_GET['elementor-preview'] ); } else { $_GET['elementor-preview'] = $original_preview; }
+    wp_set_current_user( get_user_by( 'login', 'evpower-test-admin' )->ID );
+}
+
 // API contract only: Pro is a licensed upload, not bundled in this repository.
 if ( ! function_exists( 'elementor_theme_do_location' ) ) {
     function elementor_theme_do_location( $area ) { if ( ( $GLOBALS['evpower_test_pro_area'] ?? '' ) === $area ) { echo '<header>PRO_LOCATION_TEST</header>'; return true; } return false; }

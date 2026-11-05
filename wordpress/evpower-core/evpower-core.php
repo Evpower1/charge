@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Evpower Core
  * Description: Elementor page/header/footer controls, Evpower starter content, charging locations, private requests and enquiries, and optional WooCommerce Chapa payments.
- * Version: 1.1.0
+ * Version: 1.1.1
  * Update URI: https://github.com/Evpower1/charge/tree/main/wordpress/evpower-core
  * Requires at least: 6.7
  * Requires PHP: 8.1
@@ -12,7 +12,7 @@
  */
 defined( 'ABSPATH' ) || exit;
 
-define( 'EVPOWER_CORE_VERSION', '1.1.0' );
+define( 'EVPOWER_CORE_VERSION', '1.1.1' );
 define( 'EVPOWER_CORE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'EVPOWER_CORE_URL', plugin_dir_url( __FILE__ ) );
 require_once EVPOWER_CORE_PATH . 'includes/admin.php';

@@ -4,7 +4,7 @@ This is a separate, installable WordPress version of Evpower, with Elementor edi
 
 ## Elementor: the owner workflow
 
-Update both the **Evpower theme** and **Evpower Core** to **1.1.0** using the ZIPs under `packages/`. Upload each ZIP in its matching Themes/Plugins screen and choose **Replace current with uploaded**. Existing WordPress content, products, orders and customers remain in the database.
+Use **Evpower theme 1.1.0** and **Evpower Core 1.1.1** using the ZIPs under `packages/`. Upload each ZIP in its matching Themes/Plugins screen and choose **Replace current with uploaded**. Existing WordPress content, products, orders and customers remain in the database.
 
 1. Activate **Elementor** and **WooCommerce**. To use your Pro licence, upload the official **Elementor Pro** ZIP from your Elementor account, activate it, and connect the licence privately in WordPress.
 2. Open **Evpower → Elementor & plugins → Prepare Elementor editing**. This converts Evpower marketing pages into individual heading, image, text, button, accordion and container widgets. It creates editable header/footer templates from the current layouts. Existing Elementor pages/designs are skipped rather than replaced. Original WordPress blocks are backed up before conversion.
@@ -19,6 +19,16 @@ Products, categories, prices, stock, delivery, checkout, customer accounts and o
 **Focused plugin list:** Elementor + your Elementor Pro, WooCommerce and Evpower Core are the essentials. The dashboard provides official installer/activation links for **Yoast SEO** (optional SEO tools), **WP Mail SMTP** (optional reliable email delivery), and **LiteSpeed Cache** (optional on compatible Hostinger/LiteSpeed hosting). Use one SEO plugin and one page-cache plugin. Credentials and licences stay in their private plugin settings. Third-party plugins are not bundled or silently installed by the ZIPs.
 
 Duplicate Account/Cart controls are fixed by preventing WooCommerce’s automatic header insertion when Evpower supplies those controls. Explicit controls in existing header blocks are normalized to a single pair when prepared for Elementor. Other navigation links and layouts are retained.
+
+### Fix “the content area was not found” when editing the header/footer
+
+Update **Evpower Core to 1.1.1**, clear the Hostinger/LiteSpeed cache, then reopen **Evpower → Elementor & plugins → Edit header with Elementor** (or Edit footer). Existing templates immediately use a dedicated authenticated editing preview with WordPress’s `the_content()` loop; no re-conversion or recreation is needed. This also covers Pro header/footer templates. The public website keeps its normal templates and Pro display conditions. Keep both Elementor and Elementor Pro active.
+
+### Change photos and the logo
+
+For page photos, use **Pages → choose Home/About/etc. → Edit with Elementor**. The header editor controls header content. Hover the photo and click its pencil, then use **Content → Choose Image → Upload files / Media Library**. Select the replacement, click **Select** (or **Insert Media**, depending on the Elementor version), then **Publish/Update**. Changing the image in the library alone does not replace it on the page. If the floating Structure panel covers a photo, close it or select its Image widget through Structure. Core 1.1.1 makes the homepage photo selectable through its decorative layout layers. For the logo, edit the header's **Evpower Site Identity → Logo image** control. Product photos are managed under **Products → choose product → Product image / Product gallery**.
+
+If an existing page has not been prepared for Elementor, first use **Evpower → Elementor & plugins → Enable Elementor** for that page. Standard page photos remain native Image widgets. An upload error or an empty media dialog needs its exact WordPress error message checked; the theme does not change WordPress upload permissions or file-size limits.
 
 ## Install into your existing Hostinger WordPress site
 
@@ -85,7 +95,11 @@ Testing used a mocked provider. A merchant sandbox transaction and a real hostin
 
 Validated on WordPress **7.1.4**, WooCommerce **11.2.1**, PHP **8.3**, and MariaDB **11.4**. All 45 integration checks and the full browser suite passed, including mobile layouts/navigation, map filters, requests, cart/checkout, protected receipts, native block validation, and saving a real WordPress page edit. Test map tiles and Chapa responses were simulated; no real email or payment was sent.
 
-Elementor integration uses the official stable **Elementor 4.3.6** release. All 24 Elementor integration checks and the Elementor browser suite passed, covering widget conversion, Media Library ownership, duplicate prevention, permissions, retaining owner edits, WordPress fallback layouts, responsive pages (including Full Width), and publishing actual Elementor page/header/footer edits. Pro’s public location API and display-condition exclusions are contract-tested with a local fixture; a licensed Pro ZIP is not bundled and was not available for a full Pro-plugin end-to-end test.
+Elementor integration uses the official stable **Elementor 4.3.6** release. All 29 Elementor integration checks and the Elementor browser suite passed, covering widget conversion, Media Library ownership, duplicate prevention, permissions, retaining owner edits, WordPress fallback layouts, responsive pages (including Full Width), and publishing actual Elementor page/header/footer edits. Pro’s public location API and display-condition exclusions are contract-tested with a local fixture; a licensed Pro ZIP is not bundled and was not available for a full Pro-plugin end-to-end test.
+
+The 1.1.1 preview regression reproduces the exact missing-content-area dialog for both layouts using a saved Single template without a post-content block. It then verifies that both editors load their editable documents with the dedicated preview, and anonymous requests cannot activate it. The temporary Single template is removed afterward.
+
+The media browser regression verifies that a regular About page photo opens its image controls and Media Library. It also selects the homepage Image widget on the canvas, uploads a photo through WordPress's native media dialog, publishes the changed image, verifies it on the public page, then selects the original library image and publishes its restoration. Only the uniquely identified test upload is removed afterward.
 
 The 1.0.1 setup regression also runs through the real dashboard: it reproduces the default-post homepage, selects the homepage and Post name options, confirms the hero and six public page routes, and checks that repeated setup preserves settings when those options are not selected.
 

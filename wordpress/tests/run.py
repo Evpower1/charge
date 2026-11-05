@@ -69,4 +69,6 @@ fixtures = TEMP / 'elementor-fixtures.json'
 fixtures.write_text(docker('exec', 'evpower-wp-test', 'cat', '/tmp/evpower-elementor-fixtures.json'))
 fixtures.chmod(0o600)
 subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-browser.py'))], cwd=ROOT, check=True)
+subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-preview-browser.py'))], cwd=ROOT, check=True)
+subprocess.run([sys.executable, '-u', str(Path(__file__).with_name('elementor-media-browser.py'))], cwd=ROOT, check=True)
 print('WordPress integration and browser checks passed. Stop only these test servers with: python wordpress/tests/runtime.py stop')
