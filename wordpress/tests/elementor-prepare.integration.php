@@ -27,7 +27,15 @@ try {
     // Contract fixture only: the paid Pro plugin is not represented by these classes.
     if ( ! class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) {
         class Evpower_Test_Private_Conditions { protected function save_conditions() { throw new RuntimeException( 'A protected API must not be called.' ); } }
-        eval( 'namespace ElementorPro\\Modules\\ThemeBuilder; class Module { public static function instance() { return new self(); } public function get_conditions_manager() { return new \\Evpower_Test_Private_Conditions(); } }' );
+        eval( 'namespace ElementorPro\\Modules\\ThemeBuilder; class Module { public static function instance() { return new self(); } public function get_conditions_manager() { return $GLOBALS["evpower_test_conditions_manager"] ?? new \\Evpower_Test_Private_Conditions(); } }' );
+        class Evpower_Test_Editor_Conditions {
+            public $calls = 0;
+            public function save_conditions( $id, $data ) {
+                $this->calls++;
+                // Reproduce the reported PHP error when strings reach a record handler.
+                foreach ( $data as &$record ) { unset( $record['type'] ); }
+            }
+        }
         class Evpower_Test_Header extends \Elementor\Modules\Library\Documents\Section { public static function get_type() { return 'header'; } }
         class Evpower_Test_Footer extends \Elementor\Modules\Library\Documents\Section { public static function get_type() { return 'footer'; } }
         \Elementor\Plugin::$instance->documents->register_document_type( 'header', Evpower_Test_Header::class );
@@ -40,6 +48,20 @@ try {
             $result = evpower_prepare_elementor();
             ev_prepare_check( ! is_wp_error( $result ), 'Pro document promotion does not call an inaccessible conditions method' );
             foreach ( $layouts as $area => $id ) { ev_prepare_check( $area === get_post_meta( $id, '_elementor_template_type', true ) && $snapshots[ $id ]['data'] === get_post_meta( $id, '_elementor_data', true ), $area . ' promotion preserves existing owner widget data' ); }
+            $manager = new Evpower_Test_Editor_Conditions();
+            $GLOBALS['evpower_test_conditions_manager'] = $manager;
+            $custom_conditions = array( 'include/singular/page/' . (int) $original_pages['home'] );
+            update_post_meta( $layouts['header'], '_elementor_conditions', $custom_conditions );
+            foreach ( $layouts as $id ) { update_post_meta( $id, '_elementor_template_type', 'section' ); }
+            $result = evpower_prepare_elementor();
+            if ( getenv( 'EVPOWER_EXPECT_CONDITIONS_ERROR' ) ) {
+                ev_prepare_check( is_wp_error( $result ) && str_contains( $result->get_error_message(), 'Cannot unset string offsets' ), 'REPRODUCED: preparing with an editor-payload conditions handler hits Cannot unset string offsets' );
+            } else {
+                ev_prepare_check( ! is_wp_error( $result ) && 0 === $manager->calls, 'Preparation succeeds without calling Pro’s editor-payload conditions saver' );
+                ev_prepare_check( $custom_conditions === get_post_meta( $layouts['header'], '_elementor_conditions', true ), 'Preparation preserves owner-defined Pro display conditions' );
+                foreach ( $layouts as $area => $id ) { ev_prepare_check( $snapshots[ $id ]['data'] === get_post_meta( $id, '_elementor_data', true ), $area . ' design is preserved when the incompatible conditions API is present' ); }
+            }
+            unset( $GLOBALS['evpower_test_conditions_manager'] );
             update_post_meta( $layouts['header'], '_elementor_template_type', 'section' );
             wp_set_object_terms( $layouts['header'], 'section', 'elementor_library_type' );
             $fail_promotion = function ( $document ) use ( $layouts ) { if ( (int) $document->get_main_id() === (int) $layouts['header'] ) { throw new RuntimeException( 'LOCAL_PROMOTION_FAILURE' ); } };
@@ -68,6 +90,7 @@ try {
         }
     }
 } finally {
+    unset( $GLOBALS['evpower_test_conditions_manager'] );
     remove_action( 'elementor/document/after_save', $throw, 100 );
     update_option( 'evpower_pages', $original_pages );
     update_option( 'evpower_header_footer_mode', $original_mode );

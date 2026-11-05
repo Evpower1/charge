@@ -177,13 +177,9 @@ function evpower_elementor_prepare_error( \Throwable $error ) {
 }
 
 function evpower_elementor_default_conditions( $id ) {
-    update_post_meta( $id, '_elementor_conditions', array( 'include/general' ) );
-    if ( ! class_exists( '\ElementorPro\Modules\ThemeBuilder\Module' ) ) { return; }
-    $module = \ElementorPro\Modules\ThemeBuilder\Module::instance();
-    if ( ! is_callable( array( $module, 'get_conditions_manager' ) ) ) { return; }
-    $manager = $module->get_conditions_manager();
-    // Check visibility as well as existence before using the optional Pro API.
-    if ( is_callable( array( $manager, 'save_conditions' ) ) ) { $manager->save_conditions( $id, array( 'include/general' ) ); }
+    // Native metadata uses path strings. Pro's editor handler expects its own payload.
+    // Prefill only missing metadata; the owner saves/activates it through Pro's UI.
+    if ( ! metadata_exists( 'post', $id, '_elementor_conditions' ) ) { update_post_meta( $id, '_elementor_conditions', array( 'include/general' ) ); }
 }
 
 function evpower_prepare_elementor() {
