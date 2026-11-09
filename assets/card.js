@@ -181,6 +181,7 @@
     if (closeHelp) closeHelp.addEventListener('click', function () { closeDialog(help); });
 
     var install = card.querySelector('[data-evpc-install]');
+    var installLabel = install ? install.textContent : 'Add to phone';
     var deferredInstall;
     var standalone = navigator.standalone === true;
     try { standalone = standalone || (typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches); }
@@ -201,9 +202,9 @@
         deferredInstall = null;
         function result(choice) {
           if (choice && choice.outcome === 'accepted') install.hidden = true;
-          else install.textContent = 'Add to phone';
+          else install.textContent = installLabel;
         }
-        function failed() { install.textContent = 'Add to phone'; showDialog(help); }
+        function failed() { install.textContent = installLabel; showDialog(help); }
         try {
           var prompt = event.prompt();
           if (prompt && typeof prompt.then === 'function') prompt.then(function () {}, failed);
@@ -219,18 +220,54 @@
     if (location.protocol === 'file:') { setState('Offline card preview'); return; }
     try {
       if (data.offlineApp && navigator.serviceWorker && window.isSecureContext) {
+        var expectedScope = new URL('./', location.href).href;
         setState('Preparing offline access…');
         var offlineTimer = window.setTimeout(unavailable, 12000);
         navigator.serviceWorker.addEventListener('message', function (event) {
-          if (event.data && event.data.type === 'EVPC_CACHE_READY') {
+          if (event.data && event.data.type === 'EVPC_CACHE_READY' && event.data.scope === expectedScope) {
             window.clearTimeout(offlineTimer);
             setState('Ready offline');
           }
         });
-        navigator.serviceWorker.register('./service-worker.js', {scope:'./'}).then(function () {
-          return navigator.serviceWorker.ready;
-        }).then(function (registration) {
-          if (registration.active) registration.active.postMessage({type:'EVPC_CHECK_READY'});
+        // A previously installed parent card can control a first child visit.
+        // Refresh that exact parent worker without blocking this card's setup.
+        if (data.parentAppScope && typeof navigator.serviceWorker.getRegistration === 'function') {
+          try {
+            var parentScope = new URL(data.parentAppScope, expectedScope).href;
+            var parentWorker = new URL('service-worker.js', parentScope).href;
+            if (parentScope !== expectedScope && expectedScope.indexOf(parentScope) === 0) {
+              navigator.serviceWorker.getRegistration(parentScope).then(function (parent) {
+                try {
+                  if (parent && parent.scope === parentScope && parent.active && parent.active.scriptURL === parentWorker && typeof parent.update === 'function') {
+                    var update = parent.update();
+                    if (update && typeof update.then === 'function') update.then(function () {}, function () {});
+                  }
+                } catch (error) { /* Parent refresh is optional. */ }
+              }, function () {});
+            }
+          } catch (error) { /* Restricted browsers may block registration lookup. */ }
+        }
+        navigator.serviceWorker.register('./service-worker.js', {scope:'./'}).then(function (registration) {
+          if (!registration || registration.scope !== expectedScope) { unavailable(); return; }
+          var watched = [];
+          var checkedWorker = null;
+          function inspect() {
+            try {
+              var worker = registration.installing || registration.waiting || registration.active;
+              if (!worker) return;
+              if (watched.indexOf(worker) === -1) {
+                watched.push(worker);
+                worker.addEventListener('statechange', inspect);
+              }
+              if (worker === registration.active && worker.state === 'activated' && checkedWorker !== worker) {
+                checkedWorker = worker;
+                worker.postMessage({type:'EVPC_CHECK_READY'});
+              }
+            } catch (error) { unavailable(); }
+          }
+          registration.addEventListener('updatefound', inspect);
+          navigator.serviceWorker.addEventListener('controllerchange', inspect);
+          inspect();
         }).catch(unavailable);
       } else unavailable();
     } catch (error) { unavailable(); }

@@ -1,0 +1,9 @@
+<IfModule mod_mime.c>
+AddType application/manifest+json .webmanifest
+AddType text/vcard .vcf
+</IfModule>
+<IfModule mod_headers.c>
+<FilesMatch "^(index\.html|service-worker\.js|app\.webmanifest)$">
+Header set Cache-Control "no-cache"
+</FilesMatch>
+</IfModule>
