@@ -84,6 +84,7 @@ def inline_json(data):
 
 def make_html(data, vcard, svg, standalone=False):
     logo = ('data:image/png;base64,' + base64.b64encode((UI / 'assets/logo.png').read_bytes()).decode()) if standalone else 'assets/logo.png'
+    emblem = ('data:image/png;base64,' + base64.b64encode((UI / 'assets/emblem.png').read_bytes()).decode()) if standalone else 'assets/emblem.png'
     card_config = {
         'company':data['company'], 'fullName':data['full_name'], 'designation':data['designation'],
         'phone':data['phone'], 'whatsapp':data['whatsapp'], 'tollFree':data['toll_free'], 'email':data['email'],
@@ -93,7 +94,7 @@ def make_html(data, vcard, svg, standalone=False):
         'offlineApp':not standalone,
     }
     values = {
-        'LOGO_URL':logo, 'COMPANY':data['company'], 'NAME':data['full_name'],
+        'LOGO_URL':logo, 'EMBLEM_URL':emblem, 'COMPANY':data['company'], 'NAME':data['full_name'],
         'DESIGNATION':data['designation'], 'TAGLINE':data['tagline'],
         'PHONE_URL':'tel:' + data['phone'], 'PHONE_DISPLAY':data['phone_display'],
         'WHATSAPP_URL':'https://wa.me/' + re.sub(r'\D','',data['whatsapp']),
@@ -113,20 +114,21 @@ def make_html(data, vcard, svg, standalone=False):
     tokens['SERVICES'] = ''.join('<li>' + html.escape(service) + '</li>' for service in data['services'])
     tokens['QR_SVG'] = svg
     tokens['CONFIG_JSON'] = inline_json(card_config)
-    template = (UI / 'templates/card.html').read_text()
+    template = (UI / 'templates/preloader.html').read_text() + (UI / 'templates/card.html').read_text()
     body = re.sub(r'\{\{([A-Z_]+)\}\}', lambda match: tokens[match.group(1)], template)
     assert not re.search(r'\{\{[A-Z_]+\}\}', body)
-    css = (UI / 'assets/card.css').read_text()
+    css = (UI / 'assets/preloader.css').read_text() + (UI / 'assets/card.css').read_text()
     js = (UI / 'assets/card.js').read_text()
     name=html.escape(data['full_name'],quote=True)
     description=html.escape(data['full_name']+', '+data['designation']+' at '+data['company']+'. Contact card and scannable contact QR.',quote=True)
     app_name=html.escape(data.get('app_short_name',data['company']),quote=True)
     head = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0754de"><meta name="description" content="'+description+'"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="'+app_name+'"><meta name="mobile-web-app-capable" content="yes"><title>'+name+' | Evpower Card</title>'
+    head += '<style>.evpc-preloader{display:none}</style><script>' + (UI / 'assets/preloader-boot.js').read_text() + '</script>'
     if standalone:
         document = head + '<style>html,body{margin:0;min-height:100%;background:#f4f8fc}' + css + '</style></head><body>' + body + '<script>' + js + '</script></body></html>'
         (DIST / 'evpower-card-standalone.html').write_text(document)
     else:
-        document = head + '<link rel="manifest" href="app.webmanifest"><link rel="apple-touch-icon" href="assets/icon-180.png"><link rel="icon" href="assets/icon-192.png"><link rel="stylesheet" href="assets/card.css"><script defer src="assets/card.js"></script></head><body>' + body + '</body></html>'
+        document = head + '<link rel="manifest" href="app.webmanifest"><link rel="apple-touch-icon" href="assets/icon-180.png"><link rel="icon" href="assets/icon-192.png"><link rel="stylesheet" href="assets/preloader.css"><link rel="stylesheet" href="assets/card.css"><script defer src="assets/card.js"></script></head><body>' + body + '</body></html>'
         (APP / 'index.html').write_text(document)
 
 
@@ -159,7 +161,7 @@ def render_icons():
 def make_app(vcard,svg):
     assets=APP/'assets'
     assets.mkdir(parents=True,exist_ok=True)
-    for name in ['logo.png','card.css','card.js']:
+    for name in ['logo.png','emblem.png','preloader.css','card.css','card.js']:
         shutil.copy2(UI/'assets'/name,assets/name)
     for name in [VCARD_NAME,'evpower-contact-qr.png','evpower-contact-qr.svg']:
         shutil.copy2(DIST/name,assets/name)

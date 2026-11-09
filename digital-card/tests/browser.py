@@ -44,7 +44,7 @@ async def main(base):
             assert await page.get_by_role('link',name='Call Ahmed Kemal',exact=True).get_attribute('href')=='tel:+251911049916'
             assert await page.get_by_role('link',name='Chat with Ahmed Kemal on WhatsApp',exact=True).get_attribute('href')=='https://wa.me/971563558395'
             assert not await page.evaluate('document.documentElement.scrollWidth>innerWidth'),width
-            assert await page.locator('img').count()==1,'No profile photo should be present'
+            assert await page.locator('.evpc-card img').count()==1,'No profile photo should be present'
             await page.get_by_role('link',name='Show my QR',exact=True).click()
             modal=page.locator('[data-evpc-qr-modal]')
             await expect(modal).to_be_visible()

@@ -2,6 +2,8 @@
 
 The same approved blue/cyan Evpower design, with Kedir's own contact QR and a separate home-screen app.
 
+The opening animation uses the approved Evpower emblem, charging pulse and connector lights. It plays briefly before the card opens, also when opening the cached app offline. Choose **Skip animation** or press Escape to open the card immediately. Reduced-motion preferences are respected.
+
 **Card address after deployment:** https://evpower1.github.io/charge/kedir/
 
 | Field | Value |

@@ -1,0 +1,25 @@
+/* Original approved blue/cyan emblem, charging pulse and six connector pins. */
+.evpc-preloader{position:fixed;top:0;right:0;bottom:0;left:0;z-index:2147483000;display:none;align-items:center;justify-content:center;margin:0;padding:0;background:#fff;color:#263247;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.5;opacity:1;visibility:visible;transition:opacity 180ms ease,visibility 180ms;animation:evpc-loader-release 0s 2s forwards}
+.evpc-is-loading .evpc-preloader{display:flex}
+.evpc-is-loading.evpc-is-exiting .evpc-preloader{opacity:0;visibility:hidden;pointer-events:none}
+.evpc-preloader *{box-sizing:border-box}
+.evpc-preloader__inner{display:flex;flex-direction:column;align-items:center;gap:21px;width:100%;max-width:480px;padding:24px;transform:translateY(-12px)}
+.evpc-preloader__emblem{position:relative;width:76vw;max-width:340px;height:135px;height:min(30.16vw,135px);flex:0 0 auto;overflow:hidden}
+.evpc-preloader__image,.evpc-preloader__pulse{position:absolute;top:50%;left:0;display:block;width:100%;height:auto;max-width:none;margin:0;padding:0;transform:translateY(-50%)}
+.evpc-preloader__pulse{aspect-ratio:1;pointer-events:none;overflow:visible}
+.evpc-preloader__pulse>path{fill:none;stroke:#ecfcff;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:56 1120;animation:evpc-loader-energy 1.9s linear infinite}
+.evpc-preloader__contacts circle{fill:#00cde8;opacity:0;animation:evpc-loader-pin 1.1s ease-in-out infinite}
+.evpc-preloader__track{position:relative;width:156px;height:3px;overflow:hidden;border-radius:999px;background:#e4f0fa}
+.evpc-preloader__track>span{display:block;width:44%;height:100%;border-radius:inherit;background:linear-gradient(90deg,#0754de,#00cde8);animation:evpc-loader-charge 1.9s cubic-bezier(.45,0,.3,1) infinite}
+.evpc-is-exiting .evpc-preloader__track>span{width:100%;animation:none;transform:none}
+.evpc-preloader__caption{max-width:100%;margin:-6px 0 0;color:#6d7885;font-size:12px;font-weight:400;letter-spacing:.025em;line-height:1.6;text-align:center;overflow-wrap:break-word}
+.evpc-preloader__skip{position:absolute;right:16px;right:max(16px,env(safe-area-inset-right));bottom:16px;bottom:max(16px,env(safe-area-inset-bottom));display:inline-block;min-height:44px;margin:0;border:0;border-radius:5px;padding:10px 14px;background:transparent;color:#60758a;font:400 12px/1.5 ui-sans-serif,system-ui,sans-serif;cursor:pointer}
+.evpc-preloader__skip:hover{background:#eef8ff;color:#0754de}
+.evpc-preloader__skip:focus{outline:2px solid #0754de;outline-offset:3px}
+@keyframes evpc-loader-energy{from{stroke-dashoffset:1176}to{stroke-dashoffset:0}}
+@keyframes evpc-loader-pin{0%,12%,100%{opacity:0}32%,70%{opacity:.85}}
+@keyframes evpc-loader-charge{from{transform:translateX(-115%)}to{transform:translateX(340%)}}
+@keyframes evpc-loader-release{to{opacity:0;visibility:hidden;pointer-events:none}}
+@media(max-width:360px){.evpc-preloader__inner{gap:18px;padding:16px}.evpc-preloader__emblem{width:84vw;height:33.33vw}}
+@media(prefers-reduced-motion:reduce){.evpc-preloader{display:none!important;transition:none}.evpc-preloader__pulse,.evpc-preloader__track{animation:none!important}}
+@media print{.evpc-preloader{display:none!important}}

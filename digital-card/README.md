@@ -13,6 +13,8 @@ A separate home-screen web app for iPhone and Android. Open the card, tap **Show
 
 The card image is ready to use immediately: save it in your phone's Photos/Gallery, open it, and show the QR to another person's camera. The camera or QR reader should offer a contact preview; they choose **Add contact** or **Save**. QR reader support varies by phone.
 
+Both cards open with the approved blue/cyan Evpower emblem, moving energy pulse and glowing charger contacts. The introduction lasts about a second and always releases within 1.5 seconds through its own timer. **Skip animation**, Escape, reduced-motion preferences, image failure and browser Back restoration dismiss it immediately. JavaScript-disabled pages and printed cards omit it. The emblem is stored with each offline app and embedded in the single-file download; no WordPress plugin or external animation service is used.
+
 ## Free GitHub Pages hosting
 
 The `evpower-card` repository branch contains only this static card app. It can be hosted separately from `evpower.et`, without a Hostinger upload or custom domain.
