@@ -6,6 +6,7 @@ Current version: **1.0.1**. The artwork and animation accents use blue and cyan,
 
 ## Downloads
 
+- [Download full blue-and-cyan EVPOWER logo PNG](https://github.com/Evpower1/charge/raw/refs/heads/main/wordpress/preloader/branding/evpower-logo-blue-cyan.png?download=1): horizontal emblem and wordmark on white.
 - [Download WordPress plugin ZIP](https://github.com/Evpower1/charge/raw/refs/heads/main/wordpress/preloader/dist/evpower-preloader.zip?download=1).
 - [Download interactive HTML preview](https://github.com/Evpower1/charge/raw/refs/heads/main/wordpress/preloader/dist/evpower-preloader-preview.html?download=1); choose Replay or Show page.
 - [Download animated GIF](https://github.com/Evpower1/charge/raw/refs/heads/main/wordpress/preloader/dist/evpower-preloader.gif?download=1): looping preview, 480 × 240.
