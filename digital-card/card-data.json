@@ -1,0 +1,17 @@
+{
+  "company": "Evpower",
+  "full_name": "Ahmed Kemal",
+  "designation": "Founder & CEO",
+  "phone": "+251911049916",
+  "phone_display": "+251 911 049 916",
+  "whatsapp": "+971563558395",
+  "whatsapp_display": "+971 56 355 8395",
+  "toll_free": "8890",
+  "email": "ahmed@evpower.et",
+  "website": "https://evpower.et",
+  "address": "Addis Ababa - Ethiopia",
+  "city": "Addis Ababa",
+  "country": "Ethiopia",
+  "tagline": "Powering your journey",
+  "services": ["Mobile EV Charging", "Fleet Charging", "Charger Sales & Installation", "EV Maintenance"]
+}

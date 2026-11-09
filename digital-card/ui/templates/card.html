@@ -1,0 +1,95 @@
+<section class="evpc-shell" aria-label="{{COMPANY}} digital business card">
+  <article class="evpc-card" id="evpc-card" data-evpc-card>
+    <script type="application/json" class="evpc-config">{{CONFIG_JSON}}</script>
+    <header class="evpc-header">
+      <a class="evpc-brand" href="{{WEBSITE_URL}}" aria-label="Visit {{COMPANY}} website">
+        <img src="{{LOGO_URL}}" width="2172" height="724" alt="{{COMPANY}}" decoding="async" fetchpriority="high">
+      </a>
+      <span class="evpc-card-type"><span aria-hidden="true"></span>My contact card</span>
+    </header>
+
+    <div class="evpc-main">
+      <div class="evpc-identity">
+        <p class="evpc-eyebrow">Let’s connect</p>
+        <h1>{{NAME}}</h1>
+        <p class="evpc-designation">{{DESIGNATION}}</p>
+        <p class="evpc-company">{{COMPANY}} <span aria-hidden="true">/</span> EV charging &amp; mobility</p>
+      </div>
+
+      <a class="evpc-save evpc-show-qr" href="#evpc-qr-panel" data-evpc-open-qr>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h2v2h-2zM19 15h2v6h-4v-2h-2M12 3v3m0 5v3m0 4v3M3 12h4m3 0h3m4 0h4"/></svg>
+        Show my QR
+      </a>
+      <a class="evpc-save evpc-save-secondary" href="{{VCARD_URL}}" download="evpower-ahmed-kemal.vcf" data-evpc-save>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 17v4h14v-4"/></svg>
+        Save contact
+        <svg class="evpc-save__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+      </a>
+
+      <nav class="evpc-actions" aria-label="Quick contact actions">
+        <a href="{{PHONE_URL}}" aria-label="Call {{NAME}}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 3 3 4-2 3a16 16 0 0 0 7 7l3-2 4 3-1 3C10 23 1 14 3 4Z"/></svg>
+          <span>Call</span>
+        </a>
+        <a href="{{WHATSAPP_URL}}" target="_blank" rel="noopener noreferrer" aria-label="Chat with {{NAME}} on WhatsApp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 11.5a9 9 0 0 1-13 8L3 21l1.5-5A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1 3 3 1-1 3 2"/></svg>
+          <span>WhatsApp</span>
+        </a>
+        <a href="{{EMAIL_URL}}" aria-label="Email {{NAME}}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg>
+          <span>Email</span>
+        </a>
+      </nav>
+
+      <ul class="evpc-details" aria-label="Contact details">
+        <li><a href="{{PHONE_URL}}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 3 3 4-2 3a16 16 0 0 0 7 7l3-2 4 3-1 3C10 23 1 14 3 4Z"/></svg><span><span class="evpc-detail-label">Phone</span><span class="evpc-detail-value">{{PHONE_DISPLAY}}</span></span></a></li>
+        <li><a href="{{WHATSAPP_URL}}" target="_blank" rel="noopener noreferrer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 11.5a9 9 0 0 1-13 8L3 21l1.5-5A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1 3 3 1-1 3 2"/></svg><span><span class="evpc-detail-label">WhatsApp</span><span class="evpc-detail-value">{{WHATSAPP_DISPLAY}}</span></span></a></li>
+        <li><a href="{{EMAIL_URL}}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg><span><span class="evpc-detail-label">Email</span><span class="evpc-detail-value">{{EMAIL}}</span></span></a></li>
+        <li><a href="{{WEBSITE_URL}}" target="_blank" rel="noopener noreferrer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a17 17 0 0 1 0 18 17 17 0 0 1 0-18Z"/></svg><span><span class="evpc-detail-label">Website</span><span class="evpc-detail-value">{{WEBSITE_DISPLAY}}</span></span></a></li>
+        <li><a href="{{MAP_URL}}" target="_blank" rel="noopener noreferrer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><span><span class="evpc-detail-label">Location</span><span class="evpc-detail-value">{{ADDRESS}}</span></span></a></li>
+        <li><a href="{{TOLL_FREE_URL}}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 14v-3a8 8 0 0 1 16 0v3M4 13H2v6h4v-6Zm16 0h2v6h-4v-6Zm0 6a3 3 0 0 1-3 3h-4"/></svg><span><span class="evpc-detail-label">Toll-free · Ethiopia</span><span class="evpc-detail-value">{{TOLL_FREE}}</span></span></a></li>
+      </ul>
+
+      <section class="evpc-services-section" aria-label="Our services">
+        <h2>How we can help</h2>
+        <ul class="evpc-services">{{SERVICES}}</ul>
+      </section>
+    </div>
+
+    <aside id="evpc-qr-panel" class="evpc-aside" aria-label="Scannable contact card">
+      <div class="evpc-aside__content">
+        <p class="evpc-eyebrow">Keep in touch</p>
+        <h2>{{QR_LABEL}}</h2>
+        <figure class="evpc-qr">
+          <div class="evpc-qr__code" role="img" aria-label="{{QR_LABEL}} for {{NAME}}">{{QR_SVG}}</div>
+          <figcaption>{{NAME}} <span aria-hidden="true">·</span> {{COMPANY}}</figcaption>
+        </figure>
+        <p class="evpc-qr-help">Scan with your phone’s camera.</p>
+        <button class="evpc-qr-download" type="button" data-evpc-download-qr hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 17v4h14v-4"/></svg>Download QR</button>
+        <span class="evpc-category"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m13 2-9 12h7l-1 8 10-12h-7Z"/></svg>EV charging &amp; mobility</span>
+      </div>
+    </aside>
+
+    <footer class="evpc-footer">
+      <div><p class="evpc-tagline">{{TAGLINE}}</p><p class="evpc-offline-state" data-evpc-offline-state>My Evpower card</p></div>
+      <div class="evpc-utilities">
+        <button type="button" data-evpc-share hidden><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 16V3m-5 5 5-5 5 5M5 12v9h14v-9"/></svg>Share card</button>
+        <button type="button" data-evpc-install hidden>Add to phone</button>
+      </div>
+      <p class="evpc-status" role="status" aria-live="polite" aria-atomic="true" data-evpc-status></p>
+    </footer>
+    <dialog class="evpc-qr-modal" data-evpc-qr-modal aria-labelledby="evpc-qr-title">
+      <div class="evpc-qr-modal__inner">
+        <p class="evpc-eyebrow">EVPOWER · CONTACT CARD</p>
+        <h2 id="evpc-qr-title">{{NAME}}</h2>
+        <p class="evpc-modal-role">{{DESIGNATION}}</p>
+        <div class="evpc-modal-code" data-evpc-modal-code></div>
+        <p class="evpc-modal-hint">Scan with your camera to add my contact.</p>
+        <button type="button" class="evpc-modal-close" data-evpc-close-qr autofocus>Back to card</button>
+      </div>
+    </dialog>
+    <dialog class="evpc-install-modal" data-evpc-install-modal aria-labelledby="evpc-install-title">
+      <div class="evpc-install-inner"><h2 id="evpc-install-title">Add Evpower to your phone</h2><p><strong>iPhone:</strong> Open this card in Safari. Tap Share, then Add to Home Screen.</p><p><strong>Android:</strong> Open this card in Chrome. Tap the browser menu, then Install app or Add to Home screen.</p><p>Open it online once to prepare offline use. Your QR then works without internet.</p><button type="button" class="evpc-modal-close" data-evpc-close-install autofocus>Got it</button></div>
+    </dialog>
+  </article>
+</section>

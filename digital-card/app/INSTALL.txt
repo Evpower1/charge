@@ -1,0 +1,14 @@
+EVPOWER PHONE CARD — AHMED KEMAL
+
+1. Upload evpower-card-app.zip into Hostinger File Manager > public_html.
+2. Extract it there. It creates a separate evpower-card folder.
+3. Open https://YOUR-DOMAIN/evpower-card/ using HTTPS.
+4. iPhone: Safari > Share > Add to Home Screen.
+5. Android: Chrome > menu > Install app / Add to Home screen.
+6. Wait for Ready offline on the card. It now works without internet.
+7. Tap Show my QR; another person scans with their camera and adds the contact.
+
+The app is an independent home-screen web app for Android and iPhone.
+It does not need WordPress, a login, or an app-store account.
+The ZIP is a hosting package; install the phone app from its HTTPS link.
+The card QR contains contact details directly and needs no website to scan.

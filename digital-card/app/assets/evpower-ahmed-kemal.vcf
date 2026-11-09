@@ -1,0 +1,15 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Kemal;Ahmed;;;
+FN:Ahmed Kemal
+ORG:Evpower
+TITLE:Founder & CEO
+TEL;TYPE=WORK,VOICE:+251911049916
+TEL;TYPE=WORK,VOICE:8890
+item1.TEL;TYPE=CELL:+971563558395
+item1.X-ABLabel:WhatsApp
+EMAIL;TYPE=WORK:ahmed@evpower.et
+URL:https://evpower.et
+ADR;TYPE=WORK:;;;Addis Ababa;;;Ethiopia
+NOTE:WhatsApp: https://wa.me/971563558395
+END:VCARD
