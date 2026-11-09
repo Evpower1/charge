@@ -9,10 +9,31 @@ A separate home-screen web app for iPhone and Android. Open the card, tap **Show
 - [Contact file](dist/evpower-ahmed-kemal.vcf)
 - [QR image](dist/evpower-contact-qr.png)
 - [App preview image](dist/evpower-card-phone-preview.png)
+- [Single-file card](dist/evpower-card-standalone.html)
 
 The card image is ready to use immediately: save it in your phone's Photos/Gallery, open it, and show the QR to another person's camera. The camera or QR reader should offer a contact preview; they choose **Add contact** or **Save**. QR reader support varies by phone.
 
-## Install the home-screen app
+## Free GitHub Pages hosting
+
+The `evpower-card` repository branch contains only this static card app. It can be hosted separately from `evpower.et`, without a Hostinger upload or custom domain.
+
+In [repository Settings → Pages](https://github.com/Evpower1/charge/settings/pages), choose **Deploy from a branch**, select **evpower-card**, select **/(root)**, and save. A repository administrator needs to enable this setting; a normal Git push cannot enable Pages. A public repository can use GitHub Pages for free. Availability for a private repository depends on the GitHub plan.
+
+After GitHub completes deployment, the expected address is **https://evpower1.github.io/charge/**. The link is only live after Pages is enabled and deployment finishes. Open that link on either phone to install or bookmark the card. The card app does not change the main website or its domain.
+
+## Install or open in your browser
+
+The full card, contact links and QR work as a normal web page. Use the page in current Chrome, Safari, Firefox, Edge, Samsung Internet or Opera. Home-screen installation and offline storage are optional browser features; they are not available in every browser or embedded app. A browser that cannot install the app can still bookmark the page and save the QR image.
+
+On iPhone, open the published link in Safari, choose **Share → Add to Home Screen**, and tap **Add**. Enable **Open as Web App** if offered. On Android, use your browser's **Install app** or **Add to Home screen** option if available. Inside WhatsApp or another embedded browser, choose **Open in browser** if needed. On computers, bookmark the page or install it if the browser offers that option.
+
+Open the card online and wait for **Ready offline** before relying on cached offline access. If the browser blocks offline storage, the card shows an online status instead; save the QR PNG to Photos/Gallery for use without internet. Calls, WhatsApp, email and website links still need their usual phone/network services.
+
+**Save contact** uses a normal `.vcf` link, which a browser can download or open for import. If downloads are restricted, scan the contact QR instead. **Download QR** uses a normal PNG link that can also be opened and saved as an image. If sharing or clipboard access is blocked, the page exposes selectable contact text for manual copying. The inline QR remains visible with JavaScript disabled.
+
+The single-file HTML download includes the logo, details and QR. Open it in a browser for a local card preview; some phone file viewers disable scripts or external actions. A local HTML file is not an installable home-screen app. Save the card PNG in Photos/Gallery for the simplest offline option.
+
+## Optional Hostinger hosting
 
 The ZIP is a hosting package, not an APK or an iPhone installer. Both phones install this app from a secure HTTPS link after a one-time upload.
 
@@ -59,3 +80,5 @@ python digital-card/build.py
 The browser check also exports the shareable card image and app preview. The final build refreshes the download checksums in `dist/manifest.json`. Browser tests use `/usr/bin/chromium`.
 
 Verified in Chromium at widths 320, 390, 430, 768 and 1440 pixels: contact links, full-screen QR, exact decoded vCard contents, offline reopening and downloads, manifest/icon configuration, install guidance, sharing fallback and no-JavaScript QR access. The exported card image was independently decoded with ZXing. Installation on physical iPhone/Android devices has not been tested here.
+
+Additional compatibility checks cover browsers without dialog, clipboard, sharing or service-worker APIs, denied permissions and throwing APIs, modal keyboard focus and dismissal, native vCard/PNG links, manual copying and explicit online-only status. Run `python digital-card/tests/compatibility.py` for available engines, or `python digital-card/tests/compatibility.py --engines chromium,firefox,webkit` to require all three. Firefox/WebKit downloads were blocked by this environment's network policy, so those engines have not been tested here.

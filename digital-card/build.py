@@ -84,9 +84,10 @@ def make_html(data, vcard, svg, standalone=False):
     logo = ('data:image/png;base64,' + base64.b64encode((UI / 'assets/logo.png').read_bytes()).decode()) if standalone else 'assets/logo.png'
     card_config = {
         'company':data['company'], 'fullName':data['full_name'], 'designation':data['designation'],
-        'phone':data['phone'], 'whatsapp':data['whatsapp'], 'email':data['email'],
+        'phone':data['phone'], 'whatsapp':data['whatsapp'], 'tollFree':data['toll_free'], 'email':data['email'],
         'website':data['website'], 'address':data['address'], 'cardUrl':'',
         'vcard':vcard, 'downloadName':VCARD_NAME, 'allowLocationShare':True,
+        'offlineApp':not standalone,
     }
     values = {
         'LOGO_URL':logo, 'COMPANY':data['company'], 'NAME':data['full_name'],
@@ -100,6 +101,7 @@ def make_html(data, vcard, svg, standalone=False):
         'MAP_URL':'https://www.google.com/maps/search/?' + urlencode({'api':'1','query':data['address']}),
         'TOLL_FREE_URL':'tel:' + data['toll_free'], 'TOLL_FREE':data['toll_free'],
         'VCARD_URL':('data:text/vcard;charset=utf-8,' + quote(vcard, safe='')) if standalone else 'assets/' + VCARD_NAME,
+        'QR_PNG_URL':('data:image/png;base64,' + base64.b64encode((DIST / 'evpower-contact-qr.png').read_bytes()).decode()) if standalone else 'assets/evpower-contact-qr.png',
         'CARD_URL':'', 'QR_LABEL':'Scan to save contact',
     }
     tokens = {key:html.escape(value, quote=True) for key,value in values.items()}
@@ -160,6 +162,7 @@ def make_app(vcard,svg):
         'icons':[{'src':f'assets/icon-{size}.png','sizes':f'{size}x{size}','type':'image/png','purpose':'any'} for size in [192,512]],
     }
     (APP/'app.webmanifest').write_text(json.dumps(settings,indent=2)+'\n')
+    (APP/'.nojekyll').write_text('')
     (APP/'.htaccess').write_text('''<IfModule mod_mime.c>
 AddType application/manifest+json .webmanifest
 AddType text/vcard .vcf
@@ -172,11 +175,20 @@ Header set Cache-Control "no-cache"
 ''')
     (APP/'INSTALL.txt').write_text('''EVPOWER PHONE CARD — AHMED KEMAL
 
+FREE GITHUB PAGES OPTION (no Hostinger upload):
+The repository's evpower-card branch contains the deployable card.
+In https://github.com/Evpower1/charge/settings/pages choose Deploy from a branch,
+branch evpower-card, folder /(root), then Save.
+After GitHub finishes deployment, open https://evpower1.github.io/charge/.
+The link is not live until Pages is enabled and deployment completes.
+
+OPTIONAL HOSTINGER SETUP:
+
 1. Upload evpower-card-app.zip into Hostinger File Manager > public_html.
 2. Extract it there. It creates a separate evpower-card folder.
 3. Open https://YOUR-DOMAIN/evpower-card/ using HTTPS.
 4. iPhone: Safari > Share > Add to Home Screen.
-5. Android: Chrome > menu > Install app / Add to Home screen.
+5. Android: browser menu > Install app / Add to Home screen, if available.
 6. Wait for Ready offline on the card. It now works without internet.
 7. Tap Show my QR; another person scans with their camera and adds the contact.
 
@@ -184,8 +196,11 @@ The app is an independent home-screen web app for Android and iPhone.
 It does not need WordPress, a login, or an app-store account.
 The ZIP is a hosting package; install the phone app from its HTTPS link.
 The card QR contains contact details directly and needs no website to scan.
+The card also works as a normal page in other browsers; bookmark it if there is
+no install option. In an embedded browser, choose Open in browser if needed.
+If offline storage is unavailable, save the QR image in Photos/Gallery instead.
 ''')
-    files=sorted(str(p.relative_to(APP)) for p in APP.rglob('*') if p.is_file() and p.name not in ['service-worker.js','.htaccess','INSTALL.txt'])
+    files=sorted(str(p.relative_to(APP)) for p in APP.rglob('*') if p.is_file() and p.name not in ['service-worker.js','.htaccess','.nojekyll','INSTALL.txt'])
     digest=hashlib.sha256(b''.join((APP/name).read_bytes() for name in files)).hexdigest()[:14]
     worker='''/* Offline storage is scoped only to this card app. */
 const CACHE='evpower-phone-card-VERSION';

@@ -1,5 +1,5 @@
 /* Offline storage is scoped only to this card app. */
-const CACHE='evpower-phone-card-2c7edc7c3fb5a4';
+const CACHE='evpower-phone-card-66fc58255b5136';
 const FILES=["app.webmanifest", "assets/card.css", "assets/card.js", "assets/evpower-ahmed-kemal.vcf", "assets/evpower-contact-qr.png", "assets/evpower-contact-qr.svg", "assets/icon-180.png", "assets/icon-192.png", "assets/icon-512.png", "assets/logo.png", "index.html"];
 const URLs=FILES.map(path=>new URL(path,self.registration.scope).href);
 const INDEX=new URL('index.html',self.registration.scope).href;

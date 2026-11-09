@@ -65,7 +65,7 @@
           <figcaption>{{NAME}} <span aria-hidden="true">·</span> {{COMPANY}}</figcaption>
         </figure>
         <p class="evpc-qr-help">Scan with your phone’s camera.</p>
-        <button class="evpc-qr-download" type="button" data-evpc-download-qr hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 17v4h14v-4"/></svg>Download QR</button>
+        <a class="evpc-qr-download" href="{{QR_PNG_URL}}" download="evpower-contact-qr.png" data-evpc-download-qr><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 17v4h14v-4"/></svg>Download QR</a>
         <span class="evpc-category"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m13 2-9 12h7l-1 8 10-12h-7Z"/></svg>EV charging &amp; mobility</span>
       </div>
     </aside>
@@ -77,8 +77,12 @@
         <button type="button" data-evpc-install hidden>Add to phone</button>
       </div>
       <p class="evpc-status" role="status" aria-live="polite" aria-atomic="true" data-evpc-status></p>
+      <div class="evpc-share-fallback" data-evpc-share-fallback hidden>
+        <label for="evpc-share-text">Select and copy your card details</label>
+        <textarea id="evpc-share-text" data-evpc-share-text readonly rows="9"></textarea>
+      </div>
     </footer>
-    <dialog class="evpc-qr-modal" data-evpc-qr-modal aria-labelledby="evpc-qr-title">
+    <dialog class="evpc-qr-modal" data-evpc-qr-modal role="dialog" aria-labelledby="evpc-qr-title">
       <div class="evpc-qr-modal__inner">
         <p class="evpc-eyebrow">EVPOWER · CONTACT CARD</p>
         <h2 id="evpc-qr-title">{{NAME}}</h2>
@@ -88,8 +92,8 @@
         <button type="button" class="evpc-modal-close" data-evpc-close-qr autofocus>Back to card</button>
       </div>
     </dialog>
-    <dialog class="evpc-install-modal" data-evpc-install-modal aria-labelledby="evpc-install-title">
-      <div class="evpc-install-inner"><h2 id="evpc-install-title">Add Evpower to your phone</h2><p><strong>iPhone:</strong> Open this card in Safari. Tap Share, then Add to Home Screen.</p><p><strong>Android:</strong> Open this card in Chrome. Tap the browser menu, then Install app or Add to Home screen.</p><p>Open it online once to prepare offline use. Your QR then works without internet.</p><button type="button" class="evpc-modal-close" data-evpc-close-install autofocus>Got it</button></div>
+    <dialog class="evpc-install-modal" data-evpc-install-modal role="dialog" aria-labelledby="evpc-install-title">
+      <div class="evpc-install-inner"><h2 id="evpc-install-title">Keep your Evpower card handy</h2><p>The card and QR open as a normal page in your browser.</p><p><strong>iPhone:</strong> Open the link in Safari, then Share → Add to Home Screen.</p><p><strong>Android:</strong> If your browser offers Install app or Add to Home screen, choose it from the browser menu.</p><p><strong>Other browsers and computers:</strong> Bookmark this page. If you opened it inside WhatsApp or another app, choose Open in browser for more options.</p><p>Installation and offline storage depend on your browser. Wait for Ready offline before relying on offline access, or download the QR image to Photos/Gallery.</p><button type="button" class="evpc-modal-close" data-evpc-close-install autofocus>Got it</button></div>
     </dialog>
   </article>
 </section>

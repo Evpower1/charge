@@ -87,8 +87,9 @@ async def main(base):
         assert target.read_bytes()==VCARD
         assert b'ahmed@evpower.et' in VCARD and b'+971563558395' in VCARD and b'+251911049916' in VCARD
         async with page.expect_download() as pending:
-            await page.get_by_role('button',name='Download QR',exact=True).click()
-        await (await pending.value).save_as(OUTPUT/'downloaded-qr.svg')
+            await page.get_by_role('link',name='Download QR',exact=True).click()
+        await (await pending.value).save_as(OUTPUT/'downloaded-qr.png')
+        decode((OUTPUT/'downloaded-qr.png').read_bytes())
         print('PASS: app reopens offline, QR still decodes and contact/QR files download without internet')
         await context.set_offline(False)
 
