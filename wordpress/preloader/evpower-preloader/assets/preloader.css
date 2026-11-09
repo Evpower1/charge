@@ -1,0 +1,149 @@
+/* The approved artwork stays intact; only the light trail and contacts animate. */
+.evp-preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: none;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  color: #26262c;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.5;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 280ms ease, visibility 280ms;
+  /* A CSS fallback also releases the page if another script interrupts JS. */
+  animation: evp-safety-release 0s 7s forwards;
+}
+.evp-is-loading .evp-preloader { display: grid; }
+.evp-is-loading.evp-is-exiting .evp-preloader {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.evp-preloader__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 21px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  transform: translateY(-12px);
+}
+.evp-preloader__emblem {
+  position: relative;
+  width: min(76vw, 340px);
+  aspect-ratio: 2.52 / 1;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+.evp-preloader__image,
+.evp-preloader__pulse {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  transform: translateY(-50%);
+}
+.evp-preloader__pulse {
+  aspect-ratio: 1;
+  pointer-events: none;
+  overflow: visible;
+}
+.evp-preloader__pulse > path {
+  fill: none;
+  stroke: #fff0f4;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 56 1120;
+  animation: evp-energy-flow 1.9s linear infinite;
+}
+.evp-preloader__contacts circle {
+  fill: #ee294e;
+  opacity: 0;
+  animation: evp-contact-glow 1.9s ease-in-out infinite;
+}
+.evp-preloader__track {
+  position: relative;
+  width: 156px;
+  height: 3px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #f5e9ec;
+}
+.evp-preloader__track > span {
+  display: block;
+  width: 44%;
+  height: 100%;
+  border-radius: inherit;
+  background: #c80032;
+  animation: evp-charge 1.9s cubic-bezier(.45, 0, .3, 1) infinite;
+}
+.evp-is-exiting .evp-preloader__track > span {
+  width: 100%;
+  animation: none;
+  transform: none;
+}
+.evp-preloader__caption {
+  max-width: 100%;
+  margin: -6px 0 0;
+  color: #72727c;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: .025em;
+  line-height: 1.6;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.evp-preloader__skip {
+  position: absolute;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: inline-block;
+  min-height: 44px;
+  margin: 0;
+  border: 0;
+  border-radius: 5px;
+  padding: 10px 14px;
+  background: transparent;
+  color: #73737b;
+  font: 400 12px/1.5 ui-sans-serif, system-ui, sans-serif;
+  box-shadow: none;
+  cursor: pointer;
+}
+.evp-preloader__skip:hover { background: #faf5f6; color: #a9002a; }
+.evp-preloader__skip:focus-visible { outline: 2px solid #c80032; outline-offset: 3px; }
+@keyframes evp-energy-flow {
+  from { stroke-dashoffset: 1176; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes evp-contact-glow {
+  0%, 35%, 100% { opacity: 0; }
+  55%, 72% { opacity: .85; }
+}
+@keyframes evp-charge {
+  from { transform: translateX(-115%); }
+  to { transform: translateX(340%); }
+}
+@keyframes evp-safety-release {
+  to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+@media (max-width: 360px) {
+  .evp-preloader__inner { gap: 18px; padding: 16px; }
+  .evp-preloader__emblem { width: 84vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .evp-preloader { transition: none; }
+  .evp-preloader__pulse { display: none; }
+  .evp-preloader__track > span { width: 100%; animation: none; opacity: .55; }
+}

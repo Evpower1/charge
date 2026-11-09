@@ -1,0 +1,18 @@
+{
+  "evpower-preloader-preview.html": {
+    "bytes": 1360813,
+    "sha256": "d8fcdeb5872f685ee0985f2c193bc6765b09602e4e8143de29baa6d64b041cb5"
+  },
+  "evpower-preloader-preview.mp4": {
+    "bytes": 18238,
+    "sha256": "d7e3596ab2df41ff3ada8d7619376c5d6f0d540457048f2010d953c21bf02c9c"
+  },
+  "evpower-preloader.gif": {
+    "bytes": 45973,
+    "sha256": "950a81fc5a260f87077c6e53881bece20e4b3898be5f3d8e9b4388c79cdd56d7"
+  },
+  "evpower-preloader.zip": {
+    "bytes": 702051,
+    "sha256": "d077fdf125065964ecc05d1d4c00c0a868312a3f7e011d0850b448a56575030b"
+  }
+}
