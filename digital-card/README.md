@@ -68,6 +68,8 @@ The approved blue/cyan Evpower logo is included. There is no profile photo, acco
 
 Edit `card-data.json` for the contact details and `ui/` for the design. `app/` is the generated, deployable app; `dist/` contains the download files. The offline worker only handles requests inside this app's folder.
 
+Additional people use separate profile folders. [Kedir Kemal's card](profiles/kedir/README.md) is built with `python digital-card/build.py --profile kedir` and deployed at `/charge/kedir/`. Ahmed remains at `/charge/`. Card workers use separate cache namespaces and handle only their own exact page and precached assets; they do not cache another profile's page as their own.
+
 To rebuild in a Python environment with Chromium installed:
 
 ```sh

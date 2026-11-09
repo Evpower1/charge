@@ -1,0 +1,21 @@
+{
+  "company": "Evpower",
+  "full_name": "Kedir Kemal",
+  "designation": "Managing Director",
+  "phone": "+251933606669",
+  "phone_display": "+251 933 606 669",
+  "whatsapp": "+971521170330",
+  "whatsapp_display": "+971 52 117 0330",
+  "toll_free": "8890",
+  "email": "Kedir@evpower.et",
+  "website": "https://www.evpower.et",
+  "address": "Addis Ababa - Ethiopia",
+  "city": "Addis Ababa",
+  "country": "Ethiopia",
+  "tagline": "Powering your journey",
+  "services": ["Mobile EV Charging", "Fleet Charging", "Charger Sales & Installation", "EV Maintenance"],
+  "app_short_name": "Kedir Evpower",
+  "share_app_link": false,
+  "install_label": "Add to my phone",
+  "parent_app_scope": "../"
+}

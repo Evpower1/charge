@@ -1,0 +1,15 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Kemal;Kedir;;;
+FN:Kedir Kemal
+ORG:Evpower
+TITLE:Managing Director
+TEL;TYPE=WORK,VOICE:+251933606669
+TEL;TYPE=WORK,VOICE:8890
+item1.TEL;TYPE=CELL:+971521170330
+item1.X-ABLabel:WhatsApp
+EMAIL;TYPE=WORK:Kedir@evpower.et
+URL:https://www.evpower.et
+ADR;TYPE=WORK:;;;Addis Ababa;;;Ethiopia
+NOTE:WhatsApp: https://wa.me/971521170330
+END:VCARD

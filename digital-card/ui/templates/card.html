@@ -20,7 +20,7 @@
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h2v2h-2zM19 15h2v6h-4v-2h-2M12 3v3m0 5v3m0 4v3M3 12h4m3 0h3m4 0h4"/></svg>
         Show my QR
       </a>
-      <a class="evpc-save evpc-save-secondary" href="{{VCARD_URL}}" download="evpower-ahmed-kemal.vcf" data-evpc-save>
+      <a class="evpc-save evpc-save-secondary" href="{{VCARD_URL}}" download="{{VCARD_NAME}}" data-evpc-save>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 17v4h14v-4"/></svg>
         Save contact
         <svg class="evpc-save__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
@@ -73,8 +73,8 @@
     <footer class="evpc-footer">
       <div><p class="evpc-tagline">{{TAGLINE}}</p><p class="evpc-offline-state" data-evpc-offline-state>My Evpower card</p></div>
       <div class="evpc-utilities">
-        <button type="button" data-evpc-share hidden><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 16V3m-5 5 5-5 5 5M5 12v9h14v-9"/></svg>Share card</button>
-        <button type="button" data-evpc-install hidden>Add to phone</button>
+        <button type="button" data-evpc-share hidden><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 16V3m-5 5 5-5 5 5M5 12v9h14v-9"/></svg>{{SHARE_LABEL}}</button>
+        <button type="button" data-evpc-install hidden>{{INSTALL_LABEL}}</button>
       </div>
       <p class="evpc-status" role="status" aria-live="polite" aria-atomic="true" data-evpc-status></p>
       <div class="evpc-share-fallback" data-evpc-share-fallback hidden>

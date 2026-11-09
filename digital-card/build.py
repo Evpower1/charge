@@ -1,4 +1,5 @@
-"""Build Ahmed's independent, offline-capable iPhone/Android home-screen card."""
+"""Build an independent, offline-capable Evpower iPhone/Android contact card."""
+import argparse
 from pathlib import Path
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from io import BytesIO
@@ -19,6 +20,7 @@ APP = ROOT / 'app'
 DIST = ROOT / 'dist'
 DATA = json.loads((ROOT / 'card-data.json').read_text())
 VCARD_NAME = 'evpower-ahmed-kemal.vcf'
+PROFILE = 'ahmed'
 
 
 def vescape(value):
@@ -71,7 +73,7 @@ def make_qr(vcard):
     buffer = BytesIO()
     image.save(buffer)
     svg = re.sub(r'<\?xml[^>]*\?>\s*', '', buffer.getvalue().decode())
-    svg = svg.replace('<svg ', '<svg role="img" aria-label="Scan to save Ahmed Kemal contact" shape-rendering="crispEdges" ', 1)
+    svg = svg.replace('<svg ', '<svg role="img" aria-label="Scan to save ' + html.escape(DATA['full_name'], quote=True) + ' contact" shape-rendering="crispEdges" ', 1)
     (DIST / 'evpower-contact-qr.svg').write_text(svg)
     return svg, qr.version
 
@@ -86,7 +88,8 @@ def make_html(data, vcard, svg, standalone=False):
         'company':data['company'], 'fullName':data['full_name'], 'designation':data['designation'],
         'phone':data['phone'], 'whatsapp':data['whatsapp'], 'tollFree':data['toll_free'], 'email':data['email'],
         'website':data['website'], 'address':data['address'], 'cardUrl':'',
-        'vcard':vcard, 'downloadName':VCARD_NAME, 'allowLocationShare':True,
+        'vcard':vcard, 'downloadName':VCARD_NAME, 'allowLocationShare':data.get('share_app_link',True),
+        'parentAppScope':data.get('parent_app_scope',''),
         'offlineApp':not standalone,
     }
     values = {
@@ -102,7 +105,9 @@ def make_html(data, vcard, svg, standalone=False):
         'TOLL_FREE_URL':'tel:' + data['toll_free'], 'TOLL_FREE':data['toll_free'],
         'VCARD_URL':('data:text/vcard;charset=utf-8,' + quote(vcard, safe='')) if standalone else 'assets/' + VCARD_NAME,
         'QR_PNG_URL':('data:image/png;base64,' + base64.b64encode((DIST / 'evpower-contact-qr.png').read_bytes()).decode()) if standalone else 'assets/evpower-contact-qr.png',
-        'CARD_URL':'', 'QR_LABEL':'Scan to save contact',
+        'CARD_URL':'', 'QR_LABEL':'Scan to save contact', 'VCARD_NAME':VCARD_NAME,
+        'SHARE_LABEL':'Share card' if data.get('share_app_link',True) else 'Share contact',
+        'INSTALL_LABEL':data.get('install_label','Add to phone'),
     }
     tokens = {key:html.escape(value, quote=True) for key,value in values.items()}
     tokens['SERVICES'] = ''.join('<li>' + html.escape(service) + '</li>' for service in data['services'])
@@ -113,7 +118,10 @@ def make_html(data, vcard, svg, standalone=False):
     assert not re.search(r'\{\{[A-Z_]+\}\}', body)
     css = (UI / 'assets/card.css').read_text()
     js = (UI / 'assets/card.js').read_text()
-    head = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0754de"><meta name="description" content="Ahmed Kemal, Founder &amp; CEO at Evpower. Contact card and scannable contact QR."><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Evpower"><meta name="mobile-web-app-capable" content="yes"><title>Ahmed Kemal | Evpower Card</title>'
+    name=html.escape(data['full_name'],quote=True)
+    description=html.escape(data['full_name']+', '+data['designation']+' at '+data['company']+'. Contact card and scannable contact QR.',quote=True)
+    app_name=html.escape(data.get('app_short_name',data['company']),quote=True)
+    head = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0754de"><meta name="description" content="'+description+'"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="'+app_name+'"><meta name="mobile-web-app-capable" content="yes"><title>'+name+' | Evpower Card</title>'
     if standalone:
         document = head + '<style>html,body{margin:0;min-height:100%;background:#f4f8fc}' + css + '</style></head><body>' + body + '<script>' + js + '</script></body></html>'
         (DIST / 'evpower-card-standalone.html').write_text(document)
@@ -128,6 +136,10 @@ def render_icons():
     output.mkdir(exist_ok=True)
     digest=hashlib.sha256((UI/'assets/emblem.png').read_bytes()).hexdigest()
     marker=output/'icon-source.sha256'
+    source_icons=ROOT/'app/assets'
+    if APP != ROOT/'app' and marker.exists() and marker.read_text()==digest and all((source_icons/f'icon-{size}.png').exists() for size in [180,192,512]):
+        for size in [180,192,512]: shutil.copy2(source_icons/f'icon-{size}.png',APP/f'assets/icon-{size}.png')
+        return
     if marker.exists() and marker.read_text()==digest and all((APP/f'assets/icon-{size}.png').exists() for size in [180,192,512]):
         return
     image='data:image/png;base64,'+base64.b64encode((UI/'assets/emblem.png').read_bytes()).decode()
@@ -155,8 +167,8 @@ def make_app(vcard,svg):
     make_html(DATA,vcard,svg,standalone=True)
     render_icons()
     settings={
-        'id':'./','name':'Ahmed Kemal | Evpower Card','short_name':'Evpower',
-        'description':'Ahmed Kemal, Founder & CEO. Offline contact card and scannable contact QR.',
+        'id':'./','name':DATA['full_name']+' | Evpower Card','short_name':DATA.get('app_short_name','Evpower'),
+        'description':DATA['full_name']+', '+DATA['designation']+'. Offline contact card and scannable contact QR.',
         'start_url':'./','scope':'./','display':'standalone','orientation':'portrait',
         'background_color':'#f4f8fc','theme_color':'#0754de','lang':'en',
         'icons':[{'src':f'assets/icon-{size}.png','sizes':f'{size}x{size}','type':'image/png','purpose':'any'} for size in [192,512]],
@@ -173,20 +185,22 @@ Header set Cache-Control "no-cache"
 </FilesMatch>
 </IfModule>
 ''')
-    (APP/'INSTALL.txt').write_text('''EVPOWER PHONE CARD — AHMED KEMAL
+    published_url='https://evpower1.github.io/charge/'+('' if PROFILE=='ahmed' else PROFILE+'/')
+    hosting_folder='evpower-card'+('' if PROFILE=='ahmed' else '-'+PROFILE)
+    (APP/'INSTALL.txt').write_text(('''EVPOWER PHONE CARD — CARD_OWNER
 
 FREE GITHUB PAGES OPTION (no Hostinger upload):
 The repository's evpower-card branch contains the deployable card.
 In https://github.com/Evpower1/charge/settings/pages choose Deploy from a branch,
 branch evpower-card, folder /(root), then Save.
-After GitHub finishes deployment, open https://evpower1.github.io/charge/.
+After GitHub finishes deployment, open CARD_URL.
 The link is not live until Pages is enabled and deployment completes.
 
 OPTIONAL HOSTINGER SETUP:
 
 1. Upload evpower-card-app.zip into Hostinger File Manager > public_html.
-2. Extract it there. It creates a separate evpower-card folder.
-3. Open https://YOUR-DOMAIN/evpower-card/ using HTTPS.
+2. Extract it there. It creates a separate CARD_FOLDER folder.
+3. Open https://YOUR-DOMAIN/CARD_FOLDER/ using HTTPS.
 4. iPhone: Safari > Share > Add to Home Screen.
 5. Android: browser menu > Install app / Add to Home screen, if available.
 6. Wait for Ready offline on the card. It now works without internet.
@@ -199,24 +213,34 @@ The card QR contains contact details directly and needs no website to scan.
 The card also works as a normal page in other browsers; bookmark it if there is
 no install option. In an embedded browser, choose Open in browser if needed.
 If offline storage is unavailable, save the QR image in Photos/Gallery instead.
-''')
+QR scans save the contact only; they do not open or install the card app.
+This is a public web app. Anyone with its page link can open or install it.
+''').replace('CARD_OWNER',DATA['full_name'].upper()).replace('CARD_URL',published_url).replace('CARD_FOLDER',hosting_folder))
     files=sorted(str(p.relative_to(APP)) for p in APP.rglob('*') if p.is_file() and p.name not in ['service-worker.js','.htaccess','.nojekyll','INSTALL.txt'])
     digest=hashlib.sha256(b''.join((APP/name).read_bytes() for name in files)).hexdigest()[:14]
-    worker='''/* Offline storage is scoped only to this card app. */
-const CACHE='evpower-phone-card-VERSION';
+    worker='''/* Each card owns only its exact page and precached assets. */
+const SCOPE=new URL(self.registration.scope);
+const PREFIX='evpower-card-v2:'+encodeURIComponent(SCOPE.href)+':';
+const CACHE=PREFIX+'VERSION';
 const FILES=FILES_JSON;
 const URLs=FILES.map(path=>new URL(path,self.registration.scope).href);
+const ALLOWED=new Set(URLs);
 const INDEX=new URL('index.html',self.registration.scope).href;
+const INDEX_PATH=new URL(INDEX).pathname;
+const READY={type:'EVPC_CACHE_READY',scope:self.registration.scope};
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(URLs)).then(()=>self.skipWaiting()))});
-self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('evpower-phone-card-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()).then(()=>self.clients.matchAll()).then(clients=>clients.forEach(client=>client.postMessage({type:'EVPC_CACHE_READY'}))))});
-self.addEventListener('message',event=>{if(event.data&&event.data.type==='EVPC_CHECK_READY'){event.waitUntil(caches.open(CACHE).then(cache=>Promise.all(URLs.map(url=>cache.match(url)))).then(results=>{if(results.every(Boolean)&&event.source)event.source.postMessage({type:'EVPC_CACHE_READY'})}))}});
+self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith(PREFIX)&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()).then(()=>self.clients.matchAll()).then(clients=>clients.forEach(client=>client.postMessage(READY))))});
+self.addEventListener('message',event=>{if(event.data&&event.data.type==='EVPC_CHECK_READY'){event.waitUntil(caches.open(CACHE).then(cache=>Promise.all(URLs.map(url=>cache.match(url)))).then(results=>{if(results.every(Boolean)&&event.source)event.source.postMessage(READY)}))}});
 self.addEventListener('fetch',event=>{
   const url=new URL(event.request.url);
-  if(event.request.method!=='GET'||url.origin!==self.location.origin||!url.href.startsWith(self.registration.scope))return;
+  if(event.request.method!=='GET'||url.origin!==SCOPE.origin)return;
   if(event.request.mode==='navigate'){
-    event.respondWith(fetch(event.request).then(response=>{if(response.ok){const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(INDEX,copy));return response}return caches.match(INDEX).then(cached=>cached||response)}).catch(()=>caches.match(INDEX)));
+    if(url.pathname!==SCOPE.pathname&&url.pathname!==INDEX_PATH)return;
+    const fallback=()=>caches.open(CACHE).then(cache=>cache.match(INDEX)).then(cached=>cached||new Response('Open this card online once to prepare offline access.',{status:503,headers:{'Content-Type':'text/plain;charset=utf-8'}}));
+    event.respondWith(fetch(event.request).then(response=>{if(!response.ok)return fallback();const copy=response.clone();return caches.open(CACHE).then(cache=>cache.put(INDEX,copy)).then(()=>response)}).catch(fallback));
   }else{
-    event.respondWith(caches.match(event.request).then(cached=>cached||fetch(event.request)));
+    if(!ALLOWED.has(url.href))return;
+    event.respondWith(caches.open(CACHE).then(cache=>cache.match(event.request)).then(cached=>cached||fetch(event.request)));
   }
 });
 '''.replace('FILES_JSON',json.dumps(files)).replace('VERSION',digest)
@@ -226,9 +250,10 @@ self.addEventListener('fetch',event=>{
 
 
 def package_app():
+    folder='evpower-card'+('' if PROFILE=='ahmed' else '-'+PROFILE)
     with ZipFile(DIST/'evpower-card-app.zip','w',compression=ZIP_DEFLATED,compresslevel=9) as archive:
         for path in [APP]+sorted(APP.rglob('*')):
-            relative='evpower-card'+('/'+str(path.relative_to(APP)) if path!=APP else '')
+            relative=folder+('/'+str(path.relative_to(APP)) if path!=APP else '')
             entry=ZipInfo(relative+('/' if path.is_dir() else ''),date_time=(2026,11,9,0,0,0))
             if path.is_dir(): entry.external_attr=(0o40755<<16)|0x10;archive.writestr(entry,b'')
             else:
@@ -245,6 +270,18 @@ def manifest():
 
 
 if __name__=='__main__':
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--profile',help='Profile folder name under profiles/; default is Ahmed')
+    args=parser.parse_args()
+    if args.profile:
+        if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',args.profile): parser.error('Profile must be a lowercase folder name')
+        PROFILE=args.profile
+        directory=ROOT/'profiles'/PROFILE
+        DATA=json.loads((directory/'card-data.json').read_text())
+        APP=directory/'app'
+        DIST=directory/'dist'
+        slug=re.sub(r'[^a-z0-9]+','-',DATA['full_name'].lower()).strip('-')
+        VCARD_NAME='evpower-'+slug+'.vcf'
     DIST.mkdir(exist_ok=True)
     vcard=make_vcard(DATA)
     (DIST/VCARD_NAME).write_bytes(vcard.encode('utf-8'))

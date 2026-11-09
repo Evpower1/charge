@@ -1,0 +1,30 @@
+{
+  "evpower-card-app.zip": {
+    "bytes": 874035,
+    "sha256": "2cf5ed294c367a28675596263beee3e9a414b873fcaf156a2fd3c9697ef185a2"
+  },
+  "evpower-card-phone-preview.png": {
+    "bytes": 127270,
+    "sha256": "1121d0cc88850ebddbac03a1a3b23204bfa824ae8fcaa0b5463be6ebd387b4fc"
+  },
+  "evpower-card-standalone.html": {
+    "bytes": 1402259,
+    "sha256": "0abe133b525b9e10d8ad490a728b180a770c38e0d46baadfa1dd1b51b441dddb"
+  },
+  "evpower-contact-qr.png": {
+    "bytes": 2810,
+    "sha256": "81daf518f63987c371b280861964d170aba34cd11c146a52fa74b91636067c43"
+  },
+  "evpower-contact-qr.svg": {
+    "bytes": 48247,
+    "sha256": "c25b2dc1c0aec195942448429a1edc427145cacc68717ebf0ea07c3b57c976f0"
+  },
+  "evpower-kedir-contact-card.png": {
+    "bytes": 177173,
+    "sha256": "81320a44e5278624ed704d4e3b731b32fae4e085cbc493248a07dad6003bdab5"
+  },
+  "evpower-kedir-kemal.vcf": {
+    "bytes": 377,
+    "sha256": "181df682d990a7252ecdadea79d8e6d3f40ff735070078bea8824d4105e3b502"
+  }
+}
