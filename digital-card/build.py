@@ -114,6 +114,10 @@ def make_html(data, vcard, svg, standalone=False):
     tokens['SERVICES'] = ''.join('<li>' + html.escape(service) + '</li>' for service in data['services'])
     tokens['QR_SVG'] = svg
     tokens['CONFIG_JSON'] = inline_json(card_config)
+    details=(UI / 'templates/contact-details.html').read_text().rstrip('\n')
+    tokens['CONTACT_DETAILS'] = '      '+re.sub(r'\{\{([A-Z_]+)\}\}',lambda match:tokens[match.group(1)],details) if data.get('show_contact_details',True) else ''
+    extra_actions=(UI / 'templates/extra-contact-actions.html').read_text().rstrip('\n')
+    tokens['EXTRA_CONTACT_ACTIONS'] = '\n        '+re.sub(r'\{\{([A-Z_]+)\}\}',lambda match:tokens[match.group(1)],extra_actions) if data.get('extra_contact_actions',False) else ''
     template = (UI / 'templates/preloader.html').read_text() + (UI / 'templates/card.html').read_text()
     body = re.sub(r'\{\{([A-Z_]+)\}\}', lambda match: tokens[match.group(1)], template)
     assert not re.search(r'\{\{[A-Z_]+\}\}', body)

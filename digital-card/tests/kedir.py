@@ -14,7 +14,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import threading
-from urllib.parse import urljoin
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from PIL import Image
 from playwright.async_api import async_playwright, expect
@@ -49,13 +49,17 @@ def profile_data():
     assert data['phone'] == '+251933606669'
     assert data['whatsapp'] == '+971521170330'
     assert data['email'] == 'Kedir@evpower.et'
+    assert data['show_contact_details'] is False
+    assert data['extra_contact_actions'] is True
     assert data['website'] == 'https://www.evpower.et'
     assert data['toll_free'] == '8890'
     assert data['address'] == 'Addis Ababa - Ethiopia'
+    assert data['city'] == 'Addis Ababa' and data['country'] == 'Ethiopia'
     for field in [data['full_name'], 'Managing Director', '+251933606669', '+971521170330',
                   'Kedir@evpower.et', 'https://www.evpower.et', '8890', 'Addis Ababa', 'Ethiopia']:
         assert field.encode() in contact, f'Missing vCard detail: {field}'
     assert b'\r\n' in contact
+    assert b'URL:https://www.evpower.et' in contact and b'ADR;TYPE=WORK:' in contact
     for forbidden in [b'ahmed', b'github.io', b'/charge/', b'localhost']:
         assert forbidden not in contact.lower(), f'Unexpected QR data: {forbidden!r}'
     decode((DIST / 'evpower-contact-qr.png').read_bytes(), contact)
@@ -83,6 +87,26 @@ async def show_qr(page, expected):
     decode(await page.locator('[data-evpc-modal-code]').screenshot(), expected)
     await page.keyboard.press('Escape')
     await expect(page.locator('[data-evpc-qr-modal]')).to_be_hidden()
+
+
+async def compact_actions(page, data):
+    await expect(page.locator('.evpc-details')).to_have_count(0)
+    actions = page.locator('.evpc-actions a')
+    await expect(actions).to_have_count(6)
+    labels = [text.strip() for text in await actions.all_text_contents()]
+    assert labels == ['Call', 'WhatsApp', 'Email', 'Website', 'Toll-free', 'Location']
+    assert await page.get_by_role('link', name='Call ' + data['full_name'], exact=True).get_attribute('href') == 'tel:+251933606669'
+    assert await page.get_by_role('link', name='Chat with ' + data['full_name'] + ' on WhatsApp', exact=True).get_attribute('href') == 'https://wa.me/971521170330'
+    assert await page.get_by_role('link', name='Email ' + data['full_name'], exact=True).get_attribute('href') == 'mailto:Kedir@evpower.et'
+    hrefs = {label: await actions.nth(index).get_attribute('href') for index, label in enumerate(labels)}
+    assert hrefs['Website'] == 'https://www.evpower.et'
+    assert hrefs['Toll-free'] == 'tel:8890'
+    maps = urlparse(hrefs['Location'])
+    assert maps.scheme == 'https' and maps.hostname in ['www.google.com', 'maps.google.com']
+    assert parse_qs(maps.query).get('query') == [data['address']]
+    visible = (await page.locator('.evpc-main').inner_text()).lower()
+    for duplicate in ['+251 933 606 669', '+971 52 117 0330', 'kedir@evpower.et', 'www.evpower.et', '8890', 'addis ababa']:
+        assert duplicate not in visible, f'Duplicate plain contact detail is visible: {duplicate}'
 
 
 async def export_contact_image(browser, data, contact):
@@ -113,21 +137,19 @@ async def layouts_and_share(browser, url, data, contact):
         await page.goto(url, wait_until='load')
         await expect(page.locator('h1')).to_have_text(data['full_name'])
         await expect(page.locator('.evpc-designation')).to_have_text('Managing Director')
-        for detail in ['+251 933 606 669', '+971 52 117 0330', 'Kedir@evpower.et', 'Addis Ababa - Ethiopia', '8890']:
-            await expect(page.locator('.evpc-details')).to_contain_text(detail)
-        assert await page.get_by_role('link', name='Call ' + data['full_name'], exact=True).get_attribute('href') == 'tel:+251933606669'
-        assert await page.get_by_role('link', name='Chat with ' + data['full_name'] + ' on WhatsApp', exact=True).get_attribute('href') == 'https://wa.me/971521170330'
+        await compact_actions(page, data)
         assert not await page.evaluate('document.documentElement.scrollWidth>innerWidth'), width
         config = json.loads(await page.locator('.evpc-config').text_content())
         assert config['allowLocationShare'] is False
         assert not config.get('cardUrl'), 'The share action must not expose an app URL'
+        assert config['website'] == data['website'] and config['address'] == data['address'] and config['tollFree'] == '8890'
         await expect(page.locator('[data-evpc-share]')).to_have_text('Share contact')
         await expect(page.locator('[data-evpc-install]')).to_have_text('Add to my phone')
         await show_qr(page, contact)
         if width == 390:
             await expect(page.locator('[data-evpc-offline-state]')).to_have_text('Ready offline', timeout=15000)
             await page.screenshot(path=str(DIST / 'evpower-card-phone-preview.png'), full_page=True)
-        print(f'PASS: Kedir layout, exact contacts, contact-only config and decoded QR at {width}px', flush=True)
+        print(f'PASS: six Kedir contact actions, no duplicated plain details and decoded full-contact QR at {width}px', flush=True)
     await resources(context, page, url, contact)
     manifest = await (await context.request.get(url + 'app.webmanifest')).json()
     assert manifest['id'] == './' and manifest['start_url'] == './' and manifest['scope'] == './'
@@ -140,7 +162,8 @@ async def layouts_and_share(browser, url, data, contact):
     await page.wait_for_function('window.capturedContactShare !== null')
     share = await page.evaluate('window.capturedContactShare')
     assert not share.get('url'), share
-    assert all(value in share['text'] for value in [data['full_name'], 'Managing Director', '+251933606669', '+971521170330', 'Kedir@evpower.et', 'https://www.evpower.et']), share
+    assert all(value in share['text'] for value in [data['full_name'], 'Managing Director', '+251933606669', '+971521170330',
+                      'Kedir@evpower.et', 'https://www.evpower.et', '8890', 'Addis Ababa - Ethiopia']), share
     assert all(value not in json.dumps(share).lower() for value in ['github.io', 'localhost', '/charge/', 'ahmed']), share
     assert not errors, errors
     await context.close()
@@ -213,6 +236,7 @@ async def no_script(browser, url, data, contact):
     page = await context.new_page()
     await page.goto(url + '#evpc-qr-panel', wait_until='load')
     await expect(page.locator('h1')).to_have_text(data['full_name'])
+    await compact_actions(page, data)
     await expect(page.locator('.evpc-qr__code')).to_be_in_viewport()
     decode(await page.locator('.evpc-qr__code').screenshot(), contact)
     await resources(context, page, url, contact)

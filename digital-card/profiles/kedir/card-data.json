@@ -12,6 +12,8 @@
   "address": "Addis Ababa - Ethiopia",
   "city": "Addis Ababa",
   "country": "Ethiopia",
+  "show_contact_details": false,
+  "extra_contact_actions": true,
   "tagline": "Powering your journey",
   "services": ["Mobile EV Charging", "Fleet Charging", "Charger Sales & Installation", "EV Maintenance"],
   "app_short_name": "Kedir Evpower",

@@ -38,17 +38,10 @@
         <a href="{{EMAIL_URL}}" aria-label="Email {{NAME}}">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg>
           <span>Email</span>
-        </a>
+        </a>{{EXTRA_CONTACT_ACTIONS}}
       </nav>
 
-      <ul class="evpc-details" aria-label="Contact details">
-        <li><a href="{{PHONE_URL}}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 3 3 4-2 3a16 16 0 0 0 7 7l3-2 4 3-1 3C10 23 1 14 3 4Z"/></svg><span><span class="evpc-detail-label">Phone</span><span class="evpc-detail-value">{{PHONE_DISPLAY}}</span></span></a></li>
-        <li><a href="{{WHATSAPP_URL}}" target="_blank" rel="noopener noreferrer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 11.5a9 9 0 0 1-13 8L3 21l1.5-5A9 9 0 1 1 21 11.5Z"/><path d="m8 7 2 3-1 1 3 3 1-1 3 2"/></svg><span><span class="evpc-detail-label">WhatsApp</span><span class="evpc-detail-value">{{WHATSAPP_DISPLAY}}</span></span></a></li>
-        <li><a href="{{EMAIL_URL}}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/></svg><span><span class="evpc-detail-label">Email</span><span class="evpc-detail-value">{{EMAIL}}</span></span></a></li>
-        <li><a href="{{WEBSITE_URL}}" target="_blank" rel="noopener noreferrer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a17 17 0 0 1 0 18 17 17 0 0 1 0-18Z"/></svg><span><span class="evpc-detail-label">Website</span><span class="evpc-detail-value">{{WEBSITE_DISPLAY}}</span></span></a></li>
-        <li><a href="{{MAP_URL}}" target="_blank" rel="noopener noreferrer"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg><span><span class="evpc-detail-label">Location</span><span class="evpc-detail-value">{{ADDRESS}}</span></span></a></li>
-        <li><a href="{{TOLL_FREE_URL}}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 14v-3a8 8 0 0 1 16 0v3M4 13H2v6h4v-6Zm16 0h2v6h-4v-6Zm0 6a3 3 0 0 1-3 3h-4"/></svg><span><span class="evpc-detail-label">Toll-free · Ethiopia</span><span class="evpc-detail-value">{{TOLL_FREE}}</span></span></a></li>
-      </ul>
+{{CONTACT_DETAILS}}
 
       <section class="evpc-services-section" aria-label="Our services">
         <h2>How we can help</h2>

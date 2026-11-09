@@ -2,6 +2,8 @@
 
 The same approved blue/cyan Evpower design, with Kedir's own contact QR and a separate home-screen app.
 
+Contact actions use six matching outlined buttons: **Call, WhatsApp, Email, Website, Toll-free and Location**. The repeated plain-text contact list is omitted from the page. All six contact details remain in the QR, saved contact and contact-sharing action.
+
 The opening animation uses the approved Evpower emblem, charging pulse and connector lights. It plays briefly before the card opens, also when opening the cached app offline. Choose **Skip animation** or press Escape to open the card immediately. Reduced-motion preferences are respected.
 
 **Card address after deployment:** https://evpower1.github.io/charge/kedir/
