@@ -7,6 +7,7 @@ from pathlib import Path
 import json
 import threading
 from io import BytesIO
+from urllib.parse import parse_qs,urlparse
 from PIL import Image
 import zxingcpp
 from playwright.async_api import async_playwright,expect
@@ -25,6 +26,25 @@ def decode(image):
     assert result is not None,'Rendered QR did not decode'
     assert result.bytes==VCARD,'QR contact differs from downloaded contact'
 
+async def contact_actions(page):
+    await expect(page.locator('.evpc-details')).to_have_count(0)
+    actions=page.locator('.evpc-actions a')
+    await expect(actions).to_have_count(6)
+    labels=[text.strip() for text in await actions.all_text_contents()]
+    assert labels==['Call','WhatsApp','Email','Website','Toll-free','Location']
+    hrefs={label:await actions.nth(index).get_attribute('href') for index,label in enumerate(labels)}
+    assert hrefs['Call']=='tel:+251911049916'
+    assert hrefs['WhatsApp']=='https://wa.me/971563558395'
+    assert hrefs['Email']=='mailto:ahmed@evpower.et'
+    assert hrefs['Website']=='https://evpower.et'
+    assert hrefs['Toll-free']=='tel:8890'
+    location=urlparse(hrefs['Location'])
+    assert location.scheme=='https' and location.hostname in ['www.google.com','maps.google.com']
+    assert parse_qs(location.query).get('query')==['Addis Ababa - Ethiopia']
+    visible=(await page.locator('.evpc-main').inner_text()).lower()
+    for duplicate in ['+251 911 049 916','+971 56 355 8395','ahmed@evpower.et','evpower.et','8890','addis ababa']:
+        assert duplicate not in visible,f'Duplicate plain contact detail: {duplicate}'
+
 async def main(base):
     app=base+'/app/'
     decode((ROOT/'dist/evpower-contact-qr.png').read_bytes())
@@ -39,10 +59,7 @@ async def main(base):
             await page.goto(app,wait_until='networkidle')
             await expect(page.locator('h1')).to_have_text('Ahmed Kemal')
             await expect(page.locator('.evpc-designation')).to_have_text('Founder & CEO')
-            await expect(page.locator('.evpc-details')).to_contain_text('ahmed@evpower.et')
-            await expect(page.locator('.evpc-details')).to_contain_text('Addis Ababa - Ethiopia')
-            assert await page.get_by_role('link',name='Call Ahmed Kemal',exact=True).get_attribute('href')=='tel:+251911049916'
-            assert await page.get_by_role('link',name='Chat with Ahmed Kemal on WhatsApp',exact=True).get_attribute('href')=='https://wa.me/971563558395'
+            await contact_actions(page)
             assert not await page.evaluate('document.documentElement.scrollWidth>innerWidth'),width
             assert await page.locator('.evpc-card img').count()==1,'No profile photo should be present'
             await page.get_by_role('link',name='Show my QR',exact=True).click()
@@ -57,7 +74,7 @@ async def main(base):
             await expect(page.get_by_role('link',name='Show my QR',exact=True)).to_be_focused()
             if width==390:
                 await page.screenshot(path=str(ROOT/'dist/evpower-card-phone-preview.png'),full_page=True)
-            print(f'PASS: complete contacts, distinct call/WhatsApp and scannable QR at {width}px')
+            print(f'PASS: six matching contact actions, no duplicated plain details and scannable QR at {width}px')
 
         await expect(page.locator('[data-evpc-offline-state]')).to_have_text('Ready offline',timeout=15000)
         await page.wait_for_function('navigator.serviceWorker.controller!==null')
@@ -113,6 +130,7 @@ async def main(base):
 
         nojs=await browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844})
         p=await nojs.new_page();await p.goto(app+'#evpc-qr-panel',wait_until='load')
+        await contact_actions(p)
         await expect(p.locator('.evpc-qr__code')).to_be_in_viewport()
         decode(await p.locator('.evpc-qr__code').screenshot())
         print('PASS: QR and contact links remain usable without JavaScript')

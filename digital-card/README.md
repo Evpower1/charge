@@ -2,6 +2,8 @@
 
 A separate home-screen web app for iPhone and Android. Open the card, tap **Show my QR**, and let someone scan it to add Ahmed's contact. The QR stores the contact details directly, so scanning it does not depend on a website or an internet connection.
 
+The page uses six matching contact buttons: **Call, WhatsApp, Email, Website, Toll-free and Location**. The repeated plain-text details are omitted from the page; the complete information remains in the saved contact and QR.
+
 ## Downloads
 
 - [Phone app hosting package](dist/evpower-card-app.zip)
