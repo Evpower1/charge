@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Evpower Emblem Preloader
- * Description: A lightweight page preloader using the approved Evpower charging emblem.
- * Version: 1.0.0
+ * Description: A lightweight page preloader using Evpower's blue-and-cyan charging emblem.
+ * Version: 1.0.1
  * Requires at least: 6.3
  * Requires PHP: 7.4
  * Author: Evpower
@@ -51,9 +51,9 @@ add_action( 'wp_enqueue_scripts', function () {
     if ( ! evp_loader_should_show() ) { return; }
     $base = plugin_dir_url( __FILE__ );
     $options = evp_loader_options();
-    wp_enqueue_style( 'evpower-emblem-preloader', $base . 'assets/preloader.css', array(), '1.0.0' );
+    wp_enqueue_style( 'evpower-emblem-preloader', $base . 'assets/preloader.css', array(), '1.0.1' );
     // The early script decides whether to show the overlay before body rendering.
-    wp_enqueue_script( 'evpower-emblem-preloader', $base . 'assets/preloader.js', array(), '1.0.0', false );
+    wp_enqueue_script( 'evpower-emblem-preloader', $base . 'assets/preloader.js', array(), '1.0.1', false );
     wp_add_inline_script( 'evpower-emblem-preloader', 'window.evpPreloaderConfig = ' . wp_json_encode( array(
         'sessionOnly' => ! empty( $options['session_only'] ),
         'maxWait'     => 6000,
@@ -69,7 +69,7 @@ function evp_loader_render() {
     <div id="evp-preloader" class="evp-preloader" data-evp-preloader role="status" aria-label="<?php echo esc_attr__( 'Loading Evpower', 'evpower-emblem-preloader' ); ?>" aria-live="polite">
         <div class="evp-preloader__inner">
             <div class="evp-preloader__emblem">
-                <img class="evp-preloader__image" src="<?php echo esc_url( plugin_dir_url( __FILE__ ) . 'assets/emblem.png' ); ?>" alt="" width="1254" height="1254" loading="eager" decoding="async" fetchpriority="high">
+                <img class="evp-preloader__image" src="<?php echo esc_url( add_query_arg( 'ver', '1.0.1', plugin_dir_url( __FILE__ ) . 'assets/emblem.png' ) ); ?>" alt="" width="1254" height="1254" loading="eager" decoding="async" fetchpriority="high">
                 <svg class="evp-preloader__pulse" viewBox="0 0 1254 1254" aria-hidden="true" focusable="false">
                     <path d="M 340 710 H 560 Q 595 710 610 680 L 687 535 L 724 784 L 780 670 Q 793 646 820 646 H 943"/>
                 </svg>

@@ -1,18 +1,18 @@
 {
   "evpower-preloader-preview.html": {
-    "bytes": 1360813,
-    "sha256": "d8fcdeb5872f685ee0985f2c193bc6765b09602e4e8143de29baa6d64b041cb5"
+    "bytes": 1423782,
+    "sha256": "322ed2ca99c0217d64d25ec2c325b5aedd35e145a394557333f32e70859ed8dd"
   },
   "evpower-preloader-preview.mp4": {
-    "bytes": 18238,
-    "sha256": "d7e3596ab2df41ff3ada8d7619376c5d6f0d540457048f2010d953c21bf02c9c"
+    "bytes": 18864,
+    "sha256": "6523076c539bd1b9b89785feccbf8d92d7ae00afe599ec75f6564748b7229203"
   },
   "evpower-preloader.gif": {
-    "bytes": 45973,
-    "sha256": "950a81fc5a260f87077c6e53881bece20e4b3898be5f3d8e9b4388c79cdd56d7"
+    "bytes": 46571,
+    "sha256": "4d7ef84236887edf916e642917ab45fdf08ae2fa653ffffc3b182f95946257f6"
   },
   "evpower-preloader.zip": {
-    "bytes": 702051,
-    "sha256": "d077fdf125065964ecc05d1d4c00c0a868312a3f7e011d0850b448a56575030b"
+    "bytes": 781468,
+    "sha256": "f4838f8217c3bb2fcad663697b16ed61eaedab92073452a2afd893318d5caa57"
   }
 }

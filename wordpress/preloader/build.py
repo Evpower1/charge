@@ -20,9 +20,9 @@ markup = f'''<div id="evp-preloader" class="evp-preloader" data-evp-preloader ro
 <button type="button" class="evp-preloader__skip" data-evp-skip>Skip animation</button></div>'''
 demo = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Evpower preloader preview</title>
 <style>BODY_CSS
-body{margin:0;min-height:100vh;background:#faf8f8;color:#29252a;font:16px/1.6 ui-sans-serif,system-ui,sans-serif}
-main{width:min(85vw,740px);margin:0 auto;padding:clamp(120px,23vh,220px) 0 80px}h1{font-size:clamp(36px,6vw,60px);line-height:1.1;letter-spacing:-.04em;margin:20px 0}main p{color:#77707a;max-width:530px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;color:#c80032}
-.preview-controls{position:fixed;top:14px;right:14px;display:flex;gap:8px;z-index:2147483500}.preview-controls button{min-height:44px;border:1px solid #eadfe2;border-radius:8px;padding:9px 14px;background:#fff;color:#6c5860;font:500 12px/1.4 ui-sans-serif,system-ui;cursor:pointer}.preview-controls button:hover{background:#fff5f7;border-color:#c80032}.preview-controls button:focus-visible{outline:2px solid #c80032;outline-offset:3px}
+body{margin:0;min-height:100vh;background:#f7fafe;color:#253343;font:16px/1.6 ui-sans-serif,system-ui,sans-serif}
+main{width:min(85vw,740px);margin:0 auto;padding:clamp(120px,23vh,220px) 0 80px}h1{font-size:clamp(36px,6vw,60px);line-height:1.1;letter-spacing:-.04em;margin:20px 0}main p{color:#6d7888;max-width:530px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;color:#0754de}
+.preview-controls{position:fixed;top:14px;right:14px;display:flex;gap:8px;z-index:2147483500}.preview-controls button{min-height:44px;border:1px solid #dce7f2;border-radius:8px;padding:9px 14px;background:#fff;color:#52667c;font:500 12px/1.4 ui-sans-serif,system-ui;cursor:pointer}.preview-controls button:hover{background:#f0f8ff;border-color:#0754de}.preview-controls button:focus-visible{outline:2px solid #0754de;outline-offset:3px}
 html.evp-recording .preview-controls,html.evp-recording .evp-preloader__skip{display:none}
 html.evp-recording .evp-preloader__inner{padding:8px;gap:14px;transform:none}html.evp-recording .evp-preloader__emblem{width:min(88vw,420px)}
 </style><script>if(new URLSearchParams(location.search).has('record'))document.documentElement.classList.add('evp-recording');window.evpPreloaderConfig={sessionOnly:false,maxWait:10000,preview:true};</script><script>BODY_JS</script></head><body>

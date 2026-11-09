@@ -1,0 +1,4 @@
+recording-frames/
+preview-*.png
+__pycache__/
+*.pyc

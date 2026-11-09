@@ -8,7 +8,7 @@
   margin: 0;
   padding: 0;
   background: #fff;
-  color: #26262c;
+  color: #263247;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.5;
   opacity: 1;
@@ -61,7 +61,7 @@
 }
 .evp-preloader__pulse > path {
   fill: none;
-  stroke: #fff0f4;
+  stroke: #ecfcff;
   stroke-width: 10;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -69,7 +69,7 @@
   animation: evp-energy-flow 1.9s linear infinite;
 }
 .evp-preloader__contacts circle {
-  fill: #ee294e;
+  fill: #00cde8;
   opacity: 0;
   animation: evp-contact-glow 1.9s ease-in-out infinite;
 }
@@ -79,14 +79,14 @@
   height: 3px;
   overflow: hidden;
   border-radius: 999px;
-  background: #f5e9ec;
+  background: #e4f0fa;
 }
 .evp-preloader__track > span {
   display: block;
   width: 44%;
   height: 100%;
   border-radius: inherit;
-  background: #c80032;
+  background: linear-gradient(90deg, #0754de, #00cde8);
   animation: evp-charge 1.9s cubic-bezier(.45, 0, .3, 1) infinite;
 }
 .evp-is-exiting .evp-preloader__track > span {
@@ -97,7 +97,7 @@
 .evp-preloader__caption {
   max-width: 100%;
   margin: -6px 0 0;
-  color: #72727c;
+  color: #6d7885;
   font-size: 12px;
   font-weight: 400;
   letter-spacing: .025em;
@@ -116,13 +116,13 @@
   border-radius: 5px;
   padding: 10px 14px;
   background: transparent;
-  color: #73737b;
+  color: #60758a;
   font: 400 12px/1.5 ui-sans-serif, system-ui, sans-serif;
   box-shadow: none;
   cursor: pointer;
 }
-.evp-preloader__skip:hover { background: #faf5f6; color: #a9002a; }
-.evp-preloader__skip:focus-visible { outline: 2px solid #c80032; outline-offset: 3px; }
+.evp-preloader__skip:hover { background: #eef8ff; color: #0754de; }
+.evp-preloader__skip:focus-visible { outline: 2px solid #0754de; outline-offset: 3px; }
 @keyframes evp-energy-flow {
   from { stroke-dashoffset: 1176; }
   to { stroke-dashoffset: 0; }

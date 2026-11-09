@@ -1,6 +1,8 @@
 # Evpower emblem preloader
 
-A standalone preloader using the approved red car, charging pulse and connector emblem. The original PNG is bundled unchanged. A light trail follows the pulse and illuminates the connector contacts; a small charging indicator sits below the artwork.
+A standalone preloader using Evpower's blue-and-cyan car, charging pulse and connector emblem. A light trail follows the pulse and illuminates the connector contacts; a blue-to-cyan charging indicator sits below the artwork.
+
+Current version: **1.0.1**. The artwork and animation accents use blue and cyan, with versioned asset URLs to refresh existing browser caches after an update.
 
 ## Downloads
 
@@ -12,7 +14,7 @@ A standalone preloader using the approved red car, charging pulse and connector 
 ## Install in WordPress
 
 1. For Evolta, turn off its built-in page preloader in Theme Options when using this plugin.
-2. Open **Plugins → Add New → Upload Plugin**, upload `evpower-preloader.zip`, then activate **Evpower Emblem Preloader**.
+2. Open **Plugins → Add New → Upload Plugin**, upload `evpower-preloader.zip`, then activate **Evpower Emblem Preloader**. For an existing installation, choose **Replace current with uploaded**.
 3. Open **Appearance → Evpower Preloader**. Enable/disable the preloader, choose once per browser tab or every eligible page, and change or hide the loading caption.
 4. Clear the website's page cache after installing or changing settings. Open the public site in a new browser tab to see the first-visit animation.
 
