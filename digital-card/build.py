@@ -87,6 +87,8 @@ def make_html(data, vcard, svg, standalone=False):
     logo = ('data:image/png;base64,' + base64.b64encode((UI / 'assets/logo.png').read_bytes()).decode()) if standalone else 'assets/logo.png'
     emblem = ('data:image/png;base64,' + base64.b64encode((UI / 'assets/emblem.png').read_bytes()).decode()) if standalone else 'assets/emblem.png'
     qr_png = ('data:image/png;base64,' + base64.b64encode((DIST / 'evpower-contact-qr.png').read_bytes()).decode()) if standalone else 'assets/evpower-contact-qr.png'
+    def scene_asset(name):
+        return ('data:image/png;base64,' + base64.b64encode((UI/'assets'/name).read_bytes()).decode()) if standalone else 'assets/'+name
     card_config = {
         'company':data['company'], 'fullName':data['full_name'], 'designation':data['designation'],
         'phone':data['phone'], 'whatsapp':data['whatsapp'], 'tollFree':data['toll_free'], 'email':data['email'],
@@ -97,6 +99,9 @@ def make_html(data, vcard, svg, standalone=False):
     }
     values = {
         'LOGO_URL':logo, 'EMBLEM_URL':emblem, 'COMPANY':data['company'], 'NAME':data['full_name'],
+        'CARD_CLASS':'evpc-card evpc-card--charging' if charging else 'evpc-card',
+        'CAR_ASSET_URL':scene_asset('ev-car-realistic.png') if charging else '',
+        'CHARGER_ASSET_URL':scene_asset('ev-charger-realistic.png') if charging else '',
         'DESIGNATION':data['designation'], 'TAGLINE':data['tagline'],
         'PHONE_URL':'tel:' + data['phone'], 'PHONE_DISPLAY':data['phone_display'],
         'WHATSAPP_URL':'https://wa.me/' + re.sub(r'\D','',data['whatsapp']),
@@ -179,7 +184,7 @@ def make_app(vcard,svg):
     for name in ['logo.png','emblem.png','preloader.css','card.css','card.js']:
         shutil.copy2(UI/'assets'/name,assets/name)
     if DATA.get('visual_panel')=='charging':
-        for name in ['charging-scene.css','charging-scene.js']:shutil.copy2(UI/'assets'/name,assets/name)
+        for name in ['charging-scene.css','charging-scene.js','ev-car-realistic.png','ev-charger-realistic.png']:shutil.copy2(UI/'assets'/name,assets/name)
     for name in [VCARD_NAME,'evpower-contact-qr.png','evpower-contact-qr.svg']:
         shutil.copy2(DIST/name,assets/name)
     make_html(DATA,vcard,svg)

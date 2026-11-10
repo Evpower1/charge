@@ -51,6 +51,7 @@ def profile_data():
     assert data['email'] == 'Kedir@evpower.et'
     assert data['show_contact_details'] is False
     assert data['extra_contact_actions'] is True
+    assert data['visual_panel'] == 'charging'
     assert data['website'] == 'https://www.evpower.et'
     assert data['toll_free'] == '8890'
     assert data['address'] == 'Addis Ababa - Ethiopia'
@@ -138,6 +139,8 @@ async def layouts_and_share(browser, url, data, contact):
         await expect(page.locator('h1')).to_have_text(data['full_name'])
         await expect(page.locator('.evpc-designation')).to_have_text('Managing Director')
         await compact_actions(page, data)
+        await expect(page.locator('[data-ev-scene]')).to_have_count(1)
+        await expect(page.locator('.evpc-aside .evpc-qr__code')).to_have_count(0)
         assert not await page.evaluate('document.documentElement.scrollWidth>innerWidth'), width
         config = json.loads(await page.locator('.evpc-config').text_content())
         assert config['allowLocationShare'] is False
@@ -149,7 +152,7 @@ async def layouts_and_share(browser, url, data, contact):
         if width == 390:
             await expect(page.locator('[data-evpc-offline-state]')).to_have_text('Ready offline', timeout=15000)
             await page.screenshot(path=str(DIST / 'evpower-card-phone-preview.png'), full_page=True)
-        print(f'PASS: six Kedir contact actions, no duplicated plain details and decoded full-contact QR at {width}px', flush=True)
+        print(f'PASS: Kedir charging panel, six contact actions and decoded full-contact QR modal at {width}px', flush=True)
     await resources(context, page, url, contact)
     manifest = await (await context.request.get(url + 'app.webmanifest')).json()
     assert manifest['id'] == './' and manifest['start_url'] == './' and manifest['scope'] == './'
@@ -214,6 +217,7 @@ async def offline_isolation(browser, root_url, child_url, data, contact):
     for page, name, expected in [(ahmed, ahmed_name, ahmed_contact), (kedir, data['full_name'], contact)]:
         await page.reload(wait_until='domcontentloaded')
         await expect(page.locator('h1')).to_have_text(name)
+        await expect(page.locator('[data-ev-scene]')).to_have_count(1)
         await show_qr(page, expected)
         for selector, is_qr in [('[data-evpc-save]', False), ('[data-evpc-download-qr]', True)]:
             href = await page.locator(selector).get_attribute('href')
@@ -234,16 +238,26 @@ async def offline_isolation(browser, root_url, child_url, data, contact):
 async def no_script(browser, url, data, contact):
     context = await browser.new_context(java_script_enabled=False, viewport={'width': 390, 'height': 844})
     page = await context.new_page()
-    await page.goto(url + '#evpc-qr-panel', wait_until='load')
+    await page.goto(url, wait_until='load')
     await expect(page.locator('h1')).to_have_text(data['full_name'])
     await compact_actions(page, data)
-    await expect(page.locator('.evpc-qr__code')).to_be_in_viewport()
-    decode(await page.locator('.evpc-qr__code').screenshot(), contact)
+    await expect(page.locator('[data-ev-scene]')).to_have_count(1)
+    await expect(page.locator('.evpc-aside .evpc-qr__code')).to_have_count(0)
     await resources(context, page, url, contact)
     for dialog in await page.locator('dialog').all():
         await expect(dialog).to_be_hidden()
+    trigger = page.locator('[data-evpc-open-qr]')
+    href = await trigger.get_attribute('href')
+    assert href == await page.locator('[data-evpc-download-qr]').get_attribute('href') and href.endswith('.png')
+    target = urljoin(url, href)
+    response = await context.request.get(target)
+    assert response.ok
+    decode(await response.body(), contact)
+    await trigger.click()
+    await expect(page).to_have_url(target)
+    await expect(page.locator('body > img').first).to_be_visible()
     await context.close()
-    print('PASS: Kedir inline QR and native contact/image links work without JavaScript', flush=True)
+    print('PASS: Kedir static charging panel, native contact links and genuine PNG QR navigation work without JavaScript', flush=True)
 
 
 async def main(base):

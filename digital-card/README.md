@@ -17,9 +17,11 @@ The card image is ready to use immediately: save it in your phone's Photos/Galle
 
 Both cards open with the approved blue/cyan Evpower emblem, moving energy pulse and glowing charger contacts. The introduction lasts about a second and always releases within 1.5 seconds through its own timer. **Skip animation**, Escape, reduced-motion preferences, image failure and browser Back restoration dismiss it immediately. JavaScript-disabled pages and printed cards omit it. The emblem is stored with each offline app and embedded in the single-file download; no WordPress plugin or external animation service is used.
 
-Ahmed's main visual panel shows a continuous EV charging scene: a metallic blue sedan arrives, parks, connects to the charger, charges from 22% to 100%, disconnects and drives away. Wheel rotation, connector movement, cable shape and energy flow share one timeline, so the cable is docked before departure. The scene can be paused and automatically stops off-screen, in a background tab or while the QR is open. Reduced-motion preferences and unavailable JavaScript show a stationary connected vehicle.
+Both cards share a realistic EV charging scene, with a pearl-silver car and illuminated charger in a navy/cyan studio. The 21.6-second loop starts with the vehicle charging, then completes the charge, returns the connector, drives away and brings the car back for another charge from 24% to 100%. The car accelerates and brakes smoothly; its wheels, opening charge port, connector, cable and battery display share one timeline. The connector inserts straight into the port and returns to its holster before departure.
 
-**Show my QR** still opens the genuine contact QR in a full-screen dialog. Without JavaScript it opens the QR PNG; the standalone HTML provides an embedded PNG download. The contact QR also remains on printed cards. The charging illustration uses local SVG, CSS and JavaScript, works offline and is embedded in the single-file card. Kedir's visible QR panel remains as before.
+The scene can be paused and automatically stops off-screen, in a background tab or while the QR is open. Reduced-motion preferences and unavailable JavaScript show a stationary connected vehicle. If the artwork cannot load, a static Evpower panel appears and the contact controls remain available.
+
+**Show my QR** opens each person's genuine contact QR in a full-screen dialog. Without JavaScript it opens the QR PNG; the standalone HTML provides an embedded PNG download. The contact QR also remains on printed cards. The charging scene uses local PNG artwork, SVG, CSS and JavaScript, works offline and is embedded in each single-file card.
 
 ## Free GitHub Pages hosting
 
@@ -37,7 +39,7 @@ On iPhone, open the published link in Safari, choose **Share → Add to Home Scr
 
 Open the card online and wait for **Ready offline** before relying on cached offline access. If the browser blocks offline storage, the card shows an online status instead; save the QR PNG to Photos/Gallery for use without internet. Calls, WhatsApp, email and website links still need their usual phone/network services.
 
-**Save contact** uses a normal `.vcf` link, which a browser can download or open for import. If downloads are restricted, scan the contact QR instead. **Download QR** uses a normal PNG link that can also be opened and saved as an image. If sharing or clipboard access is blocked, the page exposes selectable contact text for manual copying. With JavaScript disabled, Ahmed's **Show my QR** opens the PNG and Kedir's card retains its inline QR.
+**Save contact** uses a normal `.vcf` link, which a browser can download or open for import. If downloads are restricted, scan the contact QR instead. **Download QR** uses a normal PNG link that can also be opened and saved as an image. If sharing or clipboard access is blocked, the page exposes selectable contact text for manual copying. With JavaScript disabled, **Show my QR** opens the contact PNG on both cards.
 
 The single-file HTML download includes the logo, details and QR. Open it in a browser for a local card preview; some phone file viewers disable scripts or external actions. A local HTML file is not an installable home-screen app. Save the card PNG in Photos/Gallery for the simplest offline option.
 

@@ -1,4 +1,4 @@
-"""Check Ahmed's physical charging loop, pause controls and genuine contact QR.
+"""Check both cards' textured charging loop, pause controls and contact QR.
 
 Build both profiles first. Uses only installed Chromium and a temporary local
 server; screenshots go to ignored test-output/. No live site is contacted.
@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from io import BytesIO
+import hashlib
 import math
 from pathlib import Path
 import shutil
@@ -22,7 +23,9 @@ import zxingcpp
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / 'test-output'
-PERIOD = 16.8
+PERIOD = 21.6
+PROFILES = [('ahmed', ROOT, '/charge/'), ('kedir', ROOT / 'profiles/kedir', '/charge/kedir/')]
+TEXTURES = ('ev-car-realistic.png', 'ev-charger-realistic.png')
 
 
 class QuietHandler(SimpleHTTPRequestHandler):
@@ -39,6 +42,30 @@ def contact(profile):
 def decode(picture, expected):
     result = zxingcpp.read_barcode(Image.open(BytesIO(picture)))
     assert result is not None and result.bytes == expected, 'QR does not contain the exact contact vCard'
+
+
+def picture_path(key, frame):
+    return OUTPUT / ('charging-' + ('' if key == 'ahmed' else key + '-') + frame + '.png')
+
+
+async def scene_textures(page, *, embedded=False):
+    images = page.locator('[data-ev-scene] image')
+    assert await images.count() >= 2, 'Scene must use the generated car and charger textures'
+    if embedded:
+        expected = {hashlib.sha256((ROOT / 'ui/assets' / name).read_bytes()).digest() for name in TEXTURES}
+        rendered = set()
+        for image in await images.all():
+            href = await image.get_attribute('href') or await image.get_attribute('xlink:href')
+            assert href and href.startswith('data:image/png'), 'Standalone scene texture is not embedded'
+            metadata, payload = href.split(',', 1)
+            data = base64.b64decode(payload) if ';base64' in metadata else unquote_to_bytes(payload)
+            assert Image.open(BytesIO(data)).format == 'PNG'
+            rendered.add(hashlib.sha256(data).digest())
+        assert expected <= rendered, 'Standalone car/charger pixels differ from the generated textures'
+    else:
+        paths = [urlparse(await image.get_attribute('href') or await image.get_attribute('xlink:href')).path for image in await images.all()]
+        for name in TEXTURES:
+            assert any(path.endswith('/' + name) for path in paths), 'Missing local scene texture: ' + name
 
 
 async def freeze_clock(page):
@@ -104,6 +131,8 @@ async def fresh(browser, url, *, viewport=None, motion=None, javascript=True, cl
     await page.goto(url, wait_until='domcontentloaded')
     scene = page.locator('[data-ev-scene]')
     await expect(scene).to_have_count(1)
+    if javascript:
+        await expect(scene).to_have_attribute('data-ev-assets-ready', 'true', timeout=15000)
     await scene.locator('.evpc-scene-stage').scroll_into_view_if_needed()
     # IntersectionObserver observes actual paints, independently of the fake clock.
     await asyncio.sleep(.05)
@@ -118,9 +147,10 @@ async def modal_qr(page, expected):
     await expect(page.locator('[data-evpc-qr-modal]')).to_be_hidden()
 
 
-async def timeline_and_controls(browser, url, expected):
+async def timeline_and_controls(browser, url, expected, key):
     context, page, errors = await fresh(browser, url)
     scene = page.locator('[data-ev-scene]')
+    await scene_textures(page)
     overlay = page.locator('[data-evpc-preloader]')
     await expect(overlay).to_be_visible()
     initial = await scene_state(page)
@@ -130,49 +160,54 @@ async def timeline_and_controls(browser, url, expected):
     await page.clock.run_for(700)
     await expect(overlay).to_be_hidden()
     await expect(scene).to_have_attribute('data-playing', 'true')
-    waiting = await advance_to(page, .25, 'waiting')
-    at_plug(waiting, 115, 180)
-    arrival = await advance_to(page, 1.5, 'arriving')
-    assert abs(arrival['car'][4]) > 20 and arrival['percent'] == 22
+    waiting = await advance_to(page, .35, 'waiting')
+    at_plug(waiting, 147, 235)
+    earlier_arrival = await advance_to(page, 1.7, 'arriving')
+    arrival = await advance_to(page, 2.7, 'arriving')
+    assert abs(earlier_arrival['car'][4]) > abs(arrival['car'][4]) + 5
+    assert abs(arrival['car'][4]) > 2 and arrival['percent'] == 24
     assert arrival['flow'] == 0
-    await scene.screenshot(path=str(OUTPUT / 'charging-arrival.png'))
-    early_connect = await advance_to(page, 3.4, 'connecting')
-    late_connect = await advance_to(page, 4.5, 'connecting')
+    await scene.screenshot(path=str(picture_path(key, 'arrival')))
+    parked = await advance_to(page, 4.75, 'parked')
+    at_plug(parked, 147, 235)
+    early_connect = await advance_to(page, 5.3, 'connecting')
+    late_connect = await advance_to(page, 7.05, 'connecting')
     assert early_connect['car'] == late_connect['car'] and abs(early_connect['car'][4]) < .1
-    assert early_connect['percent'] == late_connect['percent'] == 22
+    assert parked['car'] == early_connect['car']
+    assert early_connect['percent'] == late_connect['percent'] == 24
     assert early_connect['plug'] != late_connect['plug'] and early_connect['cable'] != late_connect['cable']
     assert early_connect['flow'] == late_connect['flow'] == 0
-    charge_start = await advance_to(page, 5.2, 'charging')
-    charge_middle = await advance_to(page, 8, 'charging')
-    await scene.screenshot(path=str(OUTPUT / 'charging-connected.png'))
-    await page.screenshot(path=str(OUTPUT / 'charging-desktop.png'), full_page=True)
-    charge_end = await advance_to(page, 10.65, 'charging')
-    complete = await advance_to(page, 11.2, 'complete')
-    assert 22 <= charge_start['percent'] < charge_middle['percent'] < charge_end['percent'] <= 100
+    charge_start = await advance_to(page, 8, 'charging')
+    charge_middle = await advance_to(page, 11, 'charging')
+    await scene.screenshot(path=str(picture_path(key, 'connected')))
+    await page.screenshot(path=str(picture_path(key, 'desktop')), full_page=True)
+    charge_end = await advance_to(page, 14.05, 'charging')
+    complete = await advance_to(page, 14.6, 'complete')
+    assert 24 <= charge_start['percent'] < charge_middle['percent'] < charge_end['percent'] <= 100
     assert complete['percent'] == 100
     for state in [charge_start, charge_middle, charge_end, complete]:
         assert state['car'] == early_connect['car'], 'Vehicle must stay parked while connected'
-        at_plug(state, 184, 224)
+        at_plug(state, 240, 252)
     assert charge_middle['flow'] > 0
     assert charge_start['battery'] != charge_middle['battery'] != charge_end['battery']
-    disconnecting = await advance_to(page, 12.4, 'disconnecting')
+    disconnecting = await advance_to(page, 16.2, 'disconnecting')
     assert disconnecting['car'] == complete['car'] and disconnecting['percent'] == 100
     assert disconnecting['plug'] != complete['plug'] and disconnecting['flow'] == 0
-    departed = await advance_to(page, 13.2, 'departing')
-    at_plug(departed, 115, 180)
+    departed = await advance_to(page, 17.45, 'departing')
+    at_plug(departed, 147, 235)
     assert departed['percent'] == 100 and departed['flow'] == 0
-    departure = await advance_to(page, 14.4, 'departing')
-    assert abs(departure['car'][4]) > 20 and departure['car'] != complete['car']
+    departure = await advance_to(page, 18.9, 'departing')
+    assert abs(departure['car'][4]) > 2 and departure['car'] != complete['car']
     assert departure['plug'] == departed['plug'] and departure['cable'] == departed['cable']
-    await scene.screenshot(path=str(OUTPUT / 'charging-departure.png'))
-    end = await advance_to(page, 16.3, 'waiting')
-    assert end['car'][4] > 520, 'Vehicle must leave the illustrated frame before the loop resets'
-    repeated = await advance_to(page, 1.5, 'arriving')
-    assert repeated['percent'] == 22 and abs(repeated['car'][4] - arrival['car'][4]) < 10
+    await scene.screenshot(path=str(picture_path(key, 'departure')))
+    end = await advance_to(page, 21.15, 'waiting')
+    assert end['car'][4] > 640, 'Vehicle must leave the illustrated frame before the loop resets'
+    repeated = await advance_to(page, 2.7, 'arriving')
+    assert repeated['percent'] == 24 and abs(repeated['car'][4] - arrival['car'][4]) < 10
     assert repeated['plug'] == arrival['plug'] and repeated['cable'] == arrival['cable']
-    print('PASS: preloader hold, arrival, stationary connection/charging, 22→100%, full unplug before departure and repeatable 16.8s loop', flush=True)
+    print(f'PASS {key}: textured arrival/parking, stationary connection/charging, 24→100%, unplug before departure and repeatable 21.6s loop', flush=True)
 
-    await advance_to(page, 6.5, 'charging')
+    await advance_to(page, 9.5, 'charging')
     toggle = page.locator('[data-ev-toggle]')
     await toggle.click()
     await expect(toggle).to_have_attribute('aria-pressed', 'true')
@@ -208,14 +243,15 @@ async def timeline_and_controls(browser, url, expected):
         await expect(candidate).to_be_hidden()
     assert not errors, errors
     await context.close()
-    print('PASS: manual pause, QR modal and hidden-page states freeze the physical frame and resume without time jumps', flush=True)
+    print(f'PASS {key}: manual pause, QR modal and hidden-page states freeze the physical frame and resume without time jumps', flush=True)
 
 
-async def offscreen_and_mobile(browser, url):
+async def offscreen_and_mobile(browser, url, key):
     context, page, errors = await fresh(browser, url, viewport={'width': 390, 'height': 480})
     await page.clock.run_for(1500)
-    await advance_to(page, 6.5, 'charging')
-    await page.screenshot(path=str(OUTPUT / 'charging-mobile.png'), full_page=True)
+    await scene_textures(page)
+    await advance_to(page, 9.5, 'charging')
+    await page.screenshot(path=str(picture_path(key, 'mobile')), full_page=True)
     await page.evaluate('window.scrollTo(0,0)')
     await asyncio.sleep(.06)
     await page.clock.run_for(50)
@@ -231,15 +267,15 @@ async def offscreen_and_mobile(browser, url):
     assert not await page.evaluate('document.documentElement.scrollWidth>innerWidth')
     assert not errors, errors
     await context.close()
-    print('PASS: offscreen scene pauses, re-entry resumes, and mobile layout has no horizontal overflow', flush=True)
+    print(f'PASS {key}: offscreen scene pauses, re-entry resumes, and mobile layout has no horizontal overflow', flush=True)
 
 
-async def reduced_no_script_and_print(browser, url, expected):
+async def reduced_no_script_and_print(browser, url, expected, key):
     context, page, errors = await fresh(browser, url, motion='reduce')
     await expect(page.locator('[data-ev-toggle]')).to_be_hidden()
     static = await scene_state(page)
     assert static['percent'] == 74 and abs(static['car'][4]) < .1
-    at_plug(static, 184, 224)
+    at_plug(static, 240, 252)
     await page.evaluate("""(()=>{window.sceneRafCalls=0;const original=window.requestAnimationFrame;
         window.requestAnimationFrame=function(callback){window.sceneRafCalls++;return original.call(window,callback)};})()""")
     await page.clock.run_for(20000)
@@ -257,6 +293,7 @@ async def reduced_no_script_and_print(browser, url, expected):
     await context.close()
 
     context, page, errors = await fresh(browser, url, javascript=False, clock=False)
+    await scene_textures(page)
     await expect(page.locator('[data-ev-toggle]')).to_be_hidden()
     assert (await scene_state(page))['percent'] == 74
     link = page.locator('[data-evpc-open-qr]')
@@ -270,25 +307,52 @@ async def reduced_no_script_and_print(browser, url, expected):
     await expect(page).to_have_url(target)
     assert not errors, errors
     await context.close()
-    print('PASS: reduced-motion static connected 74% view has no RAF loop; modal/print QR and no-script native PNG fallback decode correctly', flush=True)
+    print(f'PASS {key}: reduced-motion static connected 74% view has no RAF loop; modal/print QR and no-script native PNG fallback decode correctly', flush=True)
 
 
-async def standalone(browser, url, expected):
+async def standalone(browser, url, expected, key):
     context, page, errors = await fresh(browser, url)
     assert await page.locator('link[rel="stylesheet"],script[src]').count() == 0
     for image in await page.locator('img').all():
         assert (await image.get_attribute('src') or '').startswith('data:'), 'Standalone image is not embedded'
     assert await page.locator('[data-ev-scene] svg').count() >= 1
+    await scene_textures(page, embedded=True)
     href = await page.locator('[data-evpc-download-qr]').get_attribute('href')
     assert href and href.startswith('data:image/png')
     metadata, payload = href.split(',', 1)
     decode(base64.b64decode(payload) if ';base64' in metadata else unquote_to_bytes(payload), expected)
     await page.clock.run_for(1500)
-    await advance_to(page, 8, 'charging')
+    await advance_to(page, 11, 'charging')
     await modal_qr(page, expected)
     assert not errors, errors
     await context.close()
-    print('PASS: standalone HTML embeds the scene, styling, animation and genuine contact QR without external assets', flush=True)
+    print(f'PASS {key}: standalone HTML embeds exact car/charger PNGs, styling, animation and genuine contact QR without external assets', flush=True)
+
+
+async def missing_texture(browser, url, expected, key):
+    context = await browser.new_context(viewport={'width': 390, 'height': 844}, service_workers='block')
+    await context.route('**/assets/ev-car-realistic.png', lambda route: route.abort())
+    page = await context.new_page()
+    errors = []
+    page.on('pageerror', lambda error: errors.append(str(error)))
+    await freeze_clock(page)
+    await page.goto(url, wait_until='domcontentloaded')
+    scene = page.locator('[data-ev-scene]')
+    await expect(scene).to_have_attribute('data-ev-assets-ready', 'error', timeout=15000)
+    await page.clock.run_for(1500)
+    await expect(scene.locator('.evpc-scene-asset-note')).to_be_visible()
+    await expect(scene.locator('[data-ev-toggle]')).to_be_hidden()
+    before = await scene_state(page)
+    await page.evaluate("""(()=>{window.sceneRafCalls=0;const original=window.requestAnimationFrame;
+        window.requestAnimationFrame=function(callback){window.sceneRafCalls++;return original.call(window,callback)};})()""")
+    await page.clock.run_for(2000)
+    unchanged(before, await scene_state(page))
+    assert await page.evaluate('window.sceneRafCalls') == 0
+    await modal_qr(page, expected)
+    assert (await page.locator('[data-evpc-save]').get_attribute('href')).endswith('.vcf')
+    assert not errors, errors
+    await context.close()
+    print(f'PASS {key}: failed artwork shows its placeholder, stops RAF and leaves the genuine contact QR usable', flush=True)
 
 
 async def offline_profiles(browser, base, contacts):
@@ -302,9 +366,10 @@ async def offline_profiles(browser, base, contacts):
         pages.append((key, page))
     ahmed = pages[0][1]
     kedir = pages[1][1]
-    await expect(ahmed.locator('[data-ev-scene]')).to_have_count(1)
-    await expect(kedir.locator('[data-ev-scene]')).to_have_count(0)
-    await expect(kedir.locator('.evpc-qr__code')).to_have_count(1)
+    for page in [ahmed, kedir]:
+        await expect(page.locator('[data-ev-scene]')).to_have_count(1)
+        await expect(page.locator('.evpc-aside .evpc-qr__code')).to_have_count(0)
+        await scene_textures(page)
     cache_info = await ahmed.evaluate('''async()=>{
         const result=[];
         for(const name of await caches.keys()){
@@ -318,41 +383,51 @@ async def offline_profiles(browser, base, contacts):
     root_caches = [cache for cache in cache_info if root_url + 'index.html' in cache['urls']]
     child_caches = [cache for cache in cache_info if child_url + 'index.html' in cache['urls']]
     assert len(root_caches) == len(child_caches) == 1 and root_caches[0]['name'] != child_caches[0]['name']
-    assert root_url + 'assets/charging-scene.css' in root_caches[0]['urls']
-    assert root_url + 'assets/charging-scene.js' in root_caches[0]['urls']
+    for url, caches in [(root_url, root_caches), (child_url, child_caches)]:
+        for asset in ['charging-scene.css', 'charging-scene.js', *TEXTURES]:
+            assert url + 'assets/' + asset in caches[0]['urls'], 'Missing cached scene asset: ' + asset
     assert not any(url.startswith(child_url) for url in root_caches[0]['urls'])
     await context.set_offline(True)
     for key, page in pages:
         await page.reload(wait_until='domcontentloaded')
         await expect(page.locator('[data-evpc-preloader]')).to_be_hidden(timeout=3500)
         await modal_qr(page, contacts[key])
-        if key == 'ahmed':
-            await expect(page.locator('[data-ev-scene]')).to_be_visible()
-            styles = await page.locator('link[rel="stylesheet"]').evaluate_all('(nodes)=>nodes.map(node=>node.href)')
-            for href in styles:
-                assert urlparse(href).netloc == urlparse(base).netloc
-                assert await page.evaluate('async url=>(await fetch(url)).ok', href), href
-            # Without the enhanced modal, Show my QR is a normal PNG navigation.
-            # An installed worker must serve that cached image offline too.
-            await page.goto(root_url + 'assets/evpower-contact-qr.png', wait_until='load')
-            image = page.locator('body > img').first
-            await expect(image).to_be_visible()
-            decode(await image.screenshot(), contacts[key])
-        else:
-            await expect(page.locator('[data-ev-scene]')).to_have_count(0)
+        await expect(page.locator('[data-ev-scene]')).to_be_visible()
+        styles = await page.locator('link[rel="stylesheet"]').evaluate_all('(nodes)=>nodes.map(node=>node.href)')
+        for href in styles:
+            assert urlparse(href).netloc == urlparse(base).netloc
+            assert await page.evaluate('async url=>(await fetch(url)).ok', href), href
+        for name in TEXTURES:
+            data = bytes(await page.evaluate('''async url=>{
+                const response=await fetch(url);
+                if(!response.ok)throw new Error('Offline texture unavailable');
+                return Array.from(new Uint8Array(await response.arrayBuffer()));
+            }''', 'assets/' + name))
+            expected = (ROOT / 'ui/assets' / name).read_bytes()
+            assert hashlib.sha256(data).digest() == hashlib.sha256(expected).digest(), name
+            assert Image.open(BytesIO(data)).format == 'PNG'
+        # Without the enhanced modal, Show my QR is a normal PNG navigation.
+        # Each installed worker must serve its own cached contact image offline.
+        url = root_url if key == 'ahmed' else child_url
+        await page.goto(url + 'assets/evpower-contact-qr.png', wait_until='load')
+        image = page.locator('body > img').first
+        await expect(image).to_be_visible()
+        decode(await image.screenshot(), contacts[key])
     await context.close()
-    print('PASS: scene assets and native PNG navigation work offline; both profiles retain their own contact QR/caches', flush=True)
+    print('PASS: exact 3D PNG textures, scene assets and native contact PNG navigation work offline with both profile caches isolated', flush=True)
 
 
 async def main(base):
-    contacts = {'ahmed': contact(ROOT), 'kedir': contact(ROOT / 'profiles/kedir')}
+    contacts = {key: contact(profile) for key, profile, _path in PROFILES}
     async with async_playwright() as playwright:
         browser = await playwright.chromium.launch(executable_path='/usr/bin/chromium', headless=True, args=['--no-sandbox'])
         try:
-            await timeline_and_controls(browser, base + '/charge/', contacts['ahmed'])
-            await offscreen_and_mobile(browser, base + '/charge/')
-            await reduced_no_script_and_print(browser, base + '/charge/', contacts['ahmed'])
-            await standalone(browser, base + '/standalone/ahmed.html', contacts['ahmed'])
+            for key, _profile, path in PROFILES:
+                await timeline_and_controls(browser, base + path, contacts[key], key)
+                await offscreen_and_mobile(browser, base + path, key)
+                await reduced_no_script_and_print(browser, base + path, contacts[key], key)
+                await standalone(browser, base + '/standalone/' + key + '.html', contacts[key], key)
+                await missing_texture(browser, base + path, contacts[key], key)
             await offline_profiles(browser, base, contacts)
         finally:
             await browser.close()
@@ -365,7 +440,8 @@ if __name__ == '__main__':
         shutil.copytree(ROOT / 'app', stage / 'charge')
         shutil.copytree(ROOT / 'profiles/kedir/app', stage / 'charge/kedir')
         (stage / 'standalone').mkdir()
-        shutil.copy2(ROOT / 'dist/evpower-card-standalone.html', stage / 'standalone/ahmed.html')
+        for key, profile, _path in PROFILES:
+            shutil.copy2(profile / 'dist/evpower-card-standalone.html', stage / 'standalone' / (key + '.html'))
         server = ThreadingHTTPServer(('127.0.0.1', 0), partial(QuietHandler, directory=str(stage)))
         threading.Thread(target=server.serve_forever, daemon=True).start()
         try:

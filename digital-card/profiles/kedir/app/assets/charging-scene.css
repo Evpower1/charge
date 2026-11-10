@@ -1,0 +1,38 @@
+/* Studio lighting and unchanged rendered textures; a single timeline controls motion. */
+.evpc-card.evpc-card--charging{width:100%;max-width:1140px;grid-template-columns:minmax(0,1.16fr) minmax(340px,1fr)}
+.evpc-aside--charging{padding:34px 24px 28px;background:linear-gradient(155deg,#f5f9ff,#effaff)}
+.evpc-aside__content.evpc-charging-panel{width:100%;max-width:470px;text-align:left}
+.evpc-scene-heading{padding:0 3px}
+.evpc-card .evpc-charging-panel .evpc-eyebrow{margin-bottom:13px;color:#4f7eaa;font-size:8px;font-weight:650;letter-spacing:.15em}
+.evpc-card .evpc-charging-panel h2{max-width:370px;margin:0 0 11px;color:#142f4e;font-size:32px;font-weight:700;letter-spacing:-.052em;line-height:1.16;text-align:left}
+.evpc-card .evpc-scene-intro{margin:0;color:#7288a1;font-size:11px;line-height:1.7;letter-spacing:.005em}
+.evpc-scene-stage{position:relative;width:100%;margin:21px 0 0!important;overflow:hidden;border:1px solid #264661;border-radius:22px;background:#091e35;box-shadow:0 17px 32px rgba(8,37,64,.12),0 3px 8px rgba(8,37,64,.05);isolation:isolate}
+.evpc-scene-stage:after{position:absolute;top:0;right:0;bottom:0;left:0;border:1px solid rgba(194,232,255,.06);border-radius:inherit;pointer-events:none;content:""}
+.evpc-scene-svg{display:block;width:100%;height:auto;max-width:100%;overflow:hidden}
+.evpc-scene-svg [data-ev-car]{will-change:transform}
+.evpc-scene-svg [data-ev-energy]{pointer-events:none}
+.evpc-scene-svg image{image-rendering:auto}
+.evpc-card .evpc-scene-meter{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px;margin:0;padding:11px 18px;border-top:1px solid rgba(163,205,234,.1);background:linear-gradient(90deg,rgba(13,42,64,.92),rgba(8,29,48,.97));font-size:11px;line-height:1.5}
+.evpc-scene-status{display:inline-flex;align-items:center;gap:8px;min-width:0;color:#d5e8f6;font-size:11px;font-weight:500;white-space:nowrap}
+.evpc-scene-status__dot{display:block;width:5px;height:5px;flex:0 0 5px;border-radius:50%;background:#5adfed;box-shadow:0 0 0 4px rgba(90,223,237,.07),0 0 12px rgba(90,223,237,.2)}
+.evpc-scene-battery{display:inline-flex;align-items:center;justify-content:flex-end;gap:10px;min-width:95px;color:#d9f5fa;font-size:11px;font-weight:500;font-variant-numeric:tabular-nums}
+.evpc-scene-battery__case{position:relative;display:block;width:46px;height:14px;margin-right:2px;border:1px solid #55788e;border-radius:3px;padding:2px;background:#0e293c}
+.evpc-scene-battery__case:after{position:absolute;top:3px;right:-4px;width:2px;height:6px;border-radius:0 1px 1px 0;background:#55788e;content:""}
+.evpc-scene-battery__fill{display:block;width:100%;height:100%;border-radius:1px;background:linear-gradient(90deg,#1c95ee,#66e4ed);transform-origin:left center;will-change:transform}
+.evpc-scene-battery>[data-ev-percent]{min-width:31px;text-align:right}
+.evpc-scene-tools{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px 12px;margin:14px 2px 0}
+.evpc-card .evpc-scene-tools .evpc-qr-download{display:inline-flex;min-height:44px;margin:0;border:1px solid #dce9f5;border-radius:8px;padding:8px 12px;background:rgba(255,255,255,.65);color:#36678e;font-size:10px;font-weight:550}
+.evpc-card .evpc-scene-tools .evpc-qr-download:hover{border-color:#c3dceb;background:#fff;color:#0754de}
+.evpc-card .evpc-scene-toggle{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin:0;border:1px solid transparent;border-radius:8px;padding:8px 11px;background:transparent;color:#5a7692;font:500 10px/1.5 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer;touch-action:manipulation}
+.evpc-card .evpc-scene-toggle:hover{border-color:#d6e6f3;background:rgba(255,255,255,.7);color:#0754de}
+.evpc-scene-toggle[hidden]{display:none!important}
+.evpc-scene-svg{transition:opacity 200ms ease}
+.evpc-scene-asset-note{position:absolute;top:0;right:0;bottom:53px;left:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;color:#74deed;background:radial-gradient(ellipse at center,#153c58,#091f34 70%);font:500 11px/1.5 ui-sans-serif,system-ui,sans-serif;letter-spacing:.04em}
+[data-ev-assets-ready="false"] .evpc-scene-svg,[data-ev-assets-ready="error"] .evpc-scene-svg{opacity:0}
+[data-ev-assets-ready="false"] .evpc-scene-asset-note,[data-ev-assets-ready="error"] .evpc-scene-asset-note{display:flex}
+@media(max-width:1050px) and (min-width:851px){.evpc-card.evpc-card--charging{grid-template-columns:minmax(0,1.16fr) minmax(315px,1fr)}.evpc-aside--charging{padding-right:19px;padding-left:19px}.evpc-card .evpc-charging-panel h2{font-size:29px}.evpc-card .evpc-scene-meter{padding-right:14px;padding-left:14px}}
+@media(max-width:850px){.evpc-card.evpc-card--charging{max-width:620px;grid-template-columns:minmax(0,1fr)}.evpc-aside--charging{padding:32px 28px 27px;border-top:1px solid #e2edf6;border-left:0}.evpc-aside__content.evpc-charging-panel{max-width:500px}.evpc-card .evpc-charging-panel h2{font-size:32px}}
+@media(max-width:650px){.evpc-card.evpc-card--charging{max-width:470px}.evpc-aside--charging{padding:29px 22px 24px}.evpc-card .evpc-charging-panel h2{font-size:30px}.evpc-scene-stage{margin-top:20px!important;border-radius:18px}.evpc-card .evpc-scene-meter{min-height:51px;padding:10px 14px}.evpc-scene-tools{margin-top:11px}}
+@media(max-width:380px){.evpc-aside--charging{padding-right:17px;padding-left:17px}.evpc-card .evpc-charging-panel h2{font-size:28px}.evpc-scene-stage{border-radius:16px}.evpc-card .evpc-scene-meter{gap:8px;padding-right:11px;padding-left:11px}.evpc-scene-status,.evpc-scene-battery{font-size:10px}.evpc-scene-battery{min-width:86px;gap:8px}.evpc-scene-battery__case{width:39px}}
+@media(prefers-reduced-motion:reduce){.evpc-scene-svg,.evpc-scene-svg *,.evpc-scene-battery__fill{animation:none!important;transition:none!important}}
+@media print{.evpc-card.evpc-card--charging{max-width:100%;grid-template-columns:minmax(0,1.16fr) minmax(235px,1fr)}.evpc-aside--charging{padding:24px 15px;border-top:0;border-left:1px solid #e2edf6}.evpc-card .evpc-charging-panel h2{font-size:23px}.evpc-scene-stage{box-shadow:none}.evpc-card .evpc-scene-meter{min-height:42px;padding:8px 11px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.evpc-scene-tools{display:none!important}}

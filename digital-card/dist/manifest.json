@@ -8,16 +8,16 @@
     "sha256": "d8094105e4050684d3144e98e02d1d751ff86390d79b9ba823f66a107a13ab44"
   },
   "evpower-card-app.zip": {
-    "bytes": 1674207,
-    "sha256": "c7ef0691deec968f35a2b50a327aea38081b0f2af85c3f05dac996ef8c3ac573"
+    "bytes": 3424111,
+    "sha256": "b9820c71fb83b41f59fcb7631d7dccbcdada35ed181933a9dfed04c3d4ac1a68"
   },
   "evpower-card-phone-preview.png": {
-    "bytes": 141172,
-    "sha256": "7dd6d2b1bbdc82f714f716c25c910ad8c41254c37f94628914651c774f2a2d10"
+    "bytes": 183792,
+    "sha256": "318788d07929f590475dd95b13b4f5841c7fcdfd0b6eccf2bed84db8e17db1f6"
   },
   "evpower-card-standalone.html": {
-    "bytes": 2896903,
-    "sha256": "af3f439aa711cf30eaffcbf12b87a1d7b5ed57104a98f38dd9ecd8935042c8c5"
+    "bytes": 5532471,
+    "sha256": "31d7698a4947b8d69ea7c3fba569133e125df889afe69158a9ef99d242e171bd"
   },
   "evpower-contact-qr.png": {
     "bytes": 2955,
