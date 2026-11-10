@@ -1,0 +1,9 @@
+**/node_modules
+**/.expo
+**/.data
+**/.env
+**/*.sqlite*
+**/test-output
+artifacts
+tests
+mobile/dist

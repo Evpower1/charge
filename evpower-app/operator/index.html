@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Evpower Operations</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <section id="login-view" class="login-page" aria-labelledby="login-title">
+    <div class="login-brand">
+      <img src="./assets/logo.png" width="2172" height="724" alt="Evpower">
+      <span class="eyebrow">OPERATIONS / ETHIOPIA</span>
+      <h1>Keep every<br>journey moving.</h1>
+      <p>One workspace for mobile charging requests, verified locations and customer support.</p>
+      <div class="login-note"><span class="energy-dot" aria-hidden="true"></span>Powered by your team. Connected to your chargers.</div>
+    </div>
+    <div class="login-card">
+      <span class="eyebrow">YOUR WORKSPACE</span>
+      <h2 id="login-title">Welcome back</h2>
+      <p>Sign in with your Evpower operator account.</p>
+      <form id="login-form">
+        <label>Email address<input id="login-email" type="email" autocomplete="username" inputmode="email" required maxlength="254" placeholder="you@evpower.et"></label>
+        <label>Password<input id="login-password" type="password" autocomplete="current-password" required maxlength="256" placeholder="Your password"></label>
+        <button class="button primary full" id="login-submit" type="submit">Sign in <span aria-hidden="true">→</span></button>
+        <p class="form-message" id="login-message" role="alert"></p>
+      </form>
+      <p class="small muted">Operator access is provisioned by an administrator. Customer accounts belong in the Evpower app.</p>
+    </div>
+  </section>
+
+  <div id="workspace" class="workspace" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="./" aria-label="Evpower operations home"><img src="./assets/logo.png" width="2172" height="724" alt="Evpower"></a>
+      <p class="workspace-label">OPERATIONS</p>
+      <nav class="navigation" aria-label="Workspace">
+        <button class="nav-item active" data-view="overview" type="button" aria-current="page"><span aria-hidden="true">◫</span>Overview</button>
+        <button class="nav-item" data-view="bookings" type="button"><span aria-hidden="true">↗</span>Charging requests</button>
+        <button class="nav-item" data-view="stations" type="button"><span aria-hidden="true">⌖</span>Charging stations</button>
+        <button class="nav-item" data-view="support" type="button"><span aria-hidden="true">◌</span>Customer support</button>
+        <button class="nav-item" data-view="connections" type="button"><span aria-hidden="true">⌁</span>Connections</button>
+      </nav>
+      <div class="sidebar-bottom"><span class="sidebar-caption">A cleaner drive.<br>A brighter Ethiopia.</span><button id="logout" type="button" class="button quiet full">Sign out <span aria-hidden="true">↗</span></button></div>
+    </aside>
+
+    <main id="main-content" class="main" tabindex="-1">
+      <header class="topbar"><div><p class="eyebrow" id="workspace-date">EVPOWER OPERATIONS</p><h1 id="view-title">Overview</h1></div><div class="topbar-actions"><span id="operator-name" class="operator-name"></span><button id="refresh" class="button secondary" type="button">Refresh <span aria-hidden="true">↻</span></button></div></header>
+      <div id="demo-banner" class="notice" hidden>Development environment. Sample locations are labelled. This is not a live charging network.</div>
+      <div class="update-line"><span><span class="energy-dot" aria-hidden="true"></span><span id="last-updated">Loading workspace…</span></span><span id="connection-label" class="muted"></span></div>
+
+      <section data-panel="overview" aria-label="Overview">
+        <div id="metrics" class="metrics"></div>
+        <div class="overview-grid">
+          <section class="panel"><div class="panel-heading"><div><span class="eyebrow">TODAY AND BEYOND</span><h2>Charging requests</h2></div><button type="button" class="text-button" data-go="bookings">View all →</button></div><div id="recent-bookings" class="request-list"></div></section>
+          <section class="panel network-panel"><span class="eyebrow">YOUR NETWORK</span><h2>Connected with confidence</h2><p>Availability comes from charger reports. Missing or older reports are shown as unknown.</p><div id="network-summary" class="network-summary"></div><button type="button" class="button secondary" data-go="stations">Manage locations →</button></section>
+        </div>
+      </section>
+
+      <section data-panel="bookings" hidden aria-label="Charging requests">
+        <div class="panel"><div class="panel-heading"><div><span class="eyebrow">MOBILE CHARGING</span><h2>Request desk</h2><p>Confirm a quote, assign the team and keep customers informed.</p></div></div><div class="filters"><label class="search-label"><span class="sr-only">Search requests</span><input id="booking-search" type="search" placeholder="Search reference, city or address"></label><label><span class="sr-only">Request status</span><select id="booking-filter"><option value="all">All statuses</option><option value="requested">Requested</option><option value="confirmed">Confirmed</option><option value="en_route">En route</option><option value="arrived">Arrived</option><option value="charging">Charging</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></label></div><div id="booking-list" class="request-list"></div></div>
+      </section>
+
+      <section data-panel="stations" hidden aria-label="Charging stations">
+        <div class="section-heading"><div><span class="eyebrow">VERIFIED LOCATIONS</span><h2>Charging network</h2><p>Publish real locations and match connector IDs to your charger gateway.</p></div><button id="new-station" class="button primary" type="button">Add a station +</button></div>
+        <div id="station-list" class="station-grid"></div>
+      </section>
+
+      <section data-panel="support" hidden aria-label="Customer support"><div class="panel"><div class="panel-heading"><div><span class="eyebrow">HERE TO HELP</span><h2>Customer enquiries</h2><p>Requests submitted through the Evpower app.</p></div></div><div id="ticket-list" class="ticket-list"></div></div></section>
+
+      <section data-panel="connections" hidden aria-label="Service connections"><div class="section-heading"><div><span class="eyebrow">SERVICE READINESS</span><h2>Your connected services</h2><p>Connection status comes from the API configuration.</p></div></div><div id="service-connections" class="connection-grid"></div><div class="panel connection-help"><h3>Connect a charger management system</h3><p>Your trusted charger gateway sends station and connector reports to the protected integration endpoint. The station IDs and connector IDs must match the locations configured here. Availability expires after two minutes without a recent report.</p><p>Integration keys and payment credentials belong in the API server configuration. They are never stored in this dashboard or mobile app.</p></div></section>
+      <footer class="workspace-footer"><span>Evpower · Powering your journey</span><span>All amounts in Ethiopian birr (ETB)</span></footer>
+    </main>
+  </div>
+
+  <dialog id="booking-dialog" class="modal" aria-labelledby="booking-title"><div class="modal-header"><div><span class="eyebrow">CHARGING REQUEST</span><h2 id="booking-title"></h2></div><button type="button" class="close-button" data-close="booking-dialog" aria-label="Close booking details">×</button></div><div id="booking-details"></div><form id="booking-form"><div class="form-grid"><label>Quote in ETB<input id="booking-quote" type="text" inputmode="decimal" placeholder="Awaiting quote" maxlength="12"></label><label>Request status<select id="booking-status"></select></label><label>Dispatch team member<input id="booking-dispatch-name" maxlength="120" placeholder="Name"></label><label>Dispatch phone<input id="booking-dispatch-phone" type="tel" maxlength="32" placeholder="+251…"></label></div><label>Customer update<textarea id="booking-note" rows="3" maxlength="1000" placeholder="An optional message for this update"></textarea></label><p id="booking-payment-note" class="small muted"></p><p class="form-message" id="booking-message" role="alert"></p><div class="modal-actions"><button class="button secondary" type="button" data-close="booking-dialog">Close</button><button id="booking-save" class="button primary" type="submit">Save update →</button></div></form></dialog>
+
+  <dialog id="station-dialog" class="modal" aria-labelledby="station-title"><div class="modal-header"><div><span class="eyebrow">CHARGING NETWORK</span><h2 id="station-title">Add a station</h2></div><button type="button" class="close-button" data-close="station-dialog" aria-label="Close station editor">×</button></div><form id="station-form"><div class="form-grid"><label>Station name<input id="station-name" required maxlength="120" placeholder="Location name"></label><label>City<select id="station-city"><option>Addis Ababa</option><option>Adama</option></select></label></div><label>Street address<input id="station-address" required maxlength="300" placeholder="A location customers can find"></label><div class="form-grid"><label>Latitude<input id="station-latitude" type="number" step="any" min="-90" max="90" required placeholder="9.03"></label><label>Longitude<input id="station-longitude" type="number" step="any" min="-180" max="180" required placeholder="38.75"></label></div><label class="checkbox-label"><input id="station-verified" type="checkbox">I have verified this location and its details</label><p class="small muted">Only verified locations appear in the customer app. Verification does not create live charger availability.</p><div class="connector-heading"><h3>Connectors</h3><button id="add-connector" type="button" class="text-button">Add connector +</button></div><p class="small muted">Keep these IDs aligned with reports from your charger gateway.</p><div id="connector-inputs"></div><p class="form-message" id="station-message" role="alert"></p><div class="modal-actions"><button class="button secondary" type="button" data-close="station-dialog">Cancel</button><button id="station-save" class="button primary" type="submit">Save station →</button></div></form></dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import * as Location from 'expo-location';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import type { ScreenProps } from '../types';
+
+type Vehicle = { id: string; make: string; model: string; plate: string; connector: string; batteryKwh: number };
+type Booking = { id: string; reference: string; status: string; city: string; address: string; requestedKwh: number; scheduledAt: string | null };
+const plugs = ['CCS2', 'Type2', 'GB/T', 'CHAdeMO'];
+
+export default function BookingScreen({ user, api, config, navigate, notify, refreshKey, onRequireAuth }: ScreenProps) {
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [vehicleId, setVehicleId] = useState<string | null>(null);
+  const [city, setCity] = useState(config?.serviceCities[0] || 'Addis Ababa');
+  const [address, setAddress] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const [connector, setConnector] = useState('CCS2');
+  const [requestedKwh, setRequestedKwh] = useState('20');
+  const [asap, setAsap] = useState(true);
+  const [scheduledAt, setScheduledAt] = useState('');
+  const [notes, setNotes] = useState('');
+  const [locating, setLocating] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [vehicleError, setVehicleError] = useState('');
+  const [result, setResult] = useState<Booking | null>(null);
+  const attempt = useRef<{ body: string; key: string } | null>(null);
+  const scheduleExample = new Date(Date.now() + 86400000).toISOString().slice(0, 10) + 'T14:30:00+03:00';
+  useEffect(() => {
+    let active = true;
+    if (!user) { setVehicles([]); return; }
+    api.request<{ items: Vehicle[] }>('/v1/vehicles').then(data => { if (active) { setVehicles(data.items); setVehicleError(''); } }, () => { if (active) setVehicleError('Saved vehicles could not be loaded. You can still choose a connector below.'); });
+    return () => { active = false; };
+  }, [api, user?.id, refreshKey]);
+  async function useLocation() {
+    setLocating(true);
+    try {
+      const permission = await Location.requestForegroundPermissionsAsync();
+      if (permission.status !== 'granted') { notify('Location permission was not granted. Enter your pickup address and landmark instead.'); return; }
+      const position = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+      setLatitude(position.coords.latitude.toFixed(6));
+      setLongitude(position.coords.longitude.toFixed(6));
+      notify('Pickup pin added. Please also enter a clear address or landmark for the team.');
+    } catch { notify('Your position could not be read. You can enter your pickup address without a location pin.'); }
+    finally { setLocating(false); }
+  }
+  async function submit() {
+    if (busy) return;
+    setError('');
+    const energy = Number(requestedKwh);
+    if (address.trim().length < 6) { setError('Please enter a clear pickup address or landmark, at least 6 characters.'); return; }
+    if (!Number.isFinite(energy) || energy < 1 || energy > 200) { setError('Requested energy must be between 1 and 200 kWh.'); return; }
+    const hasPin = latitude.trim() !== '' || longitude.trim() !== '';
+    const lat = Number(latitude), lon = Number(longitude);
+    if (hasPin && (!latitude.trim() || !longitude.trim() || !Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180)) { setError('Enter both valid latitude and longitude values, or clear both fields.'); return; }
+    let scheduled: string | null = null;
+    if (!asap) {
+      const time = Date.parse(scheduledAt);
+      if (!/[T ]/.test(scheduledAt) || !/(Z|[+-]\d{2}:\d{2})$/i.test(scheduledAt) || !Number.isFinite(time) || time <= Date.now() + 60000) { setError('Choose a future date and time with a timezone, for example ' + scheduleExample + '.'); return; }
+      scheduled = new Date(time).toISOString();
+    }
+    const body = { city, address: address.trim(), latitude: hasPin ? lat : null, longitude: hasPin ? lon : null, connector, requestedKwh: energy, scheduledAt: scheduled, notes: notes.trim(), vehicleId };
+    const fingerprint = JSON.stringify(body);
+    if (!attempt.current || attempt.current.body !== fingerprint) attempt.current = { body: fingerprint, key: api.newIdempotencyKey() };
+    setBusy(true);
+    try {
+      const booking = await api.request<Booking>('/v1/bookings', { method: 'POST', body, headers: { 'Idempotency-Key': attempt.current.key } });
+      setResult(booking); attempt.current = null;
+      notify('Your charging request has been received.');
+    } catch (e) { setError(e instanceof Error ? e.message : 'Your request could not be submitted. Please try again.'); }
+    finally { setBusy(false); }
+  }
+  if (!user) return <ScrollView style={s.screen} contentContainerStyle={s.content}><View><Text style={s.eyebrow}>MOBILE EV CHARGING</Text><Text style={s.title}>We come to your EV.</Text><Text style={s.subtitle}>Request a charge at your home, workplace or pickup location.</Text></View><View style={s.signinCard}><View style={s.largeIcon}><Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="car-sport-outline" size={55} color="#0754de" /></View><Text style={s.sectionTitle}>Your next charge starts here</Text><Text style={s.copy}>Create an account or sign in to send a request, receive your quote and track the service.</Text><Pressable accessibilityRole="button" style={s.primary} onPress={onRequireAuth}><Text style={s.primaryText}>Sign in or create an account</Text><Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="arrow-forward" size={18} color="#fff" /></Pressable></View><View style={s.note}><Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="information-circle-outline" size={20} color="#5b7c9c" /><Text style={s.noteText}>Service is subject to Evpower confirming coverage, connector compatibility and availability. No instant arrival time is promised.</Text></View></ScrollView>;
+  if (result) return <ScrollView style={s.screen} contentContainerStyle={s.content}><View style={s.successCard}><View style={s.successIcon}><Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="checkmark" size={43} color="#087d73" /></View><Text style={s.eyebrow}>REQUEST RECEIVED</Text><Text style={s.title}>You’re on our list.</Text><Text style={s.copy}>Evpower will confirm availability and your quote before dispatch. You can follow every update in Activity.</Text><View style={s.summary}><Summary label="Reference" value={result.reference} /><Summary label="Service city" value={result.city} /><Summary label="Requested energy" value={result.requestedKwh + ' kWh'} /><Summary label="Pickup" value={result.address} /><Summary label="Timing" value={result.scheduledAt ? new Date(result.scheduledAt).toLocaleString() : 'As soon as service is available'} /></View><Pressable accessibilityRole="button" style={s.primary} onPress={() => navigate('activity')}><Text style={s.primaryText}>Track my request</Text><Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="arrow-forward" size={18} color="#fff" /></Pressable><Pressable accessibilityRole="button" style={s.secondary} onPress={() => { setResult(null); setError(''); }}><Text style={s.link}>Make another request</Text></Pressable></View></ScrollView>;
+  return <KeyboardAvoidingView style={s.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={s.content}>
+    <View><Text style={s.eyebrow}>MOBILE EV CHARGING</Text><Text style={s.title}>Energy, on your terms.</Text><Text style={s.subtitle}>Tell us where you are and what your EV needs.</Text></View>
+    <View style={s.card}><View style={s.cardHeading}><View style={s.number}><Text style={s.numberText}>1</Text></View><Text style={s.sectionTitle}>Where should we meet?</Text></View><Text style={s.label}>Service city</Text><View style={s.chips}>{(config?.serviceCities || ['Addis Ababa', 'Adama']).map(value => <Chip key={value} value={value} active={city === value} onPress={() => setCity(value)} />)}</View><Text style={s.label}>Pickup address or landmark</Text><TextInput accessibilityLabel="Pickup address or landmark" value={address} onChangeText={setAddress} placeholder="Building, street, area and a helpful landmark" placeholderTextColor="#8b9bad" multiline maxLength={300} style={[s.input, s.multiline]} /><Pressable accessibilityRole="button" disabled={locating} onPress={() => void useLocation()} style={s.locationButton}>{locating ? <ActivityIndicator color="#0754de" size="small" /> : <Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="locate-outline" size={19} color="#0754de" />}<Text style={s.link}>{latitude && longitude ? 'Update my pickup pin' : 'Use my current location'}</Text></Pressable><Text style={s.hint}>Optional. Your location is requested only when you tap this button.</Text><View style={s.coordinates}><View style={s.flex}><Text style={s.smallLabel}>Latitude (optional)</Text><TextInput accessibilityLabel="Pickup latitude" value={latitude} onChangeText={setLatitude} keyboardType="numbers-and-punctuation" placeholder="8.980000" placeholderTextColor="#99a8b7" style={s.input} /></View><View style={s.flex}><Text style={s.smallLabel}>Longitude (optional)</Text><TextInput accessibilityLabel="Pickup longitude" value={longitude} onChangeText={setLongitude} keyboardType="numbers-and-punctuation" placeholder="38.760000" placeholderTextColor="#99a8b7" style={s.input} /></View></View></View>
+    <View style={s.card}><View style={s.cardHeading}><View style={s.number}><Text style={s.numberText}>2</Text></View><Text style={s.sectionTitle}>Your vehicle & charge</Text></View>{vehicles.length > 0 && <><Text style={s.label}>Choose a saved vehicle</Text><View style={s.chips}><Chip value="Another vehicle" active={!vehicleId} onPress={() => setVehicleId(null)} />{vehicles.map(vehicle => <Chip key={vehicle.id} value={[vehicle.make, vehicle.model, vehicle.plate].filter(Boolean).join(' · ')} active={vehicleId === vehicle.id} onPress={() => { setVehicleId(vehicle.id); setConnector(vehicle.connector); }} />)}</View></>}{vehicleError ? <Text style={s.hint}>{vehicleError}</Text> : null}<Text style={s.label}>Charging connector</Text><View style={s.chips}>{plugs.map(value => <Chip key={value} value={value} active={connector === value} onPress={() => { setConnector(value); if (vehicles.find(v => v.id === vehicleId)?.connector !== value) setVehicleId(null); }} />)}</View><Text style={s.hint}>Check the vehicle’s charging port or handbook before selecting.</Text><Text style={s.label}>How much energy would you like? (kWh)</Text><TextInput accessibilityLabel="Requested energy in kWh" value={requestedKwh} onChangeText={setRequestedKwh} keyboardType="decimal-pad" maxLength={6} style={s.input} /><Text style={s.hint}>Request between 1 and 200 kWh. Evpower will confirm what can be supplied and the final price.</Text></View>
+    <View style={s.card}><View style={s.cardHeading}><View style={s.number}><Text style={s.numberText}>3</Text></View><Text style={s.sectionTitle}>A time that works for you</Text></View><View style={s.chips}><Chip value="As soon as available" active={asap} onPress={() => setAsap(true)} /><Chip value="Schedule for later" active={!asap} onPress={() => setAsap(false)} /></View>{!asap && <><Text style={s.label}>Requested date and time</Text><TextInput accessibilityLabel="Scheduled date and time with timezone" value={scheduledAt} onChangeText={setScheduledAt} autoCapitalize="none" placeholder={scheduleExample} placeholderTextColor="#8b9bad" style={s.input} /><Text style={s.hint}>Include a timezone. Ethiopia uses +03:00. Your requested slot will be confirmed by the team.</Text></>}<Text style={s.label}>Anything else we should know? (optional)</Text><TextInput accessibilityLabel="Booking notes" value={notes} onChangeText={setNotes} placeholder="Parking access, vehicle details or special instructions" placeholderTextColor="#8b9bad" multiline maxLength={1000} style={[s.input, s.multiline]} /></View>
+    <View style={s.note}><Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="shield-checkmark-outline" size={20} color="#5b7c9c" /><Text style={s.noteText}>This sends a service request. Evpower confirms availability and a quote before dispatch. No payment is taken when you submit this form.</Text></View>
+    {error ? <View accessibilityRole="alert" style={s.error}><Text style={s.errorText}>{error}</Text></View> : null}
+    <Pressable accessibilityRole="button" disabled={busy} onPress={() => void submit()} style={[s.primary, busy && s.disabled]}>{busy ? <ActivityIndicator color="#fff" /> : <Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="flash" size={19} color="#fff" />}<Text style={s.primaryText}>{busy ? 'Sending your request…' : 'Request mobile charging'}</Text>{!busy && <Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="arrow-forward" size={18} color="#fff" />}</Pressable>
+  </ScrollView></KeyboardAvoidingView>;
+}
+
+function Chip({ value, active, onPress }: { value: string; active: boolean; onPress: () => void }) { return <Pressable accessibilityRole="button" accessibilityState={{ selected: active }} onPress={onPress} style={[s.chip, active && s.activeChip]}><Text style={[s.chipText, active && s.activeChipText]}>{value}</Text></Pressable>; }
+function Summary({ label, value }: { label: string; value: string }) { return <View style={s.summaryRow}><Text style={s.summaryLabel}>{label}</Text><Text style={s.summaryValue}>{value}</Text></View>; }
+const s = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: '#f5f8fc' }, content: { padding: 22, paddingBottom: 38, gap: 19, maxWidth: 820, width: '100%', alignSelf: 'center' }, eyebrow: { color: '#55738e', fontSize: 9, fontWeight: '800', letterSpacing: 1.3, marginBottom: 9 }, title: { color: '#122d4d', fontSize: 28, fontWeight: '800', letterSpacing: -.8 }, subtitle: { color: '#718298', fontSize: 13, lineHeight: 20, marginTop: 8 }, card: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#e0eaf5', borderRadius: 18, padding: 18 }, cardHeading: { flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 14 }, number: { width: 27, height: 27, borderRadius: 9, backgroundColor: '#eaf4ff', alignItems: 'center', justifyContent: 'center' }, numberText: { fontSize: 12, fontWeight: '800', color: '#0754de' }, sectionTitle: { color: '#1b3856', fontSize: 16, fontWeight: '700', letterSpacing: -.3 }, label: { color: '#385772', fontSize: 12, fontWeight: '700', marginBottom: 9, marginTop: 13 }, smallLabel: { color: '#7990a5', fontSize: 10, marginBottom: 7 }, input: { backgroundColor: '#fbfdff', borderWidth: 1, borderColor: '#dce7f3', borderRadius: 11, minHeight: 48, paddingHorizontal: 13, paddingVertical: 12, fontSize: 13, color: '#1d3b58' }, multiline: { minHeight: 86, textAlignVertical: 'top', lineHeight: 20 }, hint: { color: '#8091a3', fontSize: 10, lineHeight: 17, marginTop: 8 }, chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }, chip: { borderWidth: 1, borderColor: '#e0e9f3', backgroundColor: '#f9fbfe', paddingVertical: 10, paddingHorizontal: 13, borderRadius: 10 }, activeChip: { borderColor: '#9ac5f9', backgroundColor: '#edf5ff' }, chipText: { color: '#68819a', fontSize: 11, fontWeight: '600' }, activeChipText: { color: '#0754de' }, locationButton: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingVertical: 13, alignSelf: 'flex-start' }, link: { color: '#0754de', fontSize: 12, fontWeight: '700' }, coordinates: { flexDirection: 'row', gap: 10, marginTop: 14 }, flex: { flex: 1 }, note: { flexDirection: 'row', gap: 10, padding: 14, backgroundColor: '#eaf4ff', borderRadius: 13 }, noteText: { flex: 1, color: '#62809c', fontSize: 11, lineHeight: 18 }, primary: { minHeight: 52, borderRadius: 13, paddingHorizontal: 17, paddingVertical: 13, backgroundColor: '#0754de', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10 }, primaryText: { color: '#fff', fontSize: 14, fontWeight: '700', flexShrink: 1 }, disabled: { opacity: .65 }, error: { borderRadius: 12, padding: 14, backgroundColor: '#fff0f1' }, errorText: { color: '#ac424d', fontSize: 12, lineHeight: 19 }, signinCard: { backgroundColor: '#fff', borderRadius: 21, padding: 24, gap: 16, borderWidth: 1, borderColor: '#e0eaf5' }, largeIcon: { alignSelf: 'flex-start', padding: 16, borderRadius: 20, backgroundColor: '#eaf6ff' }, copy: { color: '#71879c', fontSize: 13, lineHeight: 21 }, successCard: { backgroundColor: '#fff', padding: 25, borderRadius: 22, borderWidth: 1, borderColor: '#deebf6', gap: 14 }, successIcon: { alignItems: 'center', justifyContent: 'center', width: 73, height: 73, backgroundColor: '#e2f8f1', borderRadius: 25, marginBottom: 6 }, summary: { borderTopWidth: 1, borderTopColor: '#edf2f7', marginVertical: 5, paddingTop: 6 }, summaryRow: { flexDirection: 'row', gap: 15, paddingVertical: 9, alignItems: 'flex-start' }, summaryLabel: { width: 100, color: '#8092a4', fontSize: 11 }, summaryValue: { flex: 1, color: '#264865', fontSize: 12, lineHeight: 19, fontWeight: '600' }, secondary: { minHeight: 44, alignItems: 'center', justifyContent: 'center' }
+});
