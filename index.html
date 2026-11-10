@@ -98,7 +98,7 @@
   <button type="button" class="evpc-preloader__skip" data-evpc-preloader-skip>Skip animation</button>
 </div>
 <section class="evpc-shell" aria-label="Evpower digital business card">
-  <article class="evpc-card" id="evpc-card" data-evpc-card>
+  <article class="evpc-card evpc-card--charging" id="evpc-card" data-evpc-card>
     <script type="application/json" class="evpc-config">{"company": "Evpower", "fullName": "Ahmed Kemal", "designation": "Founder \u0026 CEO", "phone": "+251911049916", "whatsapp": "+971563558395", "tollFree": "8890", "email": "ahmed@evpower.et", "website": "https://evpower.et", "address": "Addis Ababa - Ethiopia", "cardUrl": "", "vcard": "BEGIN:VCARD\r\nVERSION:3.0\r\nN:Kemal;Ahmed;;;\r\nFN:Ahmed Kemal\r\nORG:Evpower\r\nTITLE:Founder \u0026 CEO\r\nTEL;TYPE=WORK,VOICE:+251911049916\r\nTEL;TYPE=WORK,VOICE:8890\r\nitem1.TEL;TYPE=CELL:+971563558395\r\nitem1.X-ABLabel:WhatsApp\r\nEMAIL;TYPE=WORK:ahmed@evpower.et\r\nURL:https://evpower.et\r\nADR;TYPE=WORK:;;;Addis Ababa;;;Ethiopia\r\nNOTE:WhatsApp: https://wa.me/971563558395\r\nEND:VCARD\r\n", "downloadName": "evpower-ahmed-kemal.vcf", "allowLocationShare": true, "parentAppScope": "", "offlineApp": true}</script>
     <header class="evpc-header">
       <a class="evpc-brand" href="https://evpower.et" aria-label="Visit Evpower website">
@@ -161,138 +161,100 @@
     </div>
 
     <aside id="evpc-visual-panel" class="evpc-aside evpc-aside--charging" aria-label="EV charging animation">
-      <div class="evpc-aside__content evpc-charging-panel" data-ev-scene data-phase="still" data-time="0" data-playing="false">
-  <p class="evpc-eyebrow">EVPOWER / ELECTRIC MOBILITY</p>
-  <h2>Powering every journey.</h2>
-  <p class="evpc-scene-intro">Arrive. Connect. Go further.</p>
+      <div class="evpc-aside__content evpc-charging-panel" data-ev-scene data-phase="still" data-time="0" data-playing="false" data-wheel-radius="36.3">
+  <div class="evpc-scene-heading">
+    <p class="evpc-eyebrow">EVPOWER / ELECTRIC MOBILITY</p>
+    <h2>Every charge.<br>A new journey.</h2>
+    <p class="evpc-scene-intro">Arrive. Recharge. Go further.</p>
+  </div>
 
   <figure class="evpc-scene-stage" aria-label="Electric vehicle charging illustration">
-    <svg class="evpc-scene-svg" viewBox="0 0 520 380" role="img" aria-labelledby="evscene-title evscene-description">
-      <title id="evscene-title">A quieter kind of energy</title>
-      <desc id="evscene-description">An electric sedan arrives, connects to an Evpower charger, charges, disconnects and drives away.</desc>
+    <div class="evpc-scene-asset-note" aria-hidden="true"><svg viewBox="0 0 24 24" width="34" height="34" fill="none"><path d="m13 2-9 12h7l-1 8 10-12h-7Z" fill="currentColor"/></svg><span>Powering your journey</span></div>
+    <svg class="evpc-scene-svg" viewBox="0 0 640 420" role="img" aria-labelledby="evscene-title evscene-description">
+      <title id="evscene-title">The energy to move you forward</title>
+      <desc id="evscene-description">A silver electric sedan arrives at a softly lit Evpower charging station, connects, charges and continues its journey.</desc>
       <defs>
-        <linearGradient id="evscene-floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#eef8ff"/></linearGradient>
-        <radialGradient id="evscene-halo"><stop stop-color="#ccefff" stop-opacity=".7"/><stop offset="1" stop-color="#eaf7ff" stop-opacity="0"/></radialGradient>
-        <linearGradient id="evscene-body" x1=".15" y1="0" x2=".75" y2="1"><stop stop-color="#517ba3"/><stop offset=".19" stop-color="#315a83"/><stop offset=".46" stop-color="#163b65"/><stop offset=".8" stop-color="#0c2544"/><stop offset="1" stop-color="#071a33"/></linearGradient>
-        <linearGradient id="evscene-roof" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#9bb9d5"/><stop offset=".28" stop-color="#4e7398"/><stop offset="1" stop-color="#193f67"/></linearGradient>
-        <linearGradient id="evscene-glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d2e8f7"/><stop offset=".3" stop-color="#62859f"/><stop offset=".5" stop-color="#23425e"/><stop offset="1" stop-color="#10283e"/></linearGradient>
-        <linearGradient id="evscene-glass-front" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#a6c6dd"/><stop offset=".45" stop-color="#46687f"/><stop offset="1" stop-color="#193448"/></linearGradient>
-        <linearGradient id="evscene-side-shine" x1="0" y1="0" x2=".2" y2="1"><stop stop-color="#d9edfc" stop-opacity=".65"/><stop offset=".5" stop-color="#8ab7df" stop-opacity=".12"/><stop offset="1" stop-color="#a6d1ed" stop-opacity="0"/></linearGradient>
-        <linearGradient id="evscene-metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f3f8ff"/><stop offset=".38" stop-color="#a9bacd"/><stop offset=".56" stop-color="#eef5fc"/><stop offset="1" stop-color="#6c829c"/></linearGradient>
-        <radialGradient id="evscene-tire"><stop offset=".6" stop-color="#263548"/><stop offset=".82" stop-color="#0b1623"/><stop offset="1" stop-color="#182331"/></radialGradient>
-        <linearGradient id="evscene-rim" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8e4f0"/><stop offset=".4" stop-color="#73889e"/><stop offset="1" stop-color="#d1dfed"/></linearGradient>
-        <linearGradient id="evscene-charger" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#d4e0ec"/><stop offset=".17" stop-color="#fff"/><stop offset=".72" stop-color="#f6faff"/><stop offset="1" stop-color="#c8d8e8"/></linearGradient>
-        <linearGradient id="evscene-charger-side" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#bdd0e1"/><stop offset="1" stop-color="#7f9bb5"/></linearGradient>
-        <linearGradient id="evscene-screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#1e4366"/><stop offset="1" stop-color="#081e34"/></linearGradient>
-        <linearGradient id="evscene-energy-gradient" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#0754de"/><stop offset="1" stop-color="#00cde8"/></linearGradient>
-        <linearGradient id="evscene-headlight" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#bfeeff" stop-opacity=".38"/><stop offset="1" stop-color="#e9f9ff" stop-opacity="0"/></linearGradient>
-        <filter id="evscene-ground-soft" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="7"/></filter>
-        <filter id="evscene-led-soft" x="-120%" y="-120%" width="340%" height="340%"><feGaussianBlur stdDeviation="2"/></filter>
+        <linearGradient id="evscene-studio" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#0c2944"/><stop offset=".53" stop-color="#0b223b"/><stop offset="1" stop-color="#06172b"/></linearGradient>
+        <radialGradient id="evscene-studio-halo"><stop stop-color="#19506b" stop-opacity=".62"/><stop offset=".58" stop-color="#153c58" stop-opacity=".24"/><stop offset="1" stop-color="#0b223b" stop-opacity="0"/></radialGradient>
+        <linearGradient id="evscene-floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0e2b43"/><stop offset=".46" stop-color="#0a2036"/><stop offset="1" stop-color="#07192c"/></linearGradient>
+        <radialGradient id="evscene-pad"><stop stop-color="#3bd7ef" stop-opacity=".27"/><stop offset=".55" stop-color="#1ab8d7" stop-opacity=".12"/><stop offset="1" stop-color="#1ab8d7" stop-opacity="0"/></radialGradient>
+        <linearGradient id="evscene-cable-shine" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7e9ab2"/><stop offset=".35" stop-color="#273f54"/><stop offset="1" stop-color="#0a1420"/></linearGradient>
+        <linearGradient id="evscene-plug-shell" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#526a7f"/><stop offset=".24" stop-color="#253e54"/><stop offset=".65" stop-color="#122737"/><stop offset="1" stop-color="#07131e"/></linearGradient>
+        <linearGradient id="evscene-metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".38" stop-color="#bbc9d6"/><stop offset=".58" stop-color="#edf3f8"/><stop offset="1" stop-color="#6e859a"/></linearGradient>
+        <linearGradient id="evscene-headlight" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#c3edff" stop-opacity=".34"/><stop offset="1" stop-color="#c3edff" stop-opacity="0"/></linearGradient>
+        <filter id="evscene-floor-soft" x="-25%" y="-100%" width="150%" height="300%"><feGaussianBlur stdDeviation="7"/></filter>
+        <filter id="evscene-led-soft" x="-100%" y="-200%" width="300%" height="500%"><feGaussianBlur stdDeviation="3"/></filter>
+        <filter id="evscene-port-soft" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2"/></filter>
+        <filter id="evscene-connector-shadow" x="-70%" y="-70%" width="240%" height="240%"><feDropShadow dx="0" dy="1.4" stdDeviation="1.2" flood-color="#000" flood-opacity=".4"/></filter>
+        <clipPath id="evscene-rear-rim"><circle cx="414" cy="594" r="114"/></clipPath>
+        <clipPath id="evscene-front-rim"><circle cx="1454" cy="594" r="114"/></clipPath>
+        <image id="evscene-car-texture" width="1774" height="887" href="assets/ev-car-realistic.png"/>
       </defs>
 
-      <rect width="520" height="380" fill="url(#evscene-floor)"/>
-      <ellipse cx="286" cy="248" rx="236" ry="130" fill="url(#evscene-halo)"/>
-      <path d="M0 309H520" fill="none" stroke="#dcebf5" stroke-width="1"/>
-      <path d="M7 327H512M55 348H480" fill="none" stroke="#edf4fa" stroke-width="1"/>
-      <path d="m25 380 106-71m79 71 40-71m121 71-29-71m160 71-94-71" fill="none" stroke="#e9f2f9" stroke-width="1"/>
-      <ellipse cx="322" cy="299" rx="169" ry="31" fill="#d8ecfb" fill-opacity=".27" stroke="#d4e9f8" stroke-width="1"/>
-      <path d="M197 313h250" fill="none" stroke="#c3e9fb" stroke-width="1" stroke-linecap="round"/>
+      <rect width="640" height="420" fill="url(#evscene-studio)"/>
+      <ellipse cx="363" cy="203" rx="315" ry="206" fill="url(#evscene-studio-halo)"/>
+      <path d="M486 0 640 0V293L570 223Z" fill="#2b6b88" opacity=".035"/>
+      <path d="M0 342H640V420H0Z" fill="url(#evscene-floor)"/>
+      <path d="M0 342H640" stroke="#356079" stroke-opacity=".32" stroke-width=".8"/>
+      <ellipse cx="379" cy="351" rx="243" ry="35" fill="#020b13" opacity=".34" filter="url(#evscene-floor-soft)"/>
+      <ellipse cx="125" cy="344" rx="46" ry="8" fill="#020b13" opacity=".48" filter="url(#evscene-floor-soft)"/>
+      <g data-ev-pad-glow opacity=".32">
+        <ellipse cx="377" cy="352" rx="235" ry="38" fill="url(#evscene-pad)"/>
+        <path d="M213 352h35m309 0h35" fill="none" stroke="#42cde6" stroke-width="1.1" stroke-linecap="round" opacity=".6"/>
+      </g>
+      <path d="M73 378c126-15 402-15 519 0" fill="none" stroke="#2b4e66" stroke-width=".6" opacity=".26"/>
 
       <g class="evpc-scene-charger">
-        <ellipse cx="106" cy="299" rx="43" ry="9" fill="#7696b3" opacity=".19" filter="url(#evscene-ground-soft)"/>
-        <path d="m68 288 58-6 20 10-59 8Z" fill="#c2d3e3"/>
-        <path d="M87 300v4l59-9v-3Z" fill="#96adc3"/>
-        <path d="m126 105 15 9v170l-15 9Z" fill="url(#evscene-charger-side)" stroke="#a8bfd3" stroke-width=".8"/>
-        <path d="M82 102h35q10 0 10 11v171q0 7-8 8H80q-8 0-8-8V113q0-11 10-11Z" fill="url(#evscene-charger)" stroke="#bed2e4" stroke-width="1"/>
-        <path d="M83 103h34q8 0 9 8H73q1-8 10-8Z" fill="#e6f5ff"/>
-        <path d="M77 109h44" stroke="url(#evscene-energy-gradient)" stroke-width="2.5" stroke-linecap="round"/>
-        <rect x="80" y="120" width="38" height="69" rx="7" fill="#142d45"/>
-        <rect x="84" y="125" width="30" height="45" rx="4" fill="url(#evscene-screen)" stroke="#537893" stroke-opacity=".45" stroke-width=".7"/>
-        <path d="m101 132-10 15h7l-2 13 11-18h-8Z" fill="#5ddff2"/>
-        <path d="M91 178h17" stroke="#63cde5" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="116" cy="181" r="7" fill="#0b1f34" stroke="#405f79" stroke-width="1.2"/>
-        <circle cx="116" cy="181" r="3.3" fill="#7592a9"/>
-        <path d="M77 124v132" fill="none" stroke="#00cde8" stroke-width="2.4" opacity=".4" data-ev-charger-glow/>
-        <path d="M131 127v131" fill="none" stroke="#ecfaff" stroke-width="1" opacity=".7"/>
-        <text x="81" y="211" fill="#5d7890" font-family="Arial,sans-serif" font-size="5.9" font-weight="700" letter-spacing=".8">EVPOWER</text>
-        <path d="M83 267h31m-31 4h31m-31 4h31" stroke="#a5bdcf" stroke-width="1"/>
-        <circle cx="99" cy="242" r="2" fill="#00b8d8"/>
+        <image x="54" y="155" width="145" height="193.333333" href="assets/ev-charger-realistic.png"/>
+        <g data-ev-charger-glow opacity=".5">
+          <ellipse cx="125" cy="343" rx="35" ry="5" fill="#43e0f4" opacity=".13" filter="url(#evscene-led-soft)"/>
+          <rect x="112" y="190" width="25" height="19" rx="3" fill="#52dff4" opacity=".08" filter="url(#evscene-led-soft)"/>
+          <path d="M115 172h16" stroke="#a1f4ff" stroke-width="1.1" stroke-linecap="round" opacity=".6"/>
+        </g>
+        <ellipse cx="151" cy="291" rx="3.2" ry="4.6" fill="#06111b" stroke="#455e73" stroke-width=".75"/>
+        <path d="m151 290 .5 5" stroke="#1c2e3f" stroke-width="3.5" stroke-linecap="round"/>
       </g>
 
       <g data-ev-car>
-        <ellipse cx="322" cy="292" rx="159" ry="12" fill="#52718d" opacity=".23" filter="url(#evscene-ground-soft)"/>
-        <ellipse cx="225" cy="295" rx="35" ry="4" fill="#36516a" opacity=".21"/>
-        <ellipse cx="421" cy="295" rx="35" ry="4" fill="#36516a" opacity=".21"/>
-
-        <path d="M174 216q12-10 29-14l34-10 28-23q9-8 26-9l62-1q19 0 32 13l34 29 40 10q17 4 22 23l-2 19q-2 9-15 12l-12 1a32 32 0 0 0-64 0H257a32 32 0 0 0-64 0l-15-4q-13-4-13-17v-13q0-9 9-16Z" fill="url(#evscene-body)" stroke="#10304f" stroke-width="1.2"/>
-        <path d="m203 202 34-10 28-23q9-8 26-9l62-1q19 0 32 13l34 29-24 3-149 2Z" fill="url(#evscene-roof)"/>
-        <path d="m245 197 27-24q6-5 18-5h62q14 0 25 10l28 23-163 1Z" fill="#102a43" stroke="#87a7c4" stroke-width="1.3"/>
-        <path d="m250 197 24-22q6-5 16-5h4l-3 29Z" fill="url(#evscene-glass)"/>
-        <path d="m301 170 45 1 13 28h-61Z" fill="url(#evscene-glass)"/>
-        <path d="m354 172 16 4 29 23h-33Z" fill="url(#evscene-glass-front)"/>
-        <path d="m257 192 22-17h10m18 0h35" fill="none" stroke="#d3ebfa" stroke-width="1.2" stroke-linecap="round" opacity=".42"/>
-        <path d="m360 178 27 18" stroke="#bfd9ec" stroke-width="1.2" opacity=".5"/>
-        <path d="M294 169v31m55-28 13 28" fill="none" stroke="#142c43" stroke-width="4"/>
-        <path d="M237 203h172" stroke="#96b8d4" stroke-width="1.4" opacity=".75"/>
-        <path d="M179 218q42-12 75-11l151-1 45 13-46 4-165-2-64 7Z" fill="url(#evscene-side-shine)"/>
-        <path d="m414 204 41 10q12 4 18 13l-50-5-18-15Z" fill="#40668b" opacity=".75"/>
-        <path d="m419 207 37 10" stroke="#9dbdd8" stroke-width="1.2" opacity=".6"/>
-        <path d="M176 233q12-4 20-5m65-1h124m69 2 21 6" fill="none" stroke="#5181ab" stroke-width="1" opacity=".65"/>
-        <path d="m293 208-2 45m76-45 11 45" stroke="#061b32" stroke-width="1.1" opacity=".85"/>
-        <path d="M259 253h123" stroke="#5b87b0" stroke-width="1.2" opacity=".55"/>
-        <path d="M257 260h128" stroke="#07192c" stroke-width="4" stroke-linecap="round"/>
-        <path d="M197 264a28 28 0 0 1 56 0m140 0a28 28 0 0 1 56 0" fill="none" stroke="#83a6c7" stroke-width="1.4" opacity=".58"/>
-        <rect x="273" y="216" width="13" height="3.6" rx="1.8" fill="#0c233b" stroke="#7d9dbb" stroke-width=".5"/>
-        <rect x="345" y="216" width="13" height="3.6" rx="1.8" fill="#0c233b" stroke="#7d9dbb" stroke-width=".5"/>
-        <path d="m397 197 13 3 4 8-15-2-5-4Z" fill="#163650" stroke="#82a7c3" stroke-width=".8"/>
-        <path d="m400 198 9 3" stroke="#bddeef" stroke-width=".7"/>
-        <path d="m172 222 15-1 2 5-18 1Z" fill="#e9a7a9"/>
-        <path d="m457 223 16 5 2 5-22-3Z" fill="#e1f7ff"/>
-        <path d="m456 225 16 5" stroke="#a5e5ff" stroke-width="1.4"/>
-        <path d="m466 245 12-1-1 6-14 1Z" fill="#07182a"/>
-        <path d="M466 246h9m-10 3h9" stroke="#42617f" stroke-width=".8"/>
-        <path d="M168 245h15" stroke="#102237" stroke-width="3"/>
-        <rect x="178" y="220" width="12" height="8" rx="2.5" fill="#0a233a" stroke="#93b8d2" stroke-width=".8"/>
-        <circle cx="184" cy="224" r="10" fill="#00cde8" opacity=".16" filter="url(#evscene-led-soft)" data-ev-port-glow/>
-
-        <g data-ev-wheel data-cx="225" data-cy="266">
-          <circle cx="225" cy="266" r="29.5" fill="url(#evscene-tire)"/>
-          <circle cx="225" cy="266" r="25.5" fill="none" stroke="#425063" stroke-width=".8"/>
-          <circle cx="225" cy="266" r="22" fill="url(#evscene-rim)"/>
-          <circle cx="225" cy="266" r="17.7" fill="#263b51"/>
-          <g transform="translate(225 266)" fill="#c6d7e7" stroke="#edf7ff" stroke-width=".5">
-            <path d="m-3-5 1-15 5 1 1 14-4 6Z"/><path d="m-3-5 1-15 5 1 1 14-4 6Z" transform="rotate(72)"/><path d="m-3-5 1-15 5 1 1 14-4 6Z" transform="rotate(144)"/><path d="m-3-5 1-15 5 1 1 14-4 6Z" transform="rotate(216)"/><path d="m-3-5 1-15 5 1 1 14-4 6Z" transform="rotate(288)"/>
+        <g transform="translate(160 147) scale(.264938)">
+          <use href="#evscene-car-texture"/>
+          <g clip-path="url(#evscene-rear-rim)">
+            <g data-ev-wheel data-cx="414" data-cy="594"><use href="#evscene-car-texture"/></g>
           </g>
-          <circle cx="225" cy="266" r="5" fill="#344c64" stroke="#a9c3db" stroke-width="1"/><circle cx="225" cy="266" r="1.7" fill="#67d2e7"/>
-        </g>
-        <g data-ev-wheel data-cx="421" data-cy="266">
-          <circle cx="421" cy="266" r="29.5" fill="url(#evscene-tire)"/>
-          <circle cx="421" cy="266" r="25.5" fill="none" stroke="#425063" stroke-width=".8"/>
-          <circle cx="421" cy="266" r="22" fill="url(#evscene-rim)"/>
-          <circle cx="421" cy="266" r="17.7" fill="#263b51"/>
-          <g transform="translate(421 266)" fill="#c6d7e7" stroke="#edf7ff" stroke-width=".5">
-            <path d="m-3-5 1-15 5 1 1 14-4 6Z"/><path d="m-3-5 1-15 5 1 1 14-4 6Z" transform="rotate(72)"/><path d="m-3-5 1-15 5 1 1 14-4 6Z" transform="rotate(144)"/><path d="m-3-5 1-15 5 1 1 14-4 6Z" transform="rotate(216)"/><path d="m-3-5 1-15 5 1 1 14-4 6Z" transform="rotate(288)"/>
+          <g clip-path="url(#evscene-front-rim)">
+            <g data-ev-wheel data-cx="1454" data-cy="594"><use href="#evscene-car-texture"/></g>
           </g>
-          <circle cx="421" cy="266" r="5" fill="#344c64" stroke="#a9c3db" stroke-width="1"/><circle cx="421" cy="266" r="1.7" fill="#67d2e7"/>
         </g>
-        <g data-ev-lights opacity=".35"><path d="m477 229 103 15v38l-104-38Z" fill="url(#evscene-headlight)"/></g>
+        <g data-ev-port-cover opacity="1">
+          <rect x="231" y="246" width="18" height="12" rx="3.4" fill="#091a28" stroke="#758ca1" stroke-width=".8"/>
+          <ellipse cx="240" cy="252" rx="5.1" ry="4" fill="#030c13" stroke="#385367" stroke-width=".7"/>
+          <path d="m230 242 1-7 18 1-1 9Z" fill="url(#evscene-metal)" stroke="#c9d5df" stroke-width=".55"/>
+          <path d="m232 237 14 1" stroke="#f6fbff" stroke-width=".8" opacity=".9"/>
+        </g>
+        <circle cx="240" cy="252" r="10" fill="#3ee9f3" opacity=".23" filter="url(#evscene-port-soft)" data-ev-port-glow/>
+        <g data-ev-brake-light opacity="0">
+          <path d="m180 248 35 1" stroke="#ff787b" stroke-width="2.3" stroke-linecap="round"/>
+          <ellipse cx="198" cy="250" rx="23" ry="3" fill="#ff5f66" opacity=".65" filter="url(#evscene-led-soft)"/>
+        </g>
+        <g data-ev-lights opacity=".2"><path d="m610 264 87 14v28l-85-32Z" fill="url(#evscene-headlight)"/></g>
       </g>
 
-      <path data-ev-cable d="M115 188C104 281 158 294 167 231" fill="none" stroke="#102a43" stroke-width="5.5" stroke-linecap="round"/>
-      <path data-ev-energy d="M115 188C104 281 158 294 167 231" fill="none" stroke="#46d9ec" stroke-width="1.8" stroke-dasharray="2 13" stroke-linecap="round" opacity=".8"/>
-      <g data-ev-plug transform="translate(184 224)">
-        <path d="m-17-4 9-1 4 3-1 7-5 2-3 8-6-3 3-10Z" fill="#16334c" stroke="#718ea7" stroke-width=".8"/>
-        <path d="M-8-4h5v8h-5Z" fill="#83d9ea"/>
-        <path d="M-3-3h4v6h-4Z" fill="url(#evscene-metal)"/>
-        <path d="m-17 7-3 1" stroke="#102a43" stroke-width="4" stroke-linecap="round"/>
+      <path data-ev-cable d="M151 291C160 339 211 338 223 259" fill="none" stroke="url(#evscene-cable-shine)" stroke-width="5.8" stroke-linecap="round"/>
+      <path data-ev-energy d="M151 291C160 339 211 338 223 259" fill="none" stroke="#6ae5f2" stroke-width="1.05" stroke-dasharray="1 15" stroke-linecap="round" opacity=".55"/>
+      <g data-ev-plug transform="translate(240 252) rotate(360)" filter="url(#evscene-connector-shadow)">
+        <path d="m-19-5 10-1 6 3-1 9-6 1-4 9-6-3 4-11Z" fill="url(#evscene-plug-shell)" stroke="#6a8296" stroke-width=".65"/>
+        <path d="m-15 0 5-1 1 4-3 1-3 7-2-1Z" fill="#0a1723"/>
+        <path d="M-8-4h4v9h-4Z" fill="#4fc7d7"/>
+        <path d="M-4-3h4.8v6H-4Z" fill="url(#evscene-metal)"/>
+        <path d="m-18 7-2 2" stroke="#132537" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="m-17-4 7-1" stroke="#a0b7c9" stroke-width=".7" opacity=".8"/>
       </g>
     </svg>
+    <figcaption class="evpc-scene-meter" aria-label="Illustrated charging status">
+      <span class="evpc-scene-status"><span class="evpc-scene-status__dot" aria-hidden="true"></span><span data-ev-status>Charging</span></span>
+      <span class="evpc-scene-battery"><span class="evpc-scene-battery__case" aria-hidden="true"><span class="evpc-scene-battery__fill" data-ev-battery style="transform:scaleX(.74)"></span></span><span data-ev-percent>74%</span></span>
+    </figcaption>
   </figure>
-
-  <div class="evpc-scene-meter" aria-label="Illustrated charging status">
-    <span class="evpc-scene-status"><span class="evpc-scene-status__dot" aria-hidden="true"></span><span data-ev-status>Charging</span></span>
-    <span class="evpc-scene-battery"><span class="evpc-scene-battery__case" aria-hidden="true"><span class="evpc-scene-battery__fill" data-ev-battery style="transform:scaleX(.74)"></span></span><span data-ev-percent>74%</span></span>
-  </div>
   <div class="evpc-scene-tools">
     <a class="evpc-qr-download" href="assets/evpower-contact-qr.png" download="evpower-contact-qr.png" data-evpc-download-qr><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 17v4h14v-4"/></svg>Download QR</a>
     <button type="button" class="evpc-scene-toggle" data-ev-toggle hidden>Pause animation</button>
