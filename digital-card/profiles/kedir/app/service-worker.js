@@ -1,7 +1,7 @@
 /* Each card owns only its exact page and precached assets. */
 const SCOPE=new URL(self.registration.scope);
 const PREFIX='evpower-card-v2:'+encodeURIComponent(SCOPE.href)+':';
-const CACHE=PREFIX+'75e33bf491dfd6';
+const CACHE=PREFIX+'2c7006be4b185c';
 const FILES=["app.webmanifest", "assets/card.css", "assets/card.js", "assets/charging-scene.css", "assets/charging-scene.js", "assets/emblem.png", "assets/ev-car-realistic.png", "assets/ev-charger-realistic.png", "assets/evpower-contact-qr.png", "assets/evpower-contact-qr.svg", "assets/evpower-kedir-kemal.vcf", "assets/icon-180.png", "assets/icon-192.png", "assets/icon-512.png", "assets/logo.png", "assets/preloader.css", "index.html"];
 const URLs=FILES.map(path=>new URL(path,self.registration.scope).href);
 const ALLOWED=new Set(URLs);

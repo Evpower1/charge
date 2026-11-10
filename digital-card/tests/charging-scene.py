@@ -84,6 +84,7 @@ async def scene_state(page):
         return {
             phase:scene.getAttribute('data-phase'),time:parseFloat(scene.getAttribute('data-time')),
             car:matrix(get('[data-ev-car]')),plug:matrix(get('[data-ev-plug]')),
+            wheelAngles:Array.from(scene.querySelectorAll('[data-ev-wheel]'), wheel=>wheel.transform.baseVal.numberOfItems?wheel.transform.baseVal.getItem(0).angle:0),
             cable:get('[data-ev-cable]').getAttribute('d'),energy:get('[data-ev-energy]').getAttribute('d'),
             flow:parseFloat(getComputedStyle(get('[data-ev-energy]')).opacity),
             dash:get('[data-ev-energy]').getAttribute('stroke-dashoffset'),
@@ -162,13 +163,18 @@ async def timeline_and_controls(browser, url, expected, key):
     await expect(scene).to_have_attribute('data-playing', 'true')
     waiting = await advance_to(page, .35, 'waiting')
     at_plug(waiting, 147, 235)
+    assert waiting['car'][4] > 640, 'Reverse approach must start to the right of the charger'
     earlier_arrival = await advance_to(page, 1.7, 'arriving')
     arrival = await advance_to(page, 2.7, 'arriving')
-    assert abs(earlier_arrival['car'][4]) > abs(arrival['car'][4]) + 5
-    assert abs(arrival['car'][4]) > 2 and arrival['percent'] == 24
+    assert earlier_arrival['car'][4] > arrival['car'][4] + 5
+    assert arrival['car'][4] > 2 and arrival['percent'] == 24
+    assert all(later < earlier for earlier, later in zip(earlier_arrival['wheelAngles'], arrival['wheelAngles'])), 'Wheels must roll backwards while reversing into the bay'
     assert arrival['flow'] == 0
     await scene.screenshot(path=str(picture_path(key, 'arrival')))
+    await advance_to(page, 3.5, 'arriving')
+    await scene.screenshot(path=str(picture_path(key, 'reverse-parking')))
     parked = await advance_to(page, 4.75, 'parked')
+    await scene.screenshot(path=str(picture_path(key, 'docked')))
     at_plug(parked, 147, 235)
     early_connect = await advance_to(page, 5.3, 'connecting')
     late_connect = await advance_to(page, 7.05, 'connecting')
@@ -196,8 +202,11 @@ async def timeline_and_controls(browser, url, expected, key):
     departed = await advance_to(page, 17.45, 'departing')
     at_plug(departed, 147, 235)
     assert departed['percent'] == 100 and departed['flow'] == 0
+    assert departed['cable'] == parked['cable'], 'Cable must return to its tucked docked shape before departure'
+    await scene.screenshot(path=str(picture_path(key, 'departure-start')))
     departure = await advance_to(page, 18.9, 'departing')
-    assert abs(departure['car'][4]) > 2 and departure['car'] != complete['car']
+    assert departure['car'][4] > 2 and departure['car'] != complete['car']
+    assert all(later > earlier for earlier, later in zip(departed['wheelAngles'], departure['wheelAngles'])), 'Wheels must roll forwards when driving away'
     assert departure['plug'] == departed['plug'] and departure['cable'] == departed['cable']
     await scene.screenshot(path=str(picture_path(key, 'departure')))
     end = await advance_to(page, 21.15, 'waiting')
@@ -205,7 +214,7 @@ async def timeline_and_controls(browser, url, expected, key):
     repeated = await advance_to(page, 2.7, 'arriving')
     assert repeated['percent'] == 24 and abs(repeated['car'][4] - arrival['car'][4]) < 10
     assert repeated['plug'] == arrival['plug'] and repeated['cable'] == arrival['cable']
-    print(f'PASS {key}: textured arrival/parking, stationary connection/charging, 24→100%, unplug before departure and repeatable 21.6s loop', flush=True)
+    print(f'PASS {key}: reverse parking with matching wheel rotation, stationary connection/charging, 24→100%, unplug before departure and repeatable 21.6s loop', flush=True)
 
     await advance_to(page, 9.5, 'charging')
     toggle = page.locator('[data-ev-toggle]')
@@ -244,6 +253,61 @@ async def timeline_and_controls(browser, url, expected, key):
     assert not errors, errors
     await context.close()
     print(f'PASS {key}: manual pause, QR modal and hidden-page states freeze the physical frame and resume without time jumps', flush=True)
+
+
+async def cable_clearance(browser, url, key):
+    """Measure the actual rendered cable against both tire discs on every RAF."""
+    context, page, errors = await fresh(browser, url)
+    await page.clock.run_for(1500)
+    await page.evaluate("""()=>{
+        const scene=document.querySelector('[data-ev-scene]');
+        const svg=scene.querySelector('.evpc-scene-svg');
+        const cable=scene.querySelector('[data-ev-cable]');
+        const wheels=Array.from(scene.querySelectorAll('[data-ev-wheel]'));
+        const radius=Number(scene.getAttribute('data-wheel-radius'));
+        const stroke=parseFloat(getComputedStyle(cable).strokeWidth)/2;
+        const result=window.cableClearance={frames:0,min:Infinity,failures:[],phases:{},moving:0};
+        let oldPath='',points=[];
+        function sample(){
+            const phase=scene.getAttribute('data-phase');
+            const time=Number(scene.getAttribute('data-time'));
+            const toRoot=svg.getScreenCTM().inverse();
+            const path=cable.getAttribute('d');
+            if(path!==oldPath){
+                oldPath=path;points=[];
+                const matrix=toRoot.multiply(cable.getScreenCTM());
+                const length=cable.getTotalLength();
+                const count=Math.ceil(length/2);
+                for(let i=0;i<=count;i++)points.push(cable.getPointAtLength(length*i/count).matrixTransform(matrix));
+            }
+            result.frames++;result.phases[phase]=(result.phases[phase]||0)+1;
+            for(const wheel of wheels){
+                const matrix=toRoot.multiply(wheel.getScreenCTM());
+                const center=new DOMPoint(Number(wheel.getAttribute('data-cx')),Number(wheel.getAttribute('data-cy'))).matrixTransform(matrix);
+                for(const point of points){
+                    const gap=Math.hypot(center.x-point.x,center.y-point.y)-radius-stroke;
+                    result.min=Math.min(result.min,gap);
+                    if(gap<4 && result.failures.length<5)result.failures.push({phase,time,gap,center:{x:center.x,y:center.y},point:{x:point.x,y:point.y}});
+                }
+            }
+            if(phase==='arriving'||phase==='departing'){
+                result.moving++;
+                if(Number(scene.getAttribute('data-connection'))!==0 && result.failures.length<5)result.failures.push({phase,time,error:'Car moved while connected'});
+            }
+        }
+        window.cableClearanceObserver=new MutationObserver(sample);
+        window.cableClearanceObserver.observe(scene,{attributes:true,attributeFilter:['data-time']});
+        sample();
+    }""")
+    await page.clock.run_for(21700)
+    result = await page.evaluate('window.cableClearance')
+    await page.evaluate('window.cableClearanceObserver.disconnect()')
+    assert result['frames'] > 1000 and result['moving'] > 300, result
+    assert set(['waiting','arriving','parked','connecting','charging','complete','disconnecting','departing']) <= set(result['phases']), result
+    assert not result['failures'] and result['min'] > 4, result
+    assert not errors, errors
+    await context.close()
+    print(f"PASS {key}: actual SVG cable clears both tires across {result['frames']} rendered frames (minimum edge gap {result['min']:.1f}px)", flush=True)
 
 
 async def offscreen_and_mobile(browser, url, key):
@@ -424,6 +488,7 @@ async def main(base):
         try:
             for key, _profile, path in PROFILES:
                 await timeline_and_controls(browser, base + path, contacts[key], key)
+                await cable_clearance(browser, base + path, key)
                 await offscreen_and_mobile(browser, base + path, key)
                 await reduced_no_script_and_print(browser, base + path, contacts[key], key)
                 await standalone(browser, base + '/standalone/' + key + '.html', contacts[key], key)
