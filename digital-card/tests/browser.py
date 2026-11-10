@@ -28,6 +28,8 @@ def decode(image):
 
 async def contact_actions(page):
     await expect(page.locator('.evpc-details')).to_have_count(0)
+    await expect(page.locator('[data-evpc-save],[data-ev-toggle]')).to_have_count(0)
+    await expect(page.locator('[data-evpc-offline-state]')).to_be_hidden()
     actions=page.locator('.evpc-actions a')
     await expect(actions).to_have_count(6)
     labels=[text.strip() for text in await actions.all_text_contents()]
@@ -98,18 +100,18 @@ async def main(base):
         await page.get_by_role('link',name='Show my QR',exact=True).click()
         decode(await page.locator('[data-evpc-modal-code]').screenshot())
         await page.keyboard.press('Escape')
-        async with page.expect_download() as pending:
-            await page.get_by_role('link',name='Save contact',exact=True).click()
-        download=await pending.value
-        target=OUTPUT/download.suggested_filename
-        await download.save_as(target)
-        assert target.read_bytes()==VCARD
+        cached_contact=await page.evaluate('''async()=>{
+            const response=await fetch('assets/evpower-ahmed-kemal.vcf');
+            if(!response.ok)throw new Error('Offline contact asset unavailable');
+            return Array.from(new Uint8Array(await response.arrayBuffer()));
+        }''')
+        assert bytes(cached_contact)==VCARD
         assert b'ahmed@evpower.et' in VCARD and b'+971563558395' in VCARD and b'+251911049916' in VCARD
         async with page.expect_download() as pending:
             await page.get_by_role('link',name='Download QR',exact=True).click()
         await (await pending.value).save_as(OUTPUT/'downloaded-qr.png')
         decode((OUTPUT/'downloaded-qr.png').read_bytes())
-        print('PASS: app reopens offline, QR still decodes and contact/QR files download without internet')
+        print('PASS: app reopens offline, QR still decodes, contact asset stays cached and QR downloads without internet')
         await context.set_offline(False)
 
         await page.get_by_role('button',name='Add to phone',exact=True).click()

@@ -68,9 +68,8 @@ def profile_data():
 
 
 async def resources(context, page, url, expected):
-    save = page.locator('[data-evpc-save]')
-    href = await save.get_attribute('href')
-    assert href and href.endswith('.vcf') and not href.startswith(('blob:', 'data:', 'javascript:'))
+    await expect(page.locator('[data-evpc-save]')).to_have_count(0)
+    href = 'assets/' + next(DIST.glob('*.vcf')).name
     response = await context.request.get(urljoin(url, href))
     assert response.ok and await response.body() == expected
     qr = page.locator('[data-evpc-download-qr]')
@@ -92,6 +91,8 @@ async def show_qr(page, expected):
 
 async def compact_actions(page, data):
     await expect(page.locator('.evpc-details')).to_have_count(0)
+    await expect(page.locator('[data-evpc-save],[data-ev-toggle]')).to_have_count(0)
+    await expect(page.locator('[data-evpc-offline-state]')).to_be_hidden()
     actions = page.locator('.evpc-actions a')
     await expect(actions).to_have_count(6)
     labels = [text.strip() for text in await actions.all_text_contents()]
@@ -214,13 +215,14 @@ async def offline_isolation(browser, root_url, child_url, data, contact):
     assert all(url.startswith(child_url) for url in child_caches[0]['urls']), 'Child worker cached outside its own folder'
 
     await context.set_offline(True)
-    for page, name, expected in [(ahmed, ahmed_name, ahmed_contact), (kedir, data['full_name'], contact)]:
+    for page, name, expected, contact_file in [(ahmed, ahmed_name, ahmed_contact, ahmed_contact_files[0].name),
+                                                (kedir, data['full_name'], contact, next(DIST.glob('*.vcf')).name)]:
         await page.reload(wait_until='domcontentloaded')
         await expect(page.locator('h1')).to_have_text(name)
         await expect(page.locator('[data-ev-scene]')).to_have_count(1)
         await show_qr(page, expected)
-        for selector, is_qr in [('[data-evpc-save]', False), ('[data-evpc-download-qr]', True)]:
-            href = await page.locator(selector).get_attribute('href')
+        qr_href = await page.locator('[data-evpc-download-qr]').get_attribute('href')
+        for href, is_qr in [('assets/' + contact_file, False), (qr_href, True)]:
             result = await page.evaluate('''async (href)=>{
                 const response=await fetch(href);
                 if(!response.ok)throw new Error('Offline resource unavailable');

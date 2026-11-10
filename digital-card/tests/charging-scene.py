@@ -217,16 +217,7 @@ async def timeline_and_controls(browser, url, expected, key):
     print(f'PASS {key}: reverse parking with matching wheel rotation, stationary connection/charging, 24→100%, unplug before departure and repeatable 21.6s loop', flush=True)
 
     await advance_to(page, 9.5, 'charging')
-    toggle = page.locator('[data-ev-toggle]')
-    await toggle.click()
-    await expect(toggle).to_have_attribute('aria-pressed', 'true')
-    paused = await scene_state(page)
-    await page.clock.run_for(1200)
-    unchanged(paused, await scene_state(page))
-    await toggle.click()
-    await expect(toggle).to_have_attribute('aria-pressed', 'false')
-    await page.clock.run_for(250)
-    assert (await scene_state(page))['time'] > paused['time'] + .15
+    await expect(page.locator('[data-ev-toggle]')).to_have_count(0)
 
     await page.locator('[data-evpc-open-qr]').click()
     await expect(page.locator('[data-evpc-qr-modal]')).to_be_visible()
@@ -252,7 +243,7 @@ async def timeline_and_controls(browser, url, expected, key):
         await expect(candidate).to_be_hidden()
     assert not errors, errors
     await context.close()
-    print(f'PASS {key}: manual pause, QR modal and hidden-page states freeze the physical frame and resume without time jumps', flush=True)
+    print(f'PASS {key}: QR modal and hidden-page states freeze the physical frame and resume without time jumps', flush=True)
 
 
 async def cable_clearance(browser, url, key):
@@ -336,7 +327,7 @@ async def offscreen_and_mobile(browser, url, key):
 
 async def reduced_no_script_and_print(browser, url, expected, key):
     context, page, errors = await fresh(browser, url, motion='reduce')
-    await expect(page.locator('[data-ev-toggle]')).to_be_hidden()
+    await expect(page.locator('[data-ev-toggle]')).to_have_count(0)
     static = await scene_state(page)
     assert static['percent'] == 74 and abs(static['car'][4]) < .1
     at_plug(static, 240, 252)
@@ -358,7 +349,7 @@ async def reduced_no_script_and_print(browser, url, expected, key):
 
     context, page, errors = await fresh(browser, url, javascript=False, clock=False)
     await scene_textures(page)
-    await expect(page.locator('[data-ev-toggle]')).to_be_hidden()
+    await expect(page.locator('[data-ev-toggle]')).to_have_count(0)
     assert (await scene_state(page))['percent'] == 74
     link = page.locator('[data-evpc-open-qr]')
     href = await link.get_attribute('href')
@@ -405,7 +396,7 @@ async def missing_texture(browser, url, expected, key):
     await expect(scene).to_have_attribute('data-ev-assets-ready', 'error', timeout=15000)
     await page.clock.run_for(1500)
     await expect(scene.locator('.evpc-scene-asset-note')).to_be_visible()
-    await expect(scene.locator('[data-ev-toggle]')).to_be_hidden()
+    await expect(scene.locator('[data-ev-toggle]')).to_have_count(0)
     before = await scene_state(page)
     await page.evaluate("""(()=>{window.sceneRafCalls=0;const original=window.requestAnimationFrame;
         window.requestAnimationFrame=function(callback){window.sceneRafCalls++;return original.call(window,callback)};})()""")
@@ -413,7 +404,7 @@ async def missing_texture(browser, url, expected, key):
     unchanged(before, await scene_state(page))
     assert await page.evaluate('window.sceneRafCalls') == 0
     await modal_qr(page, expected)
-    assert (await page.locator('[data-evpc-save]').get_attribute('href')).endswith('.vcf')
+    await expect(page.locator('[data-evpc-save]')).to_have_count(0)
     assert not errors, errors
     await context.close()
     print(f'PASS {key}: failed artwork shows its placeholder, stops RAF and leaves the genuine contact QR usable', flush=True)

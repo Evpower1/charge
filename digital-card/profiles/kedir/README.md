@@ -6,7 +6,7 @@ Contact actions use six matching outlined buttons: **Call, WhatsApp, Email, Webs
 
 The opening animation uses the approved Evpower emblem, charging pulse and connector lights. It plays briefly before the card opens, also when opening the cached app offline. Choose **Skip animation** or press Escape to open the card immediately. Reduced-motion preferences are respected.
 
-The main visual uses the same realistic EV charging scene as Ahmed's card: a silver car reverses into a bay in a brand blue/cyan studio, connects, charges, disconnects and drives forward away. The wheels stay clear of the cable, which tucks beside the station before the car moves. The synchronized 21.6-second loop can be paused and stops while the QR is open, off-screen or in a background tab. Reduced-motion preferences show a still charging pose. Local artwork is included for offline use and in the single-file download.
+The main visual uses the same realistic EV charging scene as Ahmed's card: a silver car reverses into a bay in a brand blue/cyan studio, connects, charges, disconnects and drives forward away. The wheels stay clear of the cable, which tucks beside the station before the car moves. The synchronized 21.6-second loop stops while the QR is open, off-screen or in a background tab. Reduced-motion preferences show a still charging pose. Local artwork is included for offline use and in the single-file download.
 
 **Show my QR** opens Kedir's contact QR in a dialog. Without JavaScript it opens the QR PNG; the standalone HTML includes an embedded PNG download. The contact QR remains available through **Download QR** and on printed cards.
 
@@ -25,7 +25,7 @@ The main visual uses the same realistic EV charging scene as Ahmed's card: a sil
 
 ## Use on your phone
 
-Open the card address on your phone. On iPhone use Safari → Share → Add to Home Screen. On Android use the browser's Install app / Add to Home screen option. The phone icon is labelled **Kedir Evpower**. Wait for **Ready offline**, then use **Show my QR** when meeting someone.
+Open the card address on your phone. On iPhone use Safari → Share → Add to Home Screen. On Android use the browser's Install app / Add to Home screen option. The phone icon is labelled **Kedir Evpower**. Open it online once to prepare offline access, then use **Show my QR** when meeting someone.
 
 The QR contains a vCard with Kedir's contact information and company website. It does not contain the card app's address, an installation link or an access key. A person who scans it can preview and save the contact using their camera or a contact-capable QR reader. Scanning does not install the app. **Share contact** also shares the contact details, without the app address.
 

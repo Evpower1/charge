@@ -227,7 +227,8 @@ OPTIONAL HOSTINGER SETUP:
 3. Open https://YOUR-DOMAIN/CARD_FOLDER/ using HTTPS.
 4. iPhone: Safari > Share > Add to Home Screen.
 5. Android: browser menu > Install app / Add to Home screen, if available.
-6. Wait for Ready offline on the card. It now works without internet.
+6. Open the card online once to prepare offline access. You can also save
+   the QR image in Photos/Gallery for use without internet.
 7. Tap Show my QR; another person scans with their camera and adds the contact.
 
 The app is an independent home-screen web app for Android and iPhone.

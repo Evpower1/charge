@@ -2,7 +2,7 @@
 
 A separate home-screen web app for iPhone and Android. Open the card, tap **Show my QR**, and let someone scan it to add Ahmed's contact. The QR stores the contact details directly, so scanning it does not depend on a website or an internet connection.
 
-The page uses six matching contact buttons: **Call, WhatsApp, Email, Website, Toll-free and Location**. The repeated plain-text details are omitted from the page; the complete information remains in the saved contact and QR.
+The page uses six matching contact buttons: **Call, WhatsApp, Email, Website, Toll-free and Location**. The repeated plain-text details are omitted from the page; the complete information remains in the saved contact and QR. The separate Save contact button, animation pause button and visible offline-status line are omitted from both cards.
 
 ## Downloads
 
@@ -19,7 +19,7 @@ Both cards open with the approved blue/cyan Evpower emblem, moving energy pulse 
 
 Both cards share a realistic EV charging scene, with a pearl-silver car and illuminated charger in a brand blue/cyan studio. The 21.6-second loop starts with the vehicle charging, then completes the charge, returns the connector, drives away and brings the car back for another charge from 24% to 100%. The car reverses into the bay from the right and leaves forward on the same clear side, so its wheels never cross the cable. The unused lead tucks closely beside the station and pays out only once the vehicle is parked. The car accelerates and brakes smoothly; its wheels, opening charge port, connector, cable and battery display share one timeline. The connector inserts straight into the port and returns to its holster before departure.
 
-The scene can be paused and automatically stops off-screen, in a background tab or while the QR is open. Reduced-motion preferences and unavailable JavaScript show a stationary connected vehicle. If the artwork cannot load, a static Evpower panel appears and the contact controls remain available.
+The scene automatically stops off-screen, in a background tab or while the QR is open. Reduced-motion preferences and unavailable JavaScript show a stationary connected vehicle. If the artwork cannot load, a static Evpower panel appears and the contact controls remain available.
 
 **Show my QR** opens each person's genuine contact QR in a full-screen dialog. Without JavaScript it opens the QR PNG; the standalone HTML provides an embedded PNG download. The contact QR also remains on printed cards. The charging scene uses local PNG artwork, SVG, CSS and JavaScript, works offline and is embedded in each single-file card.
 
@@ -37,9 +37,9 @@ The full card, contact links and QR work as a normal web page. Use the page in c
 
 On iPhone, open the published link in Safari, choose **Share → Add to Home Screen**, and tap **Add**. Enable **Open as Web App** if offered. On Android, use your browser's **Install app** or **Add to Home screen** option if available. Inside WhatsApp or another embedded browser, choose **Open in browser** if needed. On computers, bookmark the page or install it if the browser offers that option.
 
-Open the card online and wait for **Ready offline** before relying on cached offline access. If the browser blocks offline storage, the card shows an online status instead; save the QR PNG to Photos/Gallery for use without internet. Calls, WhatsApp, email and website links still need their usual phone/network services.
+Open the card online once to prepare cached offline access. Offline storage depends on the browser; save the QR PNG to Photos/Gallery for an independent offline copy. Calls, WhatsApp, email and website links still need their usual phone/network services.
 
-**Save contact** uses a normal `.vcf` link, which a browser can download or open for import. If downloads are restricted, scan the contact QR instead. **Download QR** uses a normal PNG link that can also be opened and saved as an image. If sharing or clipboard access is blocked, the page exposes selectable contact text for manual copying. With JavaScript disabled, **Show my QR** opens the contact PNG on both cards.
+The contact file in Downloads is a standard `.vcf` file for importing into Contacts. The card itself uses **Show my QR** for saving the contact. **Download QR** uses a normal PNG link that can also be opened and saved as an image. If sharing or clipboard access is blocked, the page exposes selectable contact text for manual copying. With JavaScript disabled, **Show my QR** opens the contact PNG on both cards.
 
 The single-file HTML download includes the logo, details and QR. Open it in a browser for a local card preview; some phone file viewers disable scripts or external actions. A local HTML file is not an installable home-screen app. Save the card PNG in Photos/Gallery for the simplest offline option.
 
@@ -52,9 +52,9 @@ The ZIP is a hosting package, not an APK or an iPhone installer. Both phones ins
 3. Open `https://evpower.et/evpower-card/` on the phone. This address will work **after the upload**; it has not been deployed by this project.
 4. **iPhone:** open the link in Safari, tap **Share → Add to Home Screen**, and tap **Add**. Enable **Open as Web App** if offered.
 5. **Android:** open the link in Chrome, then use **Install app** on the card or **⋮ → Install app / Add to Home screen**.
-6. Open the new Evpower icon while online and wait for **Ready offline**. The contact details and QR can then reopen without internet. Calls, WhatsApp, email and website links still need their usual phone/network services.
+6. Open the new Evpower icon while online to prepare offline access. The contact details and QR can then reopen without internet. Calls, WhatsApp, email and website links still need their usual phone/network services.
 
-Tap **Show my QR** when meeting someone. They scan it with their camera or a contact-capable QR reader and confirm saving the contact. They do not need to install this app. **Save contact** downloads a `.vcf` file that can also be opened in Contacts.
+Tap **Show my QR** when meeting someone. They scan it with their camera or a contact-capable QR reader and confirm saving the contact. They do not need to install this app. The downloadable `.vcf` file can also be opened in Contacts.
 
 Phones can clear cached app data when storage is low or browser data is deleted. If that happens, open the app online once to prepare offline use again.
 
@@ -93,6 +93,6 @@ The browser check also exports the shareable card image and app preview. The fin
 
 Verified in Chromium at widths 320, 390, 430, 768 and 1440 pixels: contact links, full-screen QR, exact decoded vCard contents, offline reopening and downloads, manifest/icon configuration, install guidance, sharing fallback and no-JavaScript QR access. The exported card image was independently decoded with ZXing. Installation on physical iPhone/Android devices has not been tested here.
 
-Additional compatibility checks cover browsers without dialog, clipboard, sharing or service-worker APIs, denied permissions and throwing APIs, modal keyboard focus and dismissal, native vCard/PNG links, manual copying and explicit online-only status. Run `python digital-card/tests/compatibility.py` for available engines, or `python digital-card/tests/compatibility.py --engines chromium,firefox,webkit` to require all three. Firefox/WebKit downloads were blocked by this environment's network policy, so those engines have not been tested here.
+Additional compatibility checks cover browsers without dialog, clipboard, sharing or service-worker APIs, denied permissions and throwing APIs, modal keyboard focus and dismissal, native vCard/PNG links, manual copying and service-worker readiness. Run `python digital-card/tests/compatibility.py` for available engines, or `python digital-card/tests/compatibility.py --engines chromium,firefox,webkit` to require all three. Firefox/WebKit downloads were blocked by this environment's network policy, so those engines have not been tested here.
 
-`python digital-card/tests/charging-scene.py` verifies the charging timeline, reverse parking and forward departure, cable clearance around both tires across a full rendered loop, cable/car sequencing, pause behaviour, reduced-motion and static fallbacks, print QR, embedded standalone assets and cached offline image navigation. Browser screenshot previews show the still charging pose for a useful exported preview.
+`python digital-card/tests/charging-scene.py` verifies the charging timeline, reverse parking and forward departure, cable clearance around both tires across a full rendered loop, cable/car sequencing, automatic pause behaviour, reduced-motion and static fallbacks, print QR, embedded standalone assets and cached offline image navigation. Browser screenshot previews show the still charging pose for a useful exported preview.

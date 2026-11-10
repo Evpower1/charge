@@ -41,6 +41,8 @@ def decode(picture):
 
 async def check_contact_actions(page):
     await expect(page.locator('.evpc-details')).to_have_count(0)
+    await expect(page.locator('[data-evpc-save],[data-ev-toggle]')).to_have_count(0)
+    await expect(page.locator('[data-evpc-offline-state]')).to_be_hidden()
     actions = page.locator('.evpc-actions a')
     await expect(actions).to_have_count(6)
     labels = [text.strip() for text in await actions.all_text_contents()]
@@ -60,12 +62,10 @@ async def check_contact_actions(page):
 
 
 async def check_resources(context, page, app):
-    save = page.locator('[data-evpc-save]')
-    href = await save.get_attribute('href')
-    assert href and not href.startswith(('blob:', 'javascript:', 'data:')), href
-    assert href.split('?', 1)[0].endswith('.vcf'), href
+    await expect(page.locator('[data-evpc-save]')).to_have_count(0)
+    href = 'assets/evpower-ahmed-kemal.vcf'
     result = await context.request.get(urljoin(app, href))
-    assert result.ok and await result.body() == VCARD, 'Native contact link is not the exact vCard'
+    assert result.ok and await result.body() == VCARD, 'Packaged contact asset is not the exact vCard'
 
     qr = page.locator('[data-evpc-download-qr]')
     await expect(qr).to_be_visible()
@@ -235,7 +235,6 @@ async def check_standalone(browser, app, engine):
     for image in await page.locator('img').all():
         assert (await image.get_attribute('src') or '').startswith('data:'), 'Standalone image is not embedded'
     for selector, mime, expected in [
-        ('[data-evpc-save]', 'text/vcard', VCARD),
         ('[data-evpc-download-qr]', 'image/png', (ROOT / 'dist/evpower-contact-qr.png').read_bytes()),
     ]:
         href = await page.locator(selector).get_attribute('href')
@@ -253,7 +252,7 @@ async def check_standalone(browser, app, engine):
     assert await page.evaluate('window.standaloneRegistrations') == 0, 'Standalone HTML tried to register a worker'
     assert not errors, errors
     await context.close()
-    print(f'PASS {engine}: self-contained standalone HTML, exact embedded vCard/QR, modal QR and no worker registration', flush=True)
+    print(f'PASS {engine}: self-contained standalone HTML, exact embedded contact QR, modal QR and no worker registration', flush=True)
 
 
 async def main(app, requested):
