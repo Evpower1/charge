@@ -7,7 +7,7 @@ from pathlib import Path
 import json
 import threading
 from io import BytesIO
-from urllib.parse import parse_qs,urlparse
+from urllib.parse import parse_qs,urljoin,urlparse
 from PIL import Image
 import zxingcpp
 from playwright.async_api import async_playwright,expect
@@ -73,7 +73,9 @@ async def main(base):
             await expect(modal).to_be_hidden()
             await expect(page.get_by_role('link',name='Show my QR',exact=True)).to_be_focused()
             if width==390:
+                await page.emulate_media(reduced_motion='reduce')
                 await page.screenshot(path=str(ROOT/'dist/evpower-card-phone-preview.png'),full_page=True)
+                await page.emulate_media(reduced_motion='no-preference')
             print(f'PASS: six matching contact actions, no duplicated plain details and scannable QR at {width}px')
 
         await expect(page.locator('[data-evpc-offline-state]')).to_have_text('Ready offline',timeout=15000)
@@ -129,11 +131,20 @@ async def main(base):
         await context.close()
 
         nojs=await browser.new_context(java_script_enabled=False,viewport={'width':390,'height':844})
-        p=await nojs.new_page();await p.goto(app+'#evpc-qr-panel',wait_until='load')
+        p=await nojs.new_page();await p.goto(app,wait_until='load')
         await contact_actions(p)
-        await expect(p.locator('.evpc-qr__code')).to_be_in_viewport()
-        decode(await p.locator('.evpc-qr__code').screenshot())
-        print('PASS: QR and contact links remain usable without JavaScript')
+        await expect(p.locator('.evpc-aside .evpc-qr__code')).to_have_count(0)
+        qr=p.locator('[data-evpc-open-qr]')
+        href=await qr.get_attribute('href')
+        assert href==await p.locator('[data-evpc-download-qr]').get_attribute('href') and href.endswith('.png')
+        target=urljoin(app,href)
+        response=await nojs.request.get(target)
+        assert response.ok
+        decode(await response.body())
+        await qr.click()
+        await expect(p).to_have_url(target)
+        await expect(p.locator('body > img').first).to_be_visible()
+        print('PASS: Ahmed native QR image opens and decodes without JavaScript; contact action links remain correct')
         await nojs.close()
 
         # Immediately usable image for Photos/WhatsApp, with an independently tested QR.

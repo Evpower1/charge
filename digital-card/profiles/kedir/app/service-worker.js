@@ -1,7 +1,7 @@
 /* Each card owns only its exact page and precached assets. */
 const SCOPE=new URL(self.registration.scope);
 const PREFIX='evpower-card-v2:'+encodeURIComponent(SCOPE.href)+':';
-const CACHE=PREFIX+'d8ff04841dc39b';
+const CACHE=PREFIX+'95b43e6fdaa6f6';
 const FILES=["app.webmanifest", "assets/card.css", "assets/card.js", "assets/emblem.png", "assets/evpower-contact-qr.png", "assets/evpower-contact-qr.svg", "assets/evpower-kedir-kemal.vcf", "assets/icon-180.png", "assets/icon-192.png", "assets/icon-512.png", "assets/logo.png", "assets/preloader.css", "index.html"];
 const URLs=FILES.map(path=>new URL(path,self.registration.scope).href);
 const ALLOWED=new Set(URLs);
@@ -14,8 +14,7 @@ self.addEventListener('message',event=>{if(event.data&&event.data.type==='EVPC_C
 self.addEventListener('fetch',event=>{
   const url=new URL(event.request.url);
   if(event.request.method!=='GET'||url.origin!==SCOPE.origin)return;
-  if(event.request.mode==='navigate'){
-    if(url.pathname!==SCOPE.pathname&&url.pathname!==INDEX_PATH)return;
+  if(event.request.mode==='navigate'&&(url.pathname===SCOPE.pathname||url.pathname===INDEX_PATH)){
     const fallback=()=>caches.open(CACHE).then(cache=>cache.match(INDEX)).then(cached=>cached||new Response('Open this card online once to prepare offline access.',{status:503,headers:{'Content-Type':'text/plain;charset=utf-8'}}));
     event.respondWith(fetch(event.request).then(response=>{if(!response.ok)return fallback();const copy=response.clone();return caches.open(CACHE).then(cache=>cache.put(INDEX,copy)).then(()=>response)}).catch(fallback));
   }else{

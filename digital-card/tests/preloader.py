@@ -10,7 +10,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import threading
-from urllib.parse import unquote_to_bytes
+from urllib.parse import unquote_to_bytes, urljoin
 
 from PIL import Image
 from playwright.async_api import async_playwright, expect
@@ -57,14 +57,30 @@ async def fresh(browser, url, *, script=None, route=None, reduced_motion=None, j
 
 
 async def qr_usable(page, contact, enhanced=True):
-    await page.locator('[data-evpc-open-qr]').click()
+    trigger = page.locator('[data-evpc-open-qr]')
     if enhanced:
+        await trigger.click()
         await expect(page.locator('[data-evpc-qr-modal]')).to_be_visible()
         verify_qr(await page.locator('[data-evpc-modal-code]').screenshot(), contact)
         await page.keyboard.press('Escape')
     else:
-        await expect(page.locator('.evpc-qr__code')).to_be_in_viewport()
-        verify_qr(await page.locator('.evpc-qr__code').screenshot(), contact)
+        href = await trigger.get_attribute('href')
+        assert href
+        if href.startswith('#'):
+            await trigger.click()
+            await expect(page.locator('.evpc-qr__code')).to_be_in_viewport()
+            verify_qr(await page.locator('.evpc-qr__code').screenshot(), contact)
+        elif href.startswith('data:image/png'):
+            metadata, payload = href.split(',', 1)
+            verify_qr(base64.b64decode(payload) if ';base64' in metadata else unquote_to_bytes(payload), contact)
+        else:
+            target = urljoin(page.url, href)
+            response = await page.request.get(target)
+            assert response.ok
+            verify_qr(await response.body(), contact)
+            await trigger.click()
+            await expect(page).to_have_url(target)
+            await expect(page.locator('body > img').first).to_be_visible()
 
 
 async def normal_and_controls(browser, url, key, contact):

@@ -14,6 +14,7 @@
   "country": "Ethiopia",
   "show_contact_details": false,
   "extra_contact_actions": true,
+  "visual_panel": "charging",
   "tagline": "Powering your journey",
   "services": ["Mobile EV Charging", "Fleet Charging", "Charger Sales & Installation", "EV Maintenance"]
 }

@@ -170,9 +170,6 @@
     });
     var open = card.querySelector('[data-evpc-open-qr]');
     var qrDialog = card.querySelector('[data-evpc-qr-modal]');
-    var target = card.querySelector('[data-evpc-modal-code]');
-    var svg = card.querySelector('.evpc-qr__code svg');
-    if (target && svg) target.appendChild(svg.cloneNode(true));
     if (open && qrDialog) open.addEventListener('click', function (event) { event.preventDefault(); showDialog(qrDialog); });
     var closeQr = card.querySelector('[data-evpc-close-qr]');
     if (closeQr) closeQr.addEventListener('click', function () { closeDialog(qrDialog); });

@@ -199,15 +199,24 @@ async def check_fallbacks(browser, app, engine, script=FALLBACKS, denied=False):
 async def check_no_script(browser, app, engine):
     context = await browser.new_context(java_script_enabled=False, viewport={'width': 390, 'height': 844})
     page = await context.new_page()
-    await page.goto(app + '#evpc-qr-panel', wait_until='load')
+    await page.goto(app, wait_until='load')
     await check_contact_actions(page)
-    await expect(page.locator('.evpc-qr__code')).to_be_in_viewport()
-    decode(await page.locator('.evpc-qr__code').screenshot())
+    await expect(page.locator('.evpc-aside .evpc-qr__code')).to_have_count(0)
     await check_resources(context, page, app)
     for dialog in await page.locator('dialog').all():
         await expect(dialog).to_be_hidden()
+    qr = page.locator('[data-evpc-open-qr]')
+    href = await qr.get_attribute('href')
+    assert href == await page.locator('[data-evpc-download-qr]').get_attribute('href') and href.endswith('.png')
+    target = urljoin(app, href)
+    response = await context.request.get(target)
+    assert response.ok
+    decode(await response.body())
+    await qr.click()
+    await expect(page).to_have_url(target)
+    await expect(page.locator('body > img').first).to_be_visible()
     await context.close()
-    print(f'PASS {engine}: card, scannable QR and native resource links with JavaScript disabled', flush=True)
+    print(f'PASS {engine}: card/native contact links and decoded QR image opening with JavaScript disabled', flush=True)
 
 
 async def check_standalone(browser, app, engine):

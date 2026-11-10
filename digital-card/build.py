@@ -83,8 +83,10 @@ def inline_json(data):
 
 
 def make_html(data, vcard, svg, standalone=False):
+    charging=data.get('visual_panel')=='charging'
     logo = ('data:image/png;base64,' + base64.b64encode((UI / 'assets/logo.png').read_bytes()).decode()) if standalone else 'assets/logo.png'
     emblem = ('data:image/png;base64,' + base64.b64encode((UI / 'assets/emblem.png').read_bytes()).decode()) if standalone else 'assets/emblem.png'
+    qr_png = ('data:image/png;base64,' + base64.b64encode((DIST / 'evpower-contact-qr.png').read_bytes()).decode()) if standalone else 'assets/evpower-contact-qr.png'
     card_config = {
         'company':data['company'], 'fullName':data['full_name'], 'designation':data['designation'],
         'phone':data['phone'], 'whatsapp':data['whatsapp'], 'tollFree':data['toll_free'], 'email':data['email'],
@@ -105,7 +107,8 @@ def make_html(data, vcard, svg, standalone=False):
         'MAP_URL':'https://www.google.com/maps/search/?' + urlencode({'api':'1','query':data['address']}),
         'TOLL_FREE_URL':'tel:' + data['toll_free'], 'TOLL_FREE':data['toll_free'],
         'VCARD_URL':('data:text/vcard;charset=utf-8,' + quote(vcard, safe='')) if standalone else 'assets/' + VCARD_NAME,
-        'QR_PNG_URL':('data:image/png;base64,' + base64.b64encode((DIST / 'evpower-contact-qr.png').read_bytes()).decode()) if standalone else 'assets/evpower-contact-qr.png',
+        'QR_PNG_URL':qr_png,
+        'SHOW_QR_URL':qr_png if charging else '#evpc-qr-panel',
         'CARD_URL':'', 'QR_LABEL':'Scan to save contact', 'VCARD_NAME':VCARD_NAME,
         'SHARE_LABEL':'Share card' if data.get('share_app_link',True) else 'Share contact',
         'INSTALL_LABEL':data.get('install_label','Add to phone'),
@@ -113,16 +116,23 @@ def make_html(data, vcard, svg, standalone=False):
     tokens = {key:html.escape(value, quote=True) for key,value in values.items()}
     tokens['SERVICES'] = ''.join('<li>' + html.escape(service) + '</li>' for service in data['services'])
     tokens['QR_SVG'] = svg
+    tokens['SHOW_QR_DOWNLOAD'] = ' download="evpower-contact-qr.png"' if charging and standalone else ''
     tokens['CONFIG_JSON'] = inline_json(card_config)
     details=(UI / 'templates/contact-details.html').read_text().rstrip('\n')
     tokens['CONTACT_DETAILS'] = '      '+re.sub(r'\{\{([A-Z_]+)\}\}',lambda match:tokens[match.group(1)],details) if data.get('show_contact_details',True) else ''
     extra_actions=(UI / 'templates/extra-contact-actions.html').read_text().rstrip('\n')
     tokens['EXTRA_CONTACT_ACTIONS'] = '\n        '+re.sub(r'\{\{([A-Z_]+)\}\}',lambda match:tokens[match.group(1)],extra_actions) if data.get('extra_contact_actions',False) else ''
+    tokens['CHARGING_SCENE'] = re.sub(r'\{\{([A-Z_]+)\}\}',lambda match:tokens[match.group(1)],(UI / 'templates/charging-scene.html').read_text().rstrip('\n')) if charging else ''
+    panel=(UI / 'templates'/('charging-panel.html' if charging else 'qr-panel.html')).read_text().rstrip('\n')
+    tokens['VISUAL_PANEL'] = '    '+re.sub(r'\{\{([A-Z_]+)\}\}',lambda match:tokens[match.group(1)],panel)
     template = (UI / 'templates/preloader.html').read_text() + (UI / 'templates/card.html').read_text()
     body = re.sub(r'\{\{([A-Z_]+)\}\}', lambda match: tokens[match.group(1)], template)
     assert not re.search(r'\{\{[A-Z_]+\}\}', body)
     css = (UI / 'assets/preloader.css').read_text() + (UI / 'assets/card.css').read_text()
     js = (UI / 'assets/card.js').read_text()
+    if charging:
+        css += (UI / 'assets/charging-scene.css').read_text()
+        js += '\n' + (UI / 'assets/charging-scene.js').read_text()
     name=html.escape(data['full_name'],quote=True)
     description=html.escape(data['full_name']+', '+data['designation']+' at '+data['company']+'. Contact card and scannable contact QR.',quote=True)
     app_name=html.escape(data.get('app_short_name',data['company']),quote=True)
@@ -132,7 +142,8 @@ def make_html(data, vcard, svg, standalone=False):
         document = head + '<style>html,body{margin:0;min-height:100%;background:#f4f8fc}' + css + '</style></head><body>' + body + '<script>' + js + '</script></body></html>'
         (DIST / 'evpower-card-standalone.html').write_text(document)
     else:
-        document = head + '<link rel="manifest" href="app.webmanifest"><link rel="apple-touch-icon" href="assets/icon-180.png"><link rel="icon" href="assets/icon-192.png"><link rel="stylesheet" href="assets/preloader.css"><link rel="stylesheet" href="assets/card.css"><script defer src="assets/card.js"></script></head><body>' + body + '</body></html>'
+        scene_assets='<link rel="stylesheet" href="assets/charging-scene.css"><script defer src="assets/charging-scene.js"></script>' if charging else ''
+        document = head + '<link rel="manifest" href="app.webmanifest"><link rel="apple-touch-icon" href="assets/icon-180.png"><link rel="icon" href="assets/icon-192.png"><link rel="stylesheet" href="assets/preloader.css"><link rel="stylesheet" href="assets/card.css"><script defer src="assets/card.js"></script>'+scene_assets+'</head><body>' + body + '</body></html>'
         (APP / 'index.html').write_text(document)
 
 
@@ -167,6 +178,8 @@ def make_app(vcard,svg):
     assets.mkdir(parents=True,exist_ok=True)
     for name in ['logo.png','emblem.png','preloader.css','card.css','card.js']:
         shutil.copy2(UI/'assets'/name,assets/name)
+    if DATA.get('visual_panel')=='charging':
+        for name in ['charging-scene.css','charging-scene.js']:shutil.copy2(UI/'assets'/name,assets/name)
     for name in [VCARD_NAME,'evpower-contact-qr.png','evpower-contact-qr.svg']:
         shutil.copy2(DIST/name,assets/name)
     make_html(DATA,vcard,svg)
@@ -240,8 +253,7 @@ self.addEventListener('message',event=>{if(event.data&&event.data.type==='EVPC_C
 self.addEventListener('fetch',event=>{
   const url=new URL(event.request.url);
   if(event.request.method!=='GET'||url.origin!==SCOPE.origin)return;
-  if(event.request.mode==='navigate'){
-    if(url.pathname!==SCOPE.pathname&&url.pathname!==INDEX_PATH)return;
+  if(event.request.mode==='navigate'&&(url.pathname===SCOPE.pathname||url.pathname===INDEX_PATH)){
     const fallback=()=>caches.open(CACHE).then(cache=>cache.match(INDEX)).then(cached=>cached||new Response('Open this card online once to prepare offline access.',{status:503,headers:{'Content-Type':'text/plain;charset=utf-8'}}));
     event.respondWith(fetch(event.request).then(response=>{if(!response.ok)return fallback();const copy=response.clone();return caches.open(CACHE).then(cache=>cache.put(INDEX,copy)).then(()=>response)}).catch(fallback));
   }else{

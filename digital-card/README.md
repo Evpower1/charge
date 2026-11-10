@@ -17,6 +17,10 @@ The card image is ready to use immediately: save it in your phone's Photos/Galle
 
 Both cards open with the approved blue/cyan Evpower emblem, moving energy pulse and glowing charger contacts. The introduction lasts about a second and always releases within 1.5 seconds through its own timer. **Skip animation**, Escape, reduced-motion preferences, image failure and browser Back restoration dismiss it immediately. JavaScript-disabled pages and printed cards omit it. The emblem is stored with each offline app and embedded in the single-file download; no WordPress plugin or external animation service is used.
 
+Ahmed's main visual panel shows a continuous EV charging scene: a metallic blue sedan arrives, parks, connects to the charger, charges from 22% to 100%, disconnects and drives away. Wheel rotation, connector movement, cable shape and energy flow share one timeline, so the cable is docked before departure. The scene can be paused and automatically stops off-screen, in a background tab or while the QR is open. Reduced-motion preferences and unavailable JavaScript show a stationary connected vehicle.
+
+**Show my QR** still opens the genuine contact QR in a full-screen dialog. Without JavaScript it opens the QR PNG; the standalone HTML provides an embedded PNG download. The contact QR also remains on printed cards. The charging illustration uses local SVG, CSS and JavaScript, works offline and is embedded in the single-file card. Kedir's visible QR panel remains as before.
+
 ## Free GitHub Pages hosting
 
 The `evpower-card` repository branch contains only this static card app. It can be hosted separately from `evpower.et`, without a Hostinger upload or custom domain.
@@ -33,7 +37,7 @@ On iPhone, open the published link in Safari, choose **Share → Add to Home Scr
 
 Open the card online and wait for **Ready offline** before relying on cached offline access. If the browser blocks offline storage, the card shows an online status instead; save the QR PNG to Photos/Gallery for use without internet. Calls, WhatsApp, email and website links still need their usual phone/network services.
 
-**Save contact** uses a normal `.vcf` link, which a browser can download or open for import. If downloads are restricted, scan the contact QR instead. **Download QR** uses a normal PNG link that can also be opened and saved as an image. If sharing or clipboard access is blocked, the page exposes selectable contact text for manual copying. The inline QR remains visible with JavaScript disabled.
+**Save contact** uses a normal `.vcf` link, which a browser can download or open for import. If downloads are restricted, scan the contact QR instead. **Download QR** uses a normal PNG link that can also be opened and saved as an image. If sharing or clipboard access is blocked, the page exposes selectable contact text for manual copying. With JavaScript disabled, Ahmed's **Show my QR** opens the PNG and Kedir's card retains its inline QR.
 
 The single-file HTML download includes the logo, details and QR. Open it in a browser for a local card preview; some phone file viewers disable scripts or external actions. A local HTML file is not an installable home-screen app. Save the card PNG in Photos/Gallery for the simplest offline option.
 
@@ -88,3 +92,5 @@ The browser check also exports the shareable card image and app preview. The fin
 Verified in Chromium at widths 320, 390, 430, 768 and 1440 pixels: contact links, full-screen QR, exact decoded vCard contents, offline reopening and downloads, manifest/icon configuration, install guidance, sharing fallback and no-JavaScript QR access. The exported card image was independently decoded with ZXing. Installation on physical iPhone/Android devices has not been tested here.
 
 Additional compatibility checks cover browsers without dialog, clipboard, sharing or service-worker APIs, denied permissions and throwing APIs, modal keyboard focus and dismissal, native vCard/PNG links, manual copying and explicit online-only status. Run `python digital-card/tests/compatibility.py` for available engines, or `python digital-card/tests/compatibility.py --engines chromium,firefox,webkit` to require all three. Firefox/WebKit downloads were blocked by this environment's network policy, so those engines have not been tested here.
+
+`python digital-card/tests/charging-scene.py` verifies the charging timeline, cable/car sequencing, pause behaviour, reduced-motion and static fallbacks, print QR, embedded standalone assets and cached offline image navigation. Browser screenshot previews show the still charging pose for a useful exported preview.

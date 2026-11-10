@@ -16,7 +16,7 @@
         <p class="evpc-company">{{COMPANY}} <span aria-hidden="true">/</span> EV charging &amp; mobility</p>
       </div>
 
-      <a class="evpc-save evpc-show-qr" href="#evpc-qr-panel" data-evpc-open-qr>
+      <a class="evpc-save evpc-show-qr" href="{{SHOW_QR_URL}}"{{SHOW_QR_DOWNLOAD}} data-evpc-open-qr>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h2v2h-2zM19 15h2v6h-4v-2h-2M12 3v3m0 5v3m0 4v3M3 12h4m3 0h3m4 0h4"/></svg>
         Show my QR
       </a>
@@ -49,19 +49,7 @@
       </section>
     </div>
 
-    <aside id="evpc-qr-panel" class="evpc-aside" aria-label="Scannable contact card">
-      <div class="evpc-aside__content">
-        <p class="evpc-eyebrow">Keep in touch</p>
-        <h2>{{QR_LABEL}}</h2>
-        <figure class="evpc-qr">
-          <div class="evpc-qr__code" role="img" aria-label="{{QR_LABEL}} for {{NAME}}">{{QR_SVG}}</div>
-          <figcaption>{{NAME}} <span aria-hidden="true">·</span> {{COMPANY}}</figcaption>
-        </figure>
-        <p class="evpc-qr-help">Scan with your phone’s camera.</p>
-        <a class="evpc-qr-download" href="{{QR_PNG_URL}}" download="evpower-contact-qr.png" data-evpc-download-qr><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M5 17v4h14v-4"/></svg>Download QR</a>
-        <span class="evpc-category"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m13 2-9 12h7l-1 8 10-12h-7Z"/></svg>EV charging &amp; mobility</span>
-      </div>
-    </aside>
+{{VISUAL_PANEL}}
 
     <footer class="evpc-footer">
       <div><p class="evpc-tagline">{{TAGLINE}}</p><p class="evpc-offline-state" data-evpc-offline-state>My Evpower card</p></div>
@@ -80,7 +68,7 @@
         <p class="evpc-eyebrow">EVPOWER · CONTACT CARD</p>
         <h2 id="evpc-qr-title">{{NAME}}</h2>
         <p class="evpc-modal-role">{{DESIGNATION}}</p>
-        <div class="evpc-modal-code" data-evpc-modal-code></div>
+        <div class="evpc-modal-code" data-evpc-modal-code>{{QR_SVG}}</div>
         <p class="evpc-modal-hint">Scan with your camera to add my contact.</p>
         <button type="button" class="evpc-modal-close" data-evpc-close-qr autofocus>Back to card</button>
       </div>
