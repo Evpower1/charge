@@ -2,6 +2,7 @@
 **/.expo/
 **/dist/
 **/.data/
+**/.preview-data/
 **/coverage/
 .env*
 !.env.example

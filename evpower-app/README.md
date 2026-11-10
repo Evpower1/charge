@@ -8,6 +8,20 @@ The source runs locally and has been tested. **It is not published in the App St
 
 ## Review locally
 
+For the quickest browser preview, install [Node.js 24 LTS](https://nodejs.org/), extract the source ZIP, open a terminal in its `evpower-app` folder, and run:
+
+```sh
+npm run preview
+```
+
+The launcher installs the locked dependencies, builds the browser UI and opens the real app at `http://127.0.0.1:4100/app/`. Keep the terminal open while testing. You can register a test customer, request a charge, browse labelled sample locations and use the operator dashboard at `/operator/`. Your generated operator email/password are in the local `.preview-data/operator-access.json` file. Stop with **Ctrl+C**. The first run needs internet for dependency installation.
+
+This is a local development preview with its own private database. Real payments, email and charger integrations are disabled; requests do not dispatch a real team. It is not a public hosted app. On subsequent runs your local test data is preserved. The `.preview-data` folder is excluded from Git, source ZIPs and the deployment image. Developers can use `npm run preview -- --no-open` to skip opening a browser, or set `EVPOWER_PREVIEW_PORT` if port 4100 is occupied.
+
+To try the whole sandbox journey, create a test customer and submit a request. In the operator dashboard, confirm that test request with a **0 ETB** quote; you can then advance it through dispatch, arrival, charging and completion without enabling payments. This zero-price walkthrough is for the local sandbox only.
+
+For manual setup:
+
 Use Node 24. In two terminals:
 
 ```sh

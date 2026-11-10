@@ -6,7 +6,7 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'artifacts'
-SKIP={'node_modules','.expo','.data','dist','dist-native','coverage','test-output','__pycache__','_cacache','artifacts','ios','android'}
+SKIP={'node_modules','.expo','.data','.preview-data','dist','dist-native','coverage','test-output','__pycache__','_cacache','artifacts','ios','android'}
 def include(path):
     relative=path.relative_to(ROOT)
     if any(part in SKIP for part in relative.parts):return False

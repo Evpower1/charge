@@ -1,6 +1,7 @@
 **/node_modules
 **/.expo
 **/.data
+**/.preview-data
 **/.env
 **/*.sqlite*
 **/test-output
