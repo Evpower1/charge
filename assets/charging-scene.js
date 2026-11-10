@@ -55,7 +55,8 @@
       // Cable joins the handle, rather than stopping at the connector's metal tip.
       var endX = tipX - 17 * Math.cos(radians) - 7 * Math.sin(radians);
       var endY = tipY - 17 * Math.sin(radians) + 7 * Math.cos(radians);
-      var path = 'M151 291C' + (154 + 8 * travel).toFixed(2) + ' 339 ' + (185 + 26 * travel).toFixed(2) + ' 338 ' + endX.toFixed(2) + ' ' + endY.toFixed(2);
+      // The unused lead hangs close to the station; it pays out only once parked.
+      var path = 'M151 291C' + (152 + 10 * travel).toFixed(2) + ' ' + (305 + 34 * travel).toFixed(2) + ' ' + (164 + 47 * travel).toFixed(2) + ' ' + (292 + 46 * travel).toFixed(2) + ' ' + endX.toFixed(2) + ' ' + endY.toFixed(2);
       var moving = phase === 'arriving' || phase === 'departing';
       var pulse = (1 + Math.sin(time * Math.PI * .7)) / 2;
       attr(car, 'transform', 'translate(' + x.toFixed(2) + ' 0)');
@@ -75,7 +76,7 @@
       for (var i = 0; i < wheels.length; i++) {
         attr(wheels[i], 'transform', 'rotate(' + wheelAngle.toFixed(2) + ' ' + wheels[i].getAttribute('data-cx') + ' ' + wheels[i].getAttribute('data-cy') + ')');
       }
-      var labels = {waiting:'Ready for the road', arriving:'Arriving', parked:'Parked · ready', connecting:'Connecting', charging:'Charging', complete:'Charge complete', disconnecting:'Disconnecting', departing:'On the road', still:'EV charging'};
+      var labels = {waiting:'Ready for the road', arriving:'Parking', parked:'Parked · ready', connecting:'Connecting', charging:'Charging', complete:'Charge complete', disconnecting:'Disconnecting', departing:'On the road', still:'EV charging'};
       var label = labels[phase] || labels.waiting;
       if (status.textContent !== label) status.textContent = label;
       var value = phase === 'waiting' ? '—' : Math.round(charge) + '%';
@@ -86,35 +87,36 @@
       attr(scene, 'data-connection', q.toFixed(3));
       attr(scene, 'data-port-open', opening.toFixed(3));
     }
-    function still() { pose(0, 1, 74, 'still', initialTime, 760, 1, 0); }
+    function still() { pose(0, 1, 74, 'still', initialTime, -760, 1, 0); }
     function render(time) {
-      var x = -760, q = 0, charge = 0, phase = 'waiting', distance = 0, opening = 0, brake = 0;
+      var x = 760, q = 0, charge = 0, phase = 'waiting', distance = 0, opening = 0, brake = 0;
       if (time >= .7 && time < 4.5) {
         phase = 'arriving';
         var progress = clamp((time - .7) / 3.8);
-        x = -760 * (1 - glide(progress));
-        distance = 760 + x; charge = 24;
+        // Reverse into the bay from the right, keeping both tires away from the lead.
+        x = 760 * (1 - glide(progress));
+        distance = x - 760; charge = 24;
         brake = ease((progress - .58) / .32);
       } else if (time >= 4.5 && time < 5) {
-        phase = 'parked'; x = 0; distance = 760; charge = 24; brake = 1;
+        phase = 'parked'; x = 0; distance = -760; charge = 24; brake = 1;
       } else if (time >= 5 && time < 7.2) {
-        phase = 'connecting'; x = 0; distance = 760; charge = 24;
+        phase = 'connecting'; x = 0; distance = -760; charge = 24;
         opening = ease((time - 5) / .4);
         q = time < 5.4 ? 0 : time < 6.8 ? .8 * ease((time - 5.4) / 1.4) : .8 + .2 * ease((time - 6.8) / .4);
       } else if (time >= 7.2 && time < 14.2) {
-        phase = 'charging'; x = 0; q = 1; distance = 760; opening = 1;
+        phase = 'charging'; x = 0; q = 1; distance = -760; opening = 1;
         charge = 24 + 76 * ease((time - 7.2) / 7);
       } else if (time >= 14.2 && time < 15.1) {
-        phase = 'complete'; x = 0; q = 1; charge = 100; distance = 760; opening = 1;
+        phase = 'complete'; x = 0; q = 1; charge = 100; distance = -760; opening = 1;
       } else if (time >= 15.1 && time < 17.3) {
-        phase = 'disconnecting'; x = 0; distance = 760; charge = 100;
+        phase = 'disconnecting'; x = 0; distance = -760; charge = 100;
         q = time < 15.5 ? 1 - .2 * ease((time - 15.1) / .4) : time < 16.9 ? .8 * (1 - ease((time - 15.5) / 1.4)) : 0;
         opening = time < 16.9 ? 1 : 1 - ease((time - 16.9) / .4);
       } else if (time >= 17.3 && time < 20.8) {
         phase = 'departing'; x = 760 * glide((time - 17.3) / 3.5);
-        distance = 760 + x; charge = 100;
+        distance = x - 760; charge = 100;
       } else if (time >= 20.8) {
-        x = 760; distance = 1520;
+        x = 760; distance = 0;
       }
       pose(x, q, charge, phase, time, distance, opening, brake);
     }
