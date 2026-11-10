@@ -5,7 +5,7 @@ import type { ScreenProps, Session } from '../types';
 type Mode = 'login' | 'register' | 'forgot' | 'reset' | 'verify';
 type Props = ScreenProps & { onAuthenticated: (session: Session) => Promise<void>; initialAction?: { kind: 'reset' | 'verify'; token: string } };
 
-export default function AuthScreen({ api, navigate, notify, onAuthenticated, initialAction }: Props) {
+export default function AuthScreen({ api, config, navigate, notify, onAuthenticated, initialAction }: Props) {
   const [mode, setMode] = useState<Mode>(initialAction?.kind || 'login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -42,7 +42,7 @@ export default function AuthScreen({ api, navigate, notify, onAuthenticated, ini
       if (mode === 'register' || mode === 'login') {
         const session = await api.request<Session>('/v1/auth/' + mode, { method: 'POST', body: mode === 'register' ? { name: name.trim(), email: email.trim(), phone: phone.trim(), password } : { email: email.trim(), password } });
         await onAuthenticated(session);
-        notify(mode === 'register' ? 'Your Evpower account is ready.' : 'You are signed in.');
+        notify(config?.isBrowserDemo ? 'Demo account opened in this browser only.' : mode === 'register' ? 'Your Evpower account is ready.' : 'You are signed in.');
       } else if (mode === 'forgot') {
         const result = await api.request<{ message?: string }>('/v1/auth/password-reset', { method: 'POST', body: { email: email.trim() } });
         setMessage(result.message || 'If an account exists and email delivery is configured, reset instructions will be sent.');

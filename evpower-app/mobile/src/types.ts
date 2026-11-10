@@ -3,7 +3,7 @@ export type ScreenName = 'home' | 'stations' | 'book' | 'activity' | 'account' |
 export type User = {id:string; name:string; email:string; phone:string; role:'customer'|'admin'; emailVerified:boolean; createdAt:string};
 export type Session = {accessToken:string; refreshToken:string; user:User};
 export type AppConfig = {
-  name:string; currency:'ETB'; serviceCities:string[]; paymentsEnabled:boolean; telemetryConfigured:boolean; isDemo:boolean;
+  name:string; currency:'ETB'; serviceCities:string[]; paymentsEnabled:boolean; telemetryConfigured:boolean; isDemo:boolean; isBrowserDemo?:boolean;
   contact:{phone:string; tollFree:string; email:string; whatsapp:string};
 };
 export type ScreenProps = {

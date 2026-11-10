@@ -3,7 +3,7 @@ import {ActivityIndicator,AppState,Image,Linking,Platform,Pressable,StyleSheet,T
 import {SafeAreaProvider,SafeAreaView,useSafeAreaInsets} from 'react-native-safe-area-context';
 import {StatusBar} from 'expo-status-bar';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import {api} from './src/api';
+import {api,isBrowserDemo} from './src/api';
 import type {AppConfig,ScreenName,ScreenProps,Session,User} from './src/types';
 import {colors} from './src/theme';
 import HomeScreen from './src/screens/HomeScreen';
@@ -34,6 +34,7 @@ function Shell(){
   const [connectionError,setConnectionError]=useState('');
   const [toast,setToast]=useState('');
   const [refreshKey,setRefreshKey]=useState(0);
+  const [demoBusy,setDemoBusy]=useState(false);
   const notify=useCallback((message:string)=>setToast(message),[]);
   const navigate=useCallback((next:ScreenName)=>{setScreen(next);setToast('');if(next!=='auth')setAccountAction(undefined);},[]);
   const load=useCallback(async()=>{
@@ -82,6 +83,18 @@ function Shell(){
   const onRequireAuth=()=>{setReturnTo(screen==='auth'?'home':screen);setScreen('auth');};
   const onAuthenticated=async(session:Session)=>{await api.setSession(session);setAccountAction(undefined);setScreen(returnTo);notify('Welcome to Evpower.');};
   const onLogout=async()=>{try{await api.logout();}catch{}finally{await api.clear();setScreen('home');notify('You are signed out.');}};
+  const demoAction=async(action:'login'|'advance'|'reset')=>{
+    if(!isBrowserDemo||demoBusy)return;setDemoBusy(true);
+    try{
+      if(action==='login'){await api.setSession(await api.request<Session>('/v1/demo/session',{method:'POST'}));setScreen('home');}
+      if(action==='advance'){await api.request('/v1/demo/advance',{method:'POST'});setScreen('activity');setRefreshKey(key=>key+1);notify('Demo booking advanced. No real charging team was requested.');}
+      if(action==='reset'){
+        const demo:typeof import('./src/browser-demo')=require('./src/browser-demo');demo.resetBrowserDemo();
+        await api.clear();setScreen('home');setRefreshKey(key=>key+1);notify('Preview reset in this browser.');
+      }
+    }catch(error){notify(error instanceof Error?error.message:'Unable to update the preview.');}
+    finally{setDemoBusy(false);}
+  };
   const props:ScreenProps={user,api,config,navigate,notify,refreshKey,onRequireAuth};
   const current=()=>{
     if(screen==='auth')return <AuthScreen {...props} onAuthenticated={onAuthenticated} initialAction={accountAction}/>;
@@ -104,7 +117,13 @@ function Shell(){
           <Pressable accessibilityRole="button" accessibilityLabel="Sign in" onPress={onRequireAuth} style={styles.signIn}><Text style={styles.signInText}>Sign in</Text><Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="arrow-forward" size={16} color={colors.blue}/></Pressable>}
       </View>
     </View>
-    {config?.isDemo&&<View style={styles.demo}><Text style={styles.demoText}>Development sandbox · sample locations · no real payments</Text></View>}
+    {config?.isDemo&&<View style={styles.demo}>
+      <Text style={styles.demoText}>{isBrowserDemo?'INTERACTIVE DEMO · No real bookings or payments':'Development sandbox · sample locations · no real payments'}</Text>
+      {isBrowserDemo&&<><Text style={styles.demoDetail}>Use made-up details. Preview data stays in this browser.</Text><View style={styles.demoActions}>
+        <Pressable accessibilityRole="button" disabled={demoBusy} onPress={()=>void demoAction(user?'advance':'login')} style={styles.demoButton}><Text style={styles.demoButtonText}>{demoBusy?'Please wait…':user?'Advance demo booking':'Try demo account'}</Text></Pressable>
+        <Pressable accessibilityRole="button" disabled={demoBusy} onPress={()=>void demoAction('reset')} style={styles.demoButton}><Text style={styles.demoButtonText}>Reset preview</Text></Pressable>
+      </View></>}
+    </View>}
     <View style={styles.body}>
       {busy?<View style={styles.center}><ActivityIndicator color={colors.blue} size="large"/><Text style={styles.loading}>Connecting your journey…</Text></View>:
         connectionError?<View style={styles.center}><View style={styles.connectionIcon}><Ionicons aria-hidden={true} accessible={false} accessibilityElementsHidden={true} importantForAccessibility="no-hide-descendants" name="cloud-offline-outline" size={36} color={colors.blue}/></View><Text style={styles.errorTitle}>Let’s reconnect</Text><Text style={styles.errorCopy}>{connectionError}</Text><Pressable accessibilityRole="button" onPress={()=>void load()} style={styles.retry}><Text style={styles.retryText}>Try again</Text></Pressable><Pressable accessibilityRole="link" onPress={()=>void Linking.openURL('tel:8890')} style={styles.help}><Text style={styles.helpText}>Need a charge? Call 8890</Text></Pressable></View>:current()}
@@ -129,6 +148,7 @@ const styles=StyleSheet.create({
   logoLink:{width:218,height:59},logo:{width:'100%',height:'100%'},headerActions:{flexDirection:'row',alignItems:'center'},iconButton:{minWidth:44,minHeight:44,alignItems:'center',justifyContent:'center'},
   signIn:{minHeight:44,flexDirection:'row',alignItems:'center',gap:5},signInText:{fontSize:13,fontWeight:'700',color:colors.blue},
   demo:{backgroundColor:'#fff3d8',paddingVertical:8,paddingHorizontal:16},demoText:{color:'#75551b',fontSize:11,textAlign:'center'},
+  demoDetail:{color:'#75551b',fontSize:10,textAlign:'center',marginTop:4},demoActions:{flexDirection:'row',justifyContent:'center',gap:10,marginTop:8},demoButton:{minHeight:36,paddingHorizontal:12,paddingVertical:8,borderWidth:1,borderColor:'#e1c886',borderRadius:8,backgroundColor:'#fffcf4'},demoButtonText:{fontSize:11,fontWeight:'700',color:'#70511d'},
   body:{flex:1,width:'100%',maxWidth:1040,alignSelf:'center'},center:{flex:1,alignItems:'center',justifyContent:'center',padding:30},loading:{marginTop:17,color:colors.muted,fontSize:14},
   connectionIcon:{width:80,height:80,borderRadius:25,alignItems:'center',justifyContent:'center',backgroundColor:'#e9f4ff',marginBottom:20},
   errorTitle:{fontSize:27,fontWeight:'800',color:colors.navy},errorCopy:{fontSize:14,color:colors.muted,lineHeight:22,textAlign:'center',maxWidth:380,marginVertical:15},

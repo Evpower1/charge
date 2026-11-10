@@ -17,6 +17,7 @@ const environment={...process.env,NODE_ENV:'development',DEMO_MODE:'true',HOST:'
   DATABASE_PATH:database,API_PUBLIC_URL:base,EXPO_PUBLIC_API_URL:base,CORS_ORIGINS:base,
   PAYMENTS_ENABLED:'false',CHAPA_SECRET_KEY:'',CHAPA_WEBHOOK_SECRET:'',SMTP_URL:'',MAIL_FROM:'',
   TELEMETRY_INGEST_KEY:'',TRUSTED_PROXY_IPS:'',EAS_BUILD_PROFILE:'preview',
+  EXPO_PUBLIC_BROWSER_DEMO:'false',EXPO_PUBLIC_WEB_BASE_PATH:'/app',
   EXPO_NO_TELEMETRY:'1',EXPO_NO_DOTENV:'1',EXPO_OFFLINE:'1',CI:'1'};
 
 function run(command,args,cwd,{input,quiet=false}={}){

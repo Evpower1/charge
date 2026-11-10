@@ -2,6 +2,6 @@
   "name": "evpower-app-project",
   "version": "1.0.0",
   "private": true,
-  "scripts": {"preview": "node scripts/preview.mjs"},
+  "scripts": {"preview": "node scripts/preview.mjs", "build:browser-demo":"node scripts/export-browser-demo.mjs"},
   "engines": {"node": ">=24.2.0 <25"}
 }

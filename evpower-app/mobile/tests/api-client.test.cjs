@@ -9,12 +9,17 @@ const source=ts.transpileModule(fs.readFileSync(path.join(__dirname,'../src/api.
 const session=(accessToken='old',refreshToken='refresh-old')=>({accessToken,refreshToken,user:{id:'customer',name:'Test customer'}});
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json'}});
 const deferred=()=>{let resolve;const promise=new Promise(r=>resolve=r);return{promise,resolve};};
-function harness(fetch,storage={value:null},platform='web'){
+function harness(fetch,storage={value:null},platform='web',environment={}){
   const module={exports:{}};
   const secure={WHEN_UNLOCKED_THIS_DEVICE_ONLY:1,async getItemAsync(){return storage.value;},async setItemAsync(_key,value){storage.value=value;},async deleteItemAsync(){storage.value=null;}};
-  vm.runInNewContext(source,{module,exports:module.exports,require(name){if(name==='react-native')return{Platform:{OS:platform}};if(name==='expo-secure-store')return secure;if(name==='expo-crypto')return{randomUUID};throw new Error(name);},fetch,AbortController,setTimeout,clearTimeout,process:{env:{}},__DEV__:true});
+  vm.runInNewContext(source,{module,exports:module.exports,require(name){if(name==='react-native')return{Platform:{OS:platform}};if(name==='expo-secure-store')return secure;if(name==='expo-crypto')return{randomUUID};throw new Error(name);},fetch,AbortController,setTimeout,clearTimeout,process:{env:environment},__DEV__:true});
   return{api:new module.exports.ApiClient('https://api.example.test'),secure,storage};
 }
+test('the browser demo flag cannot replace native API transport',async()=>{
+  let calls=0;
+  const h=harness(async()=>{calls++;return json({native:true});},{value:null},'ios',{EXPO_PUBLIC_BROWSER_DEMO:'true'});
+  assert.equal((await h.api.request('/v1/config')).native,true);assert.equal(calls,1);
+});
 test('parallel expired requests share one refresh and use the rotated credential',async()=>{
   let refreshes=0;
   const gate=deferred();

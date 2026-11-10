@@ -8,6 +8,7 @@ export class ApiError extends Error {
 }
 type Options = {method?:string; body?:unknown; headers?:Record<string,string>};
 const REFRESH_KEY = 'evpower.refresh.v1';
+export const isBrowserDemo=Platform.OS==='web'&&process.env.EXPO_PUBLIC_BROWSER_DEMO==='true';
 
 export class ApiClient {
   readonly baseUrl:string;
@@ -83,6 +84,10 @@ export class ApiClient {
   }
   private async send<T>(path:string,options:Options,authorized:boolean):Promise<T> {
     if (!path.startsWith('/v1/')) throw new ApiError('Invalid API route.',0,'INVALID_ROUTE');
+    if(isBrowserDemo){
+      const demo:typeof import('./browser-demo')=require('./browser-demo');
+      return demo.browserDemoRequest<T>(path,options,authorized?this.accessToken:null);
+    }
     if (!this.baseUrl) throw new ApiError('The Evpower service connection has not been configured yet.',0,'API_NOT_CONFIGURED');
     const controller=new AbortController(); const timer=setTimeout(()=>controller.abort(),20000);
     try {

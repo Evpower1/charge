@@ -8,6 +8,10 @@ The source runs locally and has been tested. **It is not published in the App St
 
 ## Review locally
 
+For a browser-only interactive demo without installing development tools, open **https://evpower1.github.io/charge/app-preview/** after the Pages deployment completes. Choose **Try demo account** to explore, **Advance demo booking** to try its timeline, and **Reset preview** to clear local preview data. Accounts, requests and support messages in this demo stay only in that browser. Payments are disabled and all station locations are labelled samples; no real charging team is requested.
+
+The demo uses a separate browser-only data adapter. It never calls the real booking API, uses only the `evpower.browser-demo.v1` storage namespace, and is rejected by production store configuration. `npm run build:browser-demo` exports the dedicated static preview; it is not a production native or backend build. The local launcher below always disables that adapter and uses the actual local Node API instead.
+
 For the quickest browser preview, install [Node.js 24 LTS](https://nodejs.org/), extract the source ZIP, open a terminal in its `evpower-app` folder, and run:
 
 ```sh
