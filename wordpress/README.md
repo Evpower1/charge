@@ -1,3 +1,5 @@
+> **New 1.3.0 services website:** Start with [SERVICES-WEBSITE.md](SERVICES-WEBSITE.md) for the Elementor Pro website, installation and owner controls. The older commerce setup below remains optional.
+
 # Evpower for WordPress
 
 This is a separate, installable WordPress version of Evpower, with Elementor editing, Elementor Pro Theme Builder support, the WordPress block editor, and WooCommerce. The existing Next.js application remains in the repository and is not converted by uploading these packages.

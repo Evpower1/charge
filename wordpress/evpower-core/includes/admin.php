@@ -16,10 +16,11 @@ function evpower_admin_page() {
     ?>
     <div class="wrap" style="max-width:1000px">
         <h1>Evpower — your WordPress website</h1>
+        <div class="notice notice-info inline"><p><strong>New services website:</strong> <a href="<?php echo esc_url( admin_url( 'admin.php?page=evpower-services' ) ); ?>">Open Services website</a> to create and edit Mobile EV Charging, Charger Supply, Installation and Maintenance pages. Elementor Pro is supported; WooCommerce is optional.</p></div>
         <p><strong>For Elementor editing:</strong> open <a href="<?php echo esc_url( admin_url( 'admin.php?page=evpower-elementor' ) ); ?>">Evpower → Elementor &amp; plugins</a> to prepare pages, edit the header/footer, and install the focused plugin set.</p>
         <p>Edit pages in <a href="<?php echo esc_url( admin_url( 'edit.php?post_type=page' ) ); ?>">Pages</a>. Edit the header, footer, navigation, templates, logo, colours, and fonts in <a href="<?php echo esc_url( admin_url( 'site-editor.php' ) ); ?>">Appearance → Editor</a>.</p>
         <?php if ( isset( $_GET['evpower_created'] ) ) : ?><div class="notice notice-success"><p>Starter content prepared. Existing pages and products were kept. Review the setup checks below, delivery rates, legal policies, and product details before launch.</p></div><?php endif; ?>
-        <?php if ( ! $ready ) : ?><div class="notice notice-warning"><p>Install and activate WooCommerce before creating starter content. The Evpower theme uses WooCommerce for products, inventory, cart, checkout, customer accounts, and orders.</p></div><?php endif; ?>
+        <?php if ( ! $ready ) : ?><div class="notice notice-warning"><p>The optional shop starter content below requires WooCommerce. For the service website, use Evpower → Services website; WooCommerce is not required.</p></div><?php endif; ?>
         <?php if ( 'evpower' !== get_stylesheet() ) : ?><div class="notice notice-warning"><p>Activate the Evpower theme in Appearance → Themes to use its editable starter pages and Site Editor.</p></div><?php endif; ?>
         <h2>1. Prepare starter pages</h2>
         <p><strong>Seeing “Welcome to WordPress” or broken menu links?</strong> Select the homepage and Post name URL options below, then create missing starter content. A theme supplies the design; this step creates the pages and selects what the homepage displays.</p>

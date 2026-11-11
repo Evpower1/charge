@@ -3,7 +3,7 @@ defined( 'ABSPATH' ) || exit;
 
 function evpower_elementor_layout_document( $id ) {
     if ( ! $id || 'elementor_library' !== get_post_type( $id ) ) { return false; }
-    $saved = get_option( 'evpower_elementor_layouts', array() );
+    $saved = array_merge( (array) get_option( 'evpower_elementor_layouts', array() ), (array) get_option( 'evpower_services_elementor_layouts', array() ) );
     return ( is_array( $saved ) && in_array( (int) $id, array_map( 'absint', $saved ), true ) ) || in_array( get_post_meta( $id, '_elementor_template_type', true ), array( 'header', 'footer' ), true );
 }
 

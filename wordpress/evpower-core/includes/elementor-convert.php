@@ -84,21 +84,33 @@ function evpower_blocks_to_elementor( $blocks, $context = '', $palette = '' ) {
         if ( 'core/site-title' === $name || 'core/site-logo' === $name ) {
             if ( 'core/site-title' === $name ) { $result[] = evpower_element( 'evpower-identity' ); } continue;
         }
-        if ( 'core/navigation' === $name ) { $result[] = evpower_element( 'evpower-navigation', array( 'menu' => (string) evpower_elementor_menu( $block ) ) ); continue; }
+        if ( 'core/navigation' === $name ) { $result[] = evpower_element( 'evpower-navigation', array( 'menu' => (string) evpower_elementor_menu( $block ), '_css_classes' => $classes ) ); continue; }
         if ( 'core/paragraph' === $name && str_contains( $classes, 'ep-account-links' ) ) { $result[] = evpower_element( 'evpower-shop-actions' ); continue; }
         if ( 'core/paragraph' === $name && str_contains( $classes, 'ep-signin' ) ) { $result[] = evpower_element( 'evpower-shop-actions', array( 'account_label' => 'Sign in', 'account_icon' => 'signin', 'show_cart' => 'yes', 'cart_show_label' => '', '_css_classes' => 'ep-signin' ) ); continue; }
+        $services = str_contains( $classes, 'evs-' ) || 'services' === $palette;
         $settings = $classes ? array( '_css_classes' => $classes ) : array();
         if ( ! empty( $attrs['anchor'] ) ) { $settings['_element_id'] = $attrs['anchor']; }
+        // One native Accordion keeps the FAQ editable and avoids opening four panels.
+        if ( 'core/group' === $name && str_contains( $classes, 'evs-faq-list' ) ) {
+            $tabs = array();
+            foreach ( $block['innerBlocks'] as $detail ) {
+                if ( 'core/details' !== ( $detail['blockName'] ?? '' ) ) { continue; }
+                list( $dom, $summary ) = evpower_html_node( $detail['innerHTML'], 'summary' );
+                $body = ''; foreach ( $detail['innerBlocks'] as $child ) { $body .= render_block( $child ); }
+                $tabs[] = array( '_id' => wp_generate_password( 7, false ), 'tab_title' => $summary ? $summary->textContent : 'Question', 'tab_content' => $body );
+            }
+            if ( $tabs ) { $result[] = evpower_element( 'accordion', $settings + array( 'tabs' => $tabs ) ); continue; }
+        }
         if ( 'core/group' === $name || 'core/buttons' === $name || 'core/columns' === $name || 'core/column' === $name ) {
             $next_palette = str_contains( $classes, 'ep-footer-light' ) ? 'light' : ( preg_match( '/(?:^|\s)(ep-hero|ep-dark|ep-footer|ep-topbar)(?:\s|$)/', $classes ) ? 'dark' : ( str_contains( $classes, 'ep-cta' ) && ! str_contains( $classes, 'ep-cta-copy' ) && ! str_contains( $classes, 'ep-cta-inner' ) ? 'cta' : $palette ) );
             $settings += array( 'content_width' => 'full', 'flex_direction' => 'column', 'flex_gap' => array( 'column' => '0', 'row' => '0', 'unit' => 'px', 'isLinked' => true ), 'padding' => array( 'top' => '0', 'right' => '0', 'bottom' => '0', 'left' => '0', 'unit' => 'px', 'isLinked' => true ) );
             if ( ! empty( $attrs['tagName'] ) && in_array( $attrs['tagName'], array( 'section', 'article', 'main', 'aside', 'div' ), true ) ) { $settings['html_tag'] = $attrs['tagName']; }
-            $grids = array( 'ep-services-grid' => 4, 'ep-three-columns' => 3, 'ep-two-columns' => 2, 'ep-footer-grid' => 4 );
+            $grids = array( 'ep-services-grid' => 4, 'ep-three-columns' => 3, 'ep-two-columns' => 2, 'ep-footer-grid' => 4, 'evs-hero-grid' => 2, 'evs-service-grid' => 4, 'evs-three-grid' => 3, 'evs-two-grid' => 2, 'evs-footer-grid' => 4 );
             foreach ( $grids as $class => $count ) {
                 if ( str_contains( $classes, $class ) ) {
                     $settings['container_type'] = 'grid';
                     $settings['grid_columns_grid'] = array( 'unit' => 'fr', 'size' => $count );
-                    $settings['grid_columns_grid_tablet'] = array( 'unit' => 'fr', 'size' => min( 2, $count ) );
+                    $settings['grid_columns_grid_tablet'] = array( 'unit' => 'fr', 'size' => in_array( $class, array( 'evs-hero-grid', 'evs-two-grid', 'evs-three-grid' ), true ) ? 1 : min( 2, $count ) );
                     $settings['grid_columns_grid_mobile'] = array( 'unit' => 'fr', 'size' => in_array( $class, array( 'ep-services-grid', 'ep-footer-grid' ), true ) ? 2 : 1 );
                     $settings['grid_rows_grid'] = array( 'unit' => 'custom', 'size' => 'auto' );
                     $settings['grid_gaps'] = array( 'column' => '24', 'row' => '24', 'unit' => 'px' );
@@ -107,6 +119,10 @@ function evpower_blocks_to_elementor( $blocks, $context = '', $palette = '' ) {
             if ( 'core/buttons' === $name || preg_match( '/\b(ep-header-inner|ep-header-actions|ep-top-inner|ep-footer-bottom|ep-cta-inner|ep-hero-bottom|ep-compatibility)\b/', $classes ) ) {
                 $settings['flex_direction'] = 'row'; $settings['flex_align_items'] = 'center'; $settings['flex_justify_content'] = 'space-between';
                 $settings['flex_gap'] = array( 'column' => '16', 'row' => '16', 'unit' => 'px' );
+            }
+            if ( $services ) {
+                $next_palette = 'services';
+                foreach ( array( 'padding', 'flex_direction', 'flex_gap', 'grid_gaps', 'flex_align_items', 'flex_justify_content' ) as $key ) { unset( $settings[ $key ] ); }
             }
             $result[] = evpower_element( 'container', $settings, evpower_blocks_to_elementor( $block['innerBlocks'], $context, $next_palette ) ); continue;
         }
@@ -132,6 +148,8 @@ function evpower_blocks_to_elementor( $blocks, $context = '', $palette = '' ) {
         }
         if ( 'core/image' === $name ) {
             list( $dom, $img ) = evpower_html_node( $block['innerHTML'], 'img' );
+            $anchor = $dom->getElementsByTagName( 'a' )->item( 0 );
+            if ( $anchor ) { $settings['link_to'] = 'custom'; $settings['link'] = array( 'url' => $anchor->getAttribute( 'href' ), 'is_external' => '_blank' === $anchor->getAttribute( 'target' ) ? 'on' : '' ); }
             $result[] = evpower_element( 'image', $settings + array( 'image' => evpower_elementor_image( $img ? $img->getAttribute( 'src' ) : '', $img ? $img->getAttribute( 'alt' ) : '', $attrs['id'] ?? 0 ), 'image_size' => 'full' ) ); continue;
         }
         if ( 'core/button' === $name ) {
@@ -140,13 +158,22 @@ function evpower_blocks_to_elementor( $blocks, $context = '', $palette = '' ) {
             if ( 'cta' === $palette || 'header' === $context ) { $settings['background_color'] = '#10292e'; $settings['button_text_color'] = '#ffffff'; }
             if ( str_contains( $classes, 'ep-book-simple' ) ) { unset( $settings['typography_font_size'] ); $settings['background_color'] = '#a4ea20'; $settings['button_text_color'] = '#101e31'; $settings['border_radius'] = array( 'top' => '14', 'right' => '14', 'bottom' => '14', 'left' => '14', 'unit' => 'px', 'isLinked' => true ); }
             if ( str_contains( $classes, 'outline' ) ) { $settings['background_color'] = '#00000000'; $settings['button_text_color'] = 'dark' === $palette ? '#ffffff' : '#183330'; $settings['border_color'] = 'dark' === $palette ? '#ffffff88' : '#18333066'; $settings['border_border'] = 'solid'; $settings['border_width'] = array( 'top' => '1', 'right' => '1', 'bottom' => '1', 'left' => '1', 'unit' => 'px', 'isLinked' => true ); }
+            if ( $services ) { foreach ( array( 'button_text_color', 'background_color', 'typography_typography', 'typography_font_size', 'border_radius', 'border_color', 'border_border', 'border_width' ) as $key ) { unset( $settings[ $key ] ); } }
             $result[] = evpower_element( 'button', $settings ); continue;
         }
-        if ( 'core/shortcode' === $name ) { $result[] = evpower_element( 'shortcode', array( 'shortcode' => trim( $block['innerHTML'] ) ) ); continue; }
+        if ( 'core/shortcode' === $name ) {
+            $shortcode = trim( $block['innerHTML'] );
+            if ( preg_match( '/^\[evpower_service_request(?:\s+([^\]]*))?\]$/', $shortcode, $match ) ) {
+                $attributes = shortcode_parse_atts( $match[1] ?? '' );
+                $service = is_array( $attributes ) ? sanitize_key( $attributes['service'] ?? '' ) : '';
+                $result[] = evpower_element( 'evpower-service-request', $settings + array( 'default_service' => in_array( $service, array( 'mobile', 'supply', 'installation', 'maintenance' ), true ) ? $service : '' ) );
+            } else { $result[] = evpower_element( 'shortcode', $settings + array( 'shortcode' => $shortcode ) ); }
+            continue;
+        }
         if ( 'core/details' === $name ) {
             list( $dom, $summary ) = evpower_html_node( $block['innerHTML'], 'summary' );
             $body = ''; foreach ( $block['innerBlocks'] as $child ) { $body .= render_block( $child ); }
-            $result[] = evpower_element( 'accordion', array( 'tabs' => array( array( '_id' => wp_generate_password( 7, false ), 'tab_title' => $summary ? $summary->textContent : 'Question', 'tab_content' => $body ) ), 'title_color' => '#183330', 'content_color' => '#737e79', 'border_color' => '#dce2d7' ) ); continue;
+            $result[] = evpower_element( 'accordion', $settings + array( 'tabs' => array( array( '_id' => wp_generate_password( 7, false ), 'tab_title' => $summary ? $summary->textContent : 'Question', 'tab_content' => $body ) ), 'title_color' => '#183330', 'content_color' => '#737e79', 'border_color' => '#dce2d7' ) ); continue;
         }
         // Preserve dynamic/plugin blocks in a dedicated widget; never discard content.
         $result[] = evpower_element( 'evpower-block', array( 'content' => serialize_block( $block ) ) );

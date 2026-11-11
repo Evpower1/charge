@@ -1,0 +1,1618 @@
+/*
+ * Evpower services: shared defaults for WordPress blocks and Elementor widgets.
+ * Kept below Elementor's per-element specificity so the owner can change them.
+ */
+:where(.evs-page, .evs-header, .evs-footer) {
+    --evs-blue: #0754de;
+    --evs-cyan: #00cde8;
+    --evs-ink: #122d4d;
+    --evs-muted: #51667d;
+    --evs-line: #dce6f0;
+    --evs-soft: #f3f8fe;
+    --evs-white: #fff;
+    --evs-radius: 20px;
+    color: var(--evs-ink);
+    font-family: "DM Sans", sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+    text-align: start;
+    overflow-wrap: break-word;
+}
+
+.evs-page {
+    color: var(--evs-muted);
+}
+
+.evs-page,
+.evs-header,
+.evs-footer {
+    --width: 100%;
+    width: var(--width);
+    max-width: none;
+    margin: 0;
+    background: var(--evs-white);
+}
+
+/* Neutralize builder container spacing, then apply the named section layouts. */
+:where(.evs-page, .evs-header, .evs-footer).e-con,
+:where(.evs-page, .evs-header, .evs-footer) .e-con {
+    --padding-top: 0px;
+    --padding-right: 0px;
+    --padding-bottom: 0px;
+    --padding-left: 0px;
+    --gap: 0px;
+    --row-gap: 0px;
+    --column-gap: 0px;
+    --container-widget-width: 100%;
+    min-width: 0;
+    gap: var(--row-gap) var(--column-gap);
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    --flex-direction: column;
+    flex-direction: var(--flex-direction);
+}
+
+:where(.evs-page, .evs-header, .evs-footer) .e-con > .e-con-inner {
+    gap: inherit;
+    padding: 0;
+}
+
+:where(.evs-page, .evs-header, .evs-footer) *,
+:where(.evs-page, .evs-header, .evs-footer) *::before,
+:where(.evs-page, .evs-header, .evs-footer) *::after {
+    box-sizing: border-box;
+}
+
+:where(.evs-page, .evs-header, .evs-footer) :where(a, button, input, select, textarea, summary):focus-visible {
+    outline: 3px solid var(--evs-blue);
+    outline-offset: 5px;
+}
+
+:where(.evs-page, .evs-header, .evs-footer) a {
+    color: var(--evs-blue);
+    text-underline-offset: .2em;
+    text-decoration-thickness: 1px;
+}
+
+:where(.evs-page, .evs-header, .evs-footer) a:hover {
+    color: #003eac;
+}
+
+:where(.evs-page, .evs-header, .evs-footer) img {
+    max-width: 100%;
+    height: auto;
+}
+
+:where(.evs-page, .evs-header, .evs-footer) :where(h1, h2, h3, h4, .elementor-heading-title) {
+    color: var(--evs-ink);
+    font-family: Manrope, sans-serif;
+    font-weight: 700;
+    letter-spacing: -.045em;
+    text-wrap: balance;
+}
+
+.evs-page .elementor-heading-title {
+    color: var(--evs-ink);
+    font-family: Manrope, sans-serif;
+    font-weight: 700;
+    letter-spacing: -.045em;
+    line-height: 1.2;
+}
+
+.evs-page h1,
+.evs-page h1.elementor-heading-title {
+    font-size: clamp(2.375rem, 4.9vw, 4rem);
+    line-height: 1.1;
+    margin: 0;
+}
+
+.evs-page h2,
+.evs-page h2.elementor-heading-title {
+    font-size: clamp(1.9rem, 3.5vw, 2.75rem);
+    line-height: 1.2;
+    margin: 0 0 22px;
+}
+
+.evs-page h3,
+.evs-page h3.elementor-heading-title {
+    font-size: 1.35rem;
+    line-height: 1.35;
+    margin: 0 0 14px;
+}
+
+.evs-page p {
+    margin: 0 0 20px;
+}
+
+.evs-page .elementor-widget-text-editor {
+    color: var(--evs-muted);
+    font-family: "DM Sans", sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+}
+
+:where(.evs-page, .evs-header, .evs-footer) .elementor-widget-text-editor :where(p, ul, ol) {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.evs-page .elementor-widget-text-editor p:last-child,
+.evs-footer .elementor-widget-text-editor p:last-child {
+    margin-bottom: 0;
+}
+
+.evs-page .evs-container,
+.evs-header .evs-container,
+.evs-footer .evs-container {
+    --width: min(1200px, calc(100% - 80px));
+    width: var(--width);
+    --content-width: 1200px;
+    max-width: var(--content-width);
+    min-width: 0;
+    margin-inline: auto;
+}
+
+.evs-page .evs-section {
+    --width: 100%;
+    width: var(--width);
+    max-width: none;
+    margin-block: 0;
+    --padding-top: 96px;
+    --padding-bottom: 96px;
+    padding-block: var(--padding-top) var(--padding-bottom);
+}
+
+.evs-page .evs-section-soft {
+    background: var(--evs-soft);
+}
+
+.evs-page .evs-section-heading {
+    max-width: 690px;
+    margin-bottom: 40px;
+}
+
+.evs-page .evs-section-heading p:last-child {
+    margin-bottom: 0;
+}
+
+.evs-page .evs-eyebrow {
+    color: var(--evs-blue);
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .13em;
+    line-height: 1.55;
+    text-transform: uppercase;
+}
+
+.evs-page .evs-eyebrow {
+    margin-bottom: 20px;
+}
+
+.evs-page .evs-lead {
+    font-size: 1.125rem;
+    line-height: 1.7;
+}
+
+.evs-page .evs-note {
+    color: var(--evs-muted);
+    font-size: .875rem;
+    line-height: 1.65;
+}
+
+/* Hero photography stays a real, selectable image in the visual editor. */
+.evs-page .evs-hero {
+    --width: 100%;
+    width: var(--width);
+    max-width: none;
+    margin-block: 0;
+    --padding-top: 72px;
+    --padding-bottom: 84px;
+    padding-block: var(--padding-top) var(--padding-bottom);
+    background: #f7fbff;
+}
+
+.evs-page .evs-hero-grid {
+    --display: grid;
+    display: var(--display);
+    --e-con-grid-template-columns: 1.02fr 1fr;
+    grid-template-columns: var(--e-con-grid-template-columns);
+    align-items: center;
+    --row-gap: 60px;
+    --column-gap: 60px;
+    gap: var(--row-gap) var(--column-gap);
+    margin: 0;
+}
+
+.evs-page .evs-hero-grid > *,
+.evs-page :where(.evs-two-grid, .evs-three-grid, .evs-service-grid) > * {
+    --width: auto;
+    width: var(--width);
+    min-width: 0;
+    margin: 0;
+}
+
+.evs-page .evs-hero-copy {
+    --display: flex;
+    display: var(--display);
+    --flex-direction: column;
+    flex-direction: var(--flex-direction);
+    align-items: flex-start;
+    --row-gap: 24px;
+    --column-gap: 24px;
+    gap: var(--row-gap) var(--column-gap);
+    min-width: 0;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    padding-block: var(--padding-top) var(--padding-bottom);
+}
+
+.evs-page .evs-hero-copy > * {
+    margin: 0;
+}
+
+.evs-page .evs-hero-copy .evs-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    --row-gap: 9px;
+    --column-gap: 9px;
+    gap: var(--row-gap) var(--column-gap);
+    --padding-top: 7px;
+    --padding-right: 13px;
+    --padding-bottom: 7px;
+    --padding-left: 13px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    border: 1px solid #d9e8ff;
+    border-radius: 100px;
+    background: #f1f7ff;
+}
+
+.evs-page .evs-hero-copy .evs-eyebrow::before {
+    content: "";
+    display: block;
+    flex: 0 0 6px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--evs-blue);
+}
+
+.evs-page .evs-hero-copy :where(.evs-lead, .evs-lead p) {
+    max-width: 505px;
+    margin-bottom: 0;
+}
+
+.evs-page .evs-hero-visual {
+    min-width: 0;
+}
+
+.evs-page .evs-hero-image {
+    --width: 100%;
+    width: var(--width);
+    margin: 0;
+    border-radius: 24px;
+    background: #deedf6;
+    box-shadow: 0 20px 60px #183a6412;
+}
+
+.evs-page .evs-hero-image img {
+    display: block;
+    --width: 100%;
+    width: var(--width);
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    border-radius: 24px;
+}
+
+.evs-page .evs-hero-caption {
+    color: var(--evs-muted);
+    font-size: .8125rem;
+    line-height: 1.6;
+    margin-top: 14px;
+    margin-bottom: 0;
+}
+
+/* The same button classes survive conversion to editable Elementor buttons. */
+.evs-page .evs-buttons,
+.evs-header .evs-buttons,
+.evs-footer .evs-buttons {
+    --flex-wrap: wrap;
+    --display: flex;
+    display: var(--display);
+    --flex-direction: row;
+    flex-direction: var(--flex-direction);
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    --row-gap: 12px;
+    --column-gap: 12px;
+    gap: var(--row-gap) var(--column-gap);
+    --width: auto;
+    width: var(--width);
+    margin-block: 0;
+}
+
+:where(.evs-page, .evs-header) :where(.wp-block-button, .elementor-widget-button) {
+    --width: auto;
+    width: var(--width);
+    max-width: 100%;
+}
+
+.evs-page .wp-block-button__link,
+.evs-page .elementor-button,
+.evs-header .wp-block-button__link,
+.evs-header .elementor-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    --padding-top: 13px;
+    --padding-right: 23px;
+    --padding-bottom: 13px;
+    --padding-left: 23px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: var(--evs-blue);
+    color: var(--evs-white);
+    font-family: "DM Sans", sans-serif;
+    font-size: .9375rem;
+    font-weight: 600;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    transition: background .2s ease, box-shadow .2s ease;
+}
+
+.evs-page .wp-block-button__link:hover,
+.evs-page .elementor-button:hover,
+.evs-header .wp-block-button__link:hover,
+.evs-header .elementor-button:hover {
+    background: #0645b7;
+    color: var(--evs-white);
+    box-shadow: 0 5px 18px #0754de20;
+    transform: none;
+    filter: none;
+}
+
+:where(.evs-page, .evs-header) .evs-button-outline :is(.wp-block-button__link, .elementor-button) {
+    border-color: #cbd9e9;
+    background: var(--evs-white);
+    color: var(--evs-ink);
+}
+
+:where(.evs-page, .evs-header) .evs-button-outline :is(.wp-block-button__link, .elementor-button):hover {
+    border-color: var(--evs-blue);
+    background: #f3f8ff;
+    color: var(--evs-blue);
+}
+
+.evs-page .evs-text-link {
+    margin: 22px 0 0;
+    font-size: .9375rem;
+    font-weight: 600;
+}
+
+.evs-page .evs-text-link a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration: none;
+}
+
+.evs-page .evs-text-link a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive grids include the outer column wrapper in both editors. */
+.evs-page .evs-service-grid,
+.evs-page .evs-three-grid,
+.evs-page .evs-two-grid {
+    --display: grid;
+    display: var(--display);
+    --row-gap: 24px;
+    --column-gap: 24px;
+    gap: var(--row-gap) var(--column-gap);
+    margin: 0;
+}
+
+.evs-page .evs-service-grid {
+    --e-con-grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: var(--e-con-grid-template-columns);
+    align-items: stretch;
+}
+
+.evs-page .evs-three-grid {
+    --e-con-grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: var(--e-con-grid-template-columns);
+    align-items: stretch;
+}
+
+.evs-page .evs-two-grid {
+    --e-con-grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: var(--e-con-grid-template-columns);
+    align-items: center;
+    --row-gap: 64px;
+    --column-gap: 64px;
+    gap: var(--row-gap) var(--column-gap);
+}
+
+.evs-page .evs-card {
+    --display: flex;
+    display: var(--display);
+    --flex-direction: column;
+    flex-direction: var(--flex-direction);
+    align-items: flex-start;
+    --row-gap: 18px;
+    --column-gap: 0px;
+    gap: var(--row-gap) var(--column-gap);
+    height: 100%;
+    --padding-top: 28px;
+    --padding-right: 28px;
+    --padding-bottom: 28px;
+    --padding-left: 28px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    border: 1px solid var(--evs-line);
+    border-radius: var(--evs-radius);
+    background: var(--evs-white);
+    box-shadow: 0 4px 16px #17395403;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.evs-page .evs-card > * {
+    margin-block: 0;
+}
+
+.evs-page .evs-card:hover {
+    border-color: #adc9f0;
+    box-shadow: 0 10px 32px #17395409;
+}
+
+.evs-page .evs-card-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    min-height: 46px;
+    margin: 0 0 28px;
+    border-radius: 12px;
+    background: #eaf3ff;
+    color: var(--evs-blue);
+    font-family: Manrope, sans-serif;
+    font-size: .875rem;
+    font-weight: 700;
+}
+
+.evs-page .evs-card-number p {
+    margin: 0;
+    color: inherit;
+}
+
+.evs-page .evs-card h3 {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    letter-spacing: -.03em;
+    margin: 0;
+}
+
+.evs-page .evs-card-title a {
+    color: var(--evs-ink);
+    text-decoration: none;
+}
+
+.evs-page .evs-card-title a:hover {
+    color: var(--evs-blue);
+}
+
+:where(.evs-page) .evs-card > p:not(.evs-card-number),
+:where(.evs-page) .evs-card .elementor-widget-text-editor:not(.evs-card-number) {
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.evs-page .evs-card .evs-text-link {
+    margin-top: auto;
+    --padding-top: 16px;
+    padding-top: var(--padding-top);
+}
+
+.evs-page .evs-card .evs-text-link p {
+    margin: 0;
+}
+
+.evs-page .evs-page-intro {
+    margin: 0;
+    --padding-top: 68px;
+    --padding-bottom: 58px;
+    padding-block: var(--padding-top) var(--padding-bottom);
+    background: var(--evs-soft);
+}
+
+.evs-page .evs-page-intro h1 {
+    max-width: 900px;
+    margin-bottom: 24px;
+    font-size: clamp(2.375rem, 4.5vw, 3.5rem);
+}
+
+.evs-page .evs-page-intro .evs-lead {
+    max-width: 720px;
+    margin-bottom: 0;
+}
+
+.evs-page .evs-feature-image {
+    margin: 0;
+    border-radius: var(--evs-radius);
+    background: #e5eff7;
+}
+
+.evs-page .evs-feature-image img {
+    display: block;
+    --width: 100%;
+    width: var(--width);
+    aspect-ratio: 1.16;
+    object-fit: cover;
+    border-radius: var(--evs-radius);
+}
+
+.evs-page .evs-check-list,
+.evs-page .evs-check-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 24px 0;
+}
+
+.evs-page .evs-check-list li {
+    position: relative;
+    --padding-top: 10px;
+    --padding-right: 0;
+    --padding-bottom: 10px;
+    --padding-left: 31px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    color: var(--evs-muted);
+}
+
+.evs-page .evs-check-list li::before {
+    content: "✓";
+    position: absolute;
+    top: 12px;
+    left: 0;
+    --display: grid;
+    display: var(--display);
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e5f3ff;
+    color: var(--evs-blue);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.evs-page .evs-faq-list {
+    max-width: 850px;
+}
+
+.evs-page .evs-faq {
+    margin: 0;
+    --padding-top: 24px;
+    --padding-right: 0;
+    --padding-bottom: 24px;
+    --padding-left: 0;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    border-bottom: 1px solid var(--evs-line);
+}
+
+.evs-page .evs-faq:first-child {
+    border-top: 1px solid var(--evs-line);
+}
+
+.evs-page .evs-faq summary {
+    min-height: 32px;
+    --padding-right: 20px;
+    padding-right: var(--padding-right);
+    color: var(--evs-ink);
+    font-family: Manrope, sans-serif;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.6;
+    cursor: pointer;
+}
+
+.evs-page .evs-faq p {
+    max-width: 740px;
+    margin: 18px 0 0;
+    font-size: 1rem;
+}
+
+:where(.evs-page) .evs-faq-list .elementor-accordion-item {
+    border: 0;
+    border-bottom: 1px solid var(--evs-line);
+}
+
+:where(.evs-page) .evs-faq-list .elementor-tab-title {
+    --padding-top: 24px;
+    --padding-right: 0;
+    --padding-bottom: 24px;
+    --padding-left: 0;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    color: var(--evs-ink);
+    font-family: Manrope, sans-serif;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+:where(.evs-page) .evs-faq-list .elementor-tab-content {
+    --padding-top: 0;
+    --padding-right: 0;
+    --padding-bottom: 24px;
+    --padding-left: 0;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    border-top: 0;
+    color: var(--evs-muted);
+    font-family: "DM Sans", sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+:where(.evs-page) .evs-faq-list .elementor-accordion-title {
+    color: inherit;
+}
+
+.evs-page .evs-cta {
+    --width: 100%;
+    width: var(--width);
+    max-width: none;
+    margin: 0;
+    --padding-top: 66px;
+    --padding-bottom: 66px;
+    padding-block: var(--padding-top) var(--padding-bottom);
+    background: #eaf4ff;
+    border-block: 1px solid #dceaf9;
+}
+
+.evs-page .evs-cta-inner {
+    --display: flex;
+    display: var(--display);
+    --flex-direction: row;
+    flex-direction: var(--flex-direction);
+    align-items: center;
+    justify-content: space-between;
+    --row-gap: 40px;
+    --column-gap: 40px;
+    gap: var(--row-gap) var(--column-gap);
+}
+
+.evs-page .evs-cta-inner > * {
+    margin: 0;
+    min-width: 0;
+}
+
+.evs-page .evs-cta h2 {
+    max-width: 680px;
+    margin-bottom: 14px;
+    font-size: clamp(1.875rem, 3vw, 2.5rem);
+}
+
+.evs-page .evs-cta p {
+    max-width: 640px;
+    margin-bottom: 0;
+}
+
+.evs-page .evs-cta .evs-buttons {
+    flex-shrink: 0;
+}
+
+/* Short, clear header. WordPress handles the accessible mobile menu dialog. */
+.evs-header {
+    position: relative;
+    z-index: 20;
+    border-bottom: 1px solid #e5edf5;
+}
+
+.evs-header .evs-header-inner {
+    --display: flex;
+    display: var(--display);
+    --flex-direction: row;
+    flex-direction: var(--flex-direction);
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    --row-gap: 32px;
+    --column-gap: 32px;
+    gap: var(--row-gap) var(--column-gap);
+    min-height: 92px;
+    --padding-top: 14px;
+    --padding-bottom: 14px;
+    padding-block: var(--padding-top) var(--padding-bottom);
+}
+
+.evs-header .evs-header-inner > * {
+    margin: 0;
+    min-width: 0;
+}
+
+.evs-header .evs-brand-image {
+    flex: 0 0 195px;
+    width: 195px;
+}
+
+.evs-header .evs-brand-image :where(a, img) {
+    display: block;
+    --width: 100%;
+    width: var(--width);
+}
+
+.evs-header .evs-brand-image img {
+    max-height: 54px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.evs-header .evs-navigation,
+.evs-header .elementor-widget-evpower-navigation {
+    flex: 1 1 auto;
+    --width: auto;
+    width: var(--width);
+    color: var(--evs-muted);
+    font-size: .875rem;
+    font-weight: 500;
+}
+
+.evs-header .wp-block-navigation {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.evs-header .wp-block-navigation__container {
+    --row-gap: 30px;
+    --column-gap: 30px;
+    gap: var(--row-gap) var(--column-gap);
+}
+
+.evs-header .wp-block-navigation a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.evs-header .wp-block-navigation a:hover,
+.evs-header .wp-block-navigation .current-menu-item > a {
+    color: var(--evs-blue);
+}
+
+.evs-header .evs-header-actions {
+    --display: flex;
+    display: var(--display);
+    --flex-direction: row;
+    flex-direction: var(--flex-direction);
+    align-items: center;
+    flex-wrap: nowrap;
+    flex: 0 0 auto;
+    --row-gap: 16px;
+    --column-gap: 16px;
+    gap: var(--row-gap) var(--column-gap);
+    --width: auto;
+    width: var(--width);
+    margin-left: auto;
+}
+
+.evs-header .evs-header-actions > * {
+    --width: auto;
+    width: var(--width);
+    margin: 0;
+}
+
+.evs-header .evs-header-actions .evs-buttons {
+    margin-left: auto;
+}
+
+.evs-header .evs-header-actions :where(.elementor-button, .wp-block-button__link) {
+    min-height: 46px;
+    --padding-top: 10px;
+    --padding-right: 19px;
+    --padding-bottom: 10px;
+    --padding-left: 19px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    font-size: .875rem;
+    white-space: nowrap;
+}
+
+.evs-header .evs-cart {
+    font-size: .875rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.evs-header .evs-cart p {
+    margin: 0;
+}
+
+.evs-header .evs-cart a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    --row-gap: 7px;
+    --column-gap: 7px;
+    gap: var(--row-gap) var(--column-gap);
+    color: var(--evs-ink);
+    text-decoration: none;
+}
+
+.evs-header .wp-block-navigation__responsive-container-open,
+.evs-header .wp-block-navigation__responsive-container-close {
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    color: var(--evs-ink);
+}
+
+.evs-header .wp-block-navigation__responsive-container.is-menu-open {
+    background: var(--evs-white);
+    color: var(--evs-ink);
+    --padding-top: 24px;
+    --padding-right: 24px;
+    --padding-bottom: 24px;
+    --padding-left: 24px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+}
+
+.evs-header .is-menu-open .wp-block-navigation__container {
+    align-items: flex-start;
+    --width: 100%;
+    width: var(--width);
+    --row-gap: 18px;
+    --column-gap: 18px;
+    gap: var(--row-gap) var(--column-gap);
+    font-size: 1.25rem;
+}
+
+.evs-header .wp-block-navigation__submenu-container {
+    min-width: 220px;
+    --padding-top: 12px;
+    --padding-right: 12px;
+    --padding-bottom: 12px;
+    --padding-left: 12px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    border: 1px solid var(--evs-line);
+    border-radius: 12px;
+    background: var(--evs-white);
+    box-shadow: 0 12px 36px #1739540a;
+}
+
+.evs-header .wp-block-navigation__submenu-container a {
+    --padding-top: 6px;
+    --padding-right: 10px;
+    --padding-bottom: 6px;
+    --padding-left: 10px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    line-height: 1.5;
+}
+
+/* Light footer provides the secondary navigation instead of crowding the header. */
+.evs-footer {
+    --padding-top: 66px;
+    --padding-bottom: 0;
+    padding-block: var(--padding-top) var(--padding-bottom);
+    border-top: 1px solid #e1eaf3;
+    background: #f7faff;
+    color: var(--evs-muted);
+    font-size: .9375rem;
+    line-height: 1.8;
+}
+
+.evs-footer .evs-footer-grid {
+    --display: grid;
+    display: var(--display);
+    --e-con-grid-template-columns: 1.3fr 1.1fr .9fr 1.1fr;
+    grid-template-columns: var(--e-con-grid-template-columns);
+    align-items: start;
+    --row-gap: 44px;
+    --column-gap: 44px;
+    gap: var(--row-gap) var(--column-gap);
+    --padding-bottom: 54px;
+    padding-bottom: var(--padding-bottom);
+    margin: 0;
+}
+
+.evs-footer .evs-footer-grid > * {
+    --width: auto;
+    width: var(--width);
+    min-width: 0;
+    margin: 0;
+}
+
+.evs-footer .evs-footer-logo {
+    --width: min(210px, 100%);
+    width: var(--width);
+    margin: 0 0 20px;
+}
+
+.evs-footer .evs-footer-logo img {
+    display: block;
+    --width: 100%;
+    width: var(--width);
+    max-height: 56px;
+    object-fit: contain;
+    object-position: left center;
+}
+
+.evs-footer .elementor-widget-text-editor {
+    color: var(--evs-muted);
+    font-size: .9375rem;
+    line-height: 1.8;
+    margin: 0 0 12px;
+}
+
+.evs-footer p {
+    margin: 0 0 12px;
+    color: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.evs-footer .evs-footer-heading {
+    color: var(--evs-ink);
+    font-family: Manrope, sans-serif;
+    font-size: .9375rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    margin: 0 0 16px;
+}
+
+.evs-footer .evs-footer-links,
+.evs-footer .evs-footer-links ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.evs-footer .evs-footer-links li {
+    margin: 0;
+    color: var(--evs-muted);
+    font-size: .9375rem;
+    line-height: 1.7;
+}
+
+.evs-footer .evs-footer-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    --padding-top: 5px;
+    --padding-bottom: 5px;
+    padding-block: var(--padding-top) var(--padding-bottom);
+    color: var(--evs-muted);
+    text-decoration: none;
+}
+
+.evs-footer .evs-footer-links a:hover {
+    color: var(--evs-blue);
+    text-decoration: underline;
+}
+
+.evs-footer .evs-footer-bottom {
+    --display: flex;
+    display: var(--display);
+    --flex-direction: row;
+    flex-direction: var(--flex-direction);
+    align-items: center;
+    justify-content: space-between;
+    --row-gap: 24px;
+    --column-gap: 24px;
+    gap: var(--row-gap) var(--column-gap);
+    --padding-top: 22px;
+    --padding-bottom: 22px;
+    padding-block: var(--padding-top) var(--padding-bottom);
+    border-top: 1px solid var(--evs-line);
+    color: var(--evs-muted);
+    font-size: .8125rem;
+}
+
+.evs-footer .evs-footer-bottom p,
+.evs-footer .evs-footer-bottom .elementor-widget-text-editor {
+    margin: 0;
+    font-size: inherit;
+}
+
+/* The quote form is usable with native WordPress and Elementor shortcode widgets. */
+.evs-page .evs-form-panel,
+.evs-page .evs-contact-card {
+    --padding-top: 36px;
+    --padding-right: 36px;
+    --padding-bottom: 36px;
+    --padding-left: 36px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    border: 1px solid var(--evs-line);
+    border-radius: var(--evs-radius);
+    background: var(--evs-white);
+}
+
+.evs-page .evs-contact-card {
+    background: var(--evs-soft);
+}
+
+.evs-page .evs-contact-card h3:not(:first-child) {
+    margin-top: 30px;
+}
+
+.evs-page .evs-contact-card a {
+    display: inline-block;
+    --padding-top: 4px;
+    --padding-bottom: 4px;
+    padding-block: var(--padding-top) var(--padding-bottom);
+    overflow-wrap: anywhere;
+}
+
+.evs-page .evs-request {
+    color: var(--evs-ink);
+    font-family: "DM Sans", sans-serif;
+    font-size: 1rem;
+    line-height: 1.65;
+}
+
+.evs-page .evs-request__grid {
+    --display: grid;
+    display: var(--display);
+    --e-con-grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: var(--e-con-grid-template-columns);
+    --row-gap: 22px;
+    --column-gap: 22px;
+    gap: var(--row-gap) var(--column-gap);
+}
+
+.evs-page .evs-request-field,
+.evs-page .evs-request p {
+    margin: 0 0 22px;
+}
+
+.evs-page .evs-request__full {
+    grid-column: 1 / -1;
+}
+
+.evs-page .evs-request label {
+    display: block;
+    margin-bottom: 8px;
+    color: inherit;
+    font-size: .9375rem;
+    font-weight: 500;
+}
+
+.evs-page .evs-request label :where(input, select, textarea) {
+    margin-top: 8px;
+}
+
+.evs-page .evs-request__grid > label {
+    margin-bottom: 0;
+    min-width: 0;
+}
+
+.evs-page .evs-request__consent {
+    --display: flex;
+    display: var(--display);
+    align-items: flex-start;
+    --row-gap: 10px;
+    --column-gap: 10px;
+    gap: var(--row-gap) var(--column-gap);
+    min-height: 44px;
+    font-size: .875rem;
+    font-weight: 400;
+}
+
+.evs-page .evs-request__consent input {
+    flex-shrink: 0;
+    margin: 4px 0 0;
+}
+
+.evs-page .evs-request__trap {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.evs-page .evs-request__button {
+    margin-top: 24px;
+}
+
+.evs-page .evs-request__note {
+    margin-top: 14px;
+    color: var(--evs-muted);
+    font-size: .8125rem;
+    line-height: 1.65;
+}
+
+.evs-page .evs-request :where(input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="hidden"]), select, textarea) {
+    display: block;
+    --width: 100%;
+    width: var(--width);
+    min-width: 0;
+    min-height: 50px;
+    --padding-top: 12px;
+    --padding-right: 14px;
+    --padding-bottom: 12px;
+    --padding-left: 14px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    border: 1px solid #bdccdd;
+    border-radius: 9px;
+    background: #fff;
+    color: var(--evs-ink);
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.evs-page .evs-request textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.evs-page .evs-request :where(input, textarea)::placeholder {
+    color: #65768e;
+    opacity: 1;
+}
+
+.evs-page .evs-request :where(input[type="checkbox"], input[type="radio"]) {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--evs-blue);
+    vertical-align: middle;
+}
+
+.evs-page .evs-request :where(button[type="submit"], input[type="submit"]) {
+    min-height: 50px;
+    --padding-top: 13px;
+    --padding-right: 24px;
+    --padding-bottom: 13px;
+    --padding-left: 24px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: var(--evs-blue);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.evs-page .evs-request :where(button[type="submit"], input[type="submit"]):hover {
+    background: #0645b7;
+}
+
+.evs-page :where(.evs-request__notice, .evs-request__notice--success, .evs-request__notice--error) {
+    --padding-top: 16px;
+    --padding-right: 18px;
+    --padding-bottom: 16px;
+    --padding-left: 18px;
+    padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    margin: 0 0 24px;
+    border: 1px solid #b5d1ef;
+    border-radius: 10px;
+    background: #eff7ff;
+    color: var(--evs-ink);
+}
+
+.evs-page .evs-request__notice--error {
+    border-color: #e2b6b6;
+    background: #fff5f5;
+    color: #8f2424;
+}
+
+.evs-page .evs-privacy .evs-container,
+.evs-privacy .evs-container {
+    max-width: 820px;
+}
+
+.evs-privacy .evs-section h2 {
+    margin-top: 36px;
+    font-size: 1.7rem;
+}
+
+@media (min-width: 1001px) {
+    /* These two rules only choose the menu breakpoint, never editor styling. */
+    .evs-header .wp-block-navigation__responsive-container:not(.is-menu-open) {
+        display: block !important;
+    }
+
+    .evs-header .wp-block-navigation__responsive-container-open {
+        display: none !important;
+    }
+}
+
+@media (max-width: 1100px) {
+    .evs-page .evs-hero-grid {
+        --row-gap: 36px;
+        --column-gap: 36px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-page .evs-service-grid {
+        --e-con-grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: var(--e-con-grid-template-columns);
+    }
+
+    .evs-page .evs-two-grid {
+        --row-gap: 40px;
+        --column-gap: 40px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-header .evs-header-inner {
+        --row-gap: 24px;
+        --column-gap: 24px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-header .wp-block-navigation__container {
+        --row-gap: 20px;
+        --column-gap: 20px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-footer .evs-footer-grid {
+        --row-gap: 32px;
+        --column-gap: 32px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+}
+
+@media (max-width: 1000px) {
+    .evs-header .evs-header-inner {
+        min-height: 80px;
+        --row-gap: 20px;
+        --column-gap: 20px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-header .evs-navigation,
+    .evs-header .elementor-widget-evpower-navigation {
+        order: 3;
+        flex: 0 0 44px;
+        width: 44px;
+        margin-left: 0;
+    }
+
+    .evs-header .wp-block-navigation__responsive-container:not(.is-menu-open) {
+        display: none !important;
+    }
+
+    .evs-header .wp-block-navigation__responsive-container-open {
+        display: flex !important;
+    }
+
+    .evs-header .evs-brand-image {
+        flex-basis: 180px;
+        width: 180px;
+    }
+
+    .evs-page .evs-three-grid {
+        --e-con-grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: var(--e-con-grid-template-columns);
+    }
+
+    .evs-footer .evs-footer-grid {
+        --e-con-grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: var(--e-con-grid-template-columns);
+        --row-gap: 36px;
+        --column-gap: 56px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+}
+
+@media (max-width: 780px) {
+    .evs-page .evs-container,
+.evs-header .evs-container,
+.evs-footer .evs-container {
+        --width: calc(100% - 40px);
+        width: var(--width);
+    }
+
+    .evs-page .evs-section {
+        --padding-top: 64px;
+        --padding-bottom: 64px;
+        padding-block: var(--padding-top) var(--padding-bottom);
+    }
+
+    .evs-page .evs-hero {
+        --padding-top: 42px;
+        --padding-bottom: 56px;
+        padding-block: var(--padding-top) var(--padding-bottom);
+    }
+
+    .evs-page .evs-hero-grid,
+    .evs-page .evs-two-grid {
+        --e-con-grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: var(--e-con-grid-template-columns);
+        --row-gap: 36px;
+        --column-gap: 36px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-page .evs-hero-copy {
+        --padding-top: 0px;
+        --padding-right: 0px;
+        --padding-bottom: 0px;
+        --padding-left: 0px;
+        padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+        --row-gap: 22px;
+        --column-gap: 22px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-page .evs-hero-image img {
+        aspect-ratio: 3 / 2;
+    }
+
+    .evs-page h1,
+.evs-page h1.elementor-heading-title {
+        max-width: 620px;
+        font-size: clamp(2.375rem, 7vw, 3.5rem);
+    }
+
+    .evs-page .evs-section-heading {
+        margin-bottom: 30px;
+    }
+
+    .evs-page .evs-page-intro {
+        --padding-top: 46px;
+        --padding-bottom: 46px;
+        padding-block: var(--padding-top) var(--padding-bottom);
+    }
+
+    .evs-page .evs-cta {
+        --padding-top: 46px;
+        --padding-bottom: 46px;
+        padding-block: var(--padding-top) var(--padding-bottom);
+    }
+
+    .evs-page .evs-cta-inner {
+        --flex-direction: column;
+        flex-direction: var(--flex-direction);
+        align-items: flex-start;
+        --row-gap: 28px;
+        --column-gap: 28px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-page .evs-form-panel,
+    .evs-page .evs-contact-card {
+        --padding-top: 28px;
+        --padding-right: 28px;
+        --padding-bottom: 28px;
+        --padding-left: 28px;
+        padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    }
+
+    .evs-header .evs-header-inner {
+        --row-gap: 12px;
+        --column-gap: 12px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-header .evs-brand-image {
+        flex-basis: 155px;
+        width: 155px;
+    }
+
+    .evs-header .evs-header-actions {
+        --row-gap: 10px;
+        --column-gap: 10px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-header .evs-header-actions :where(.wp-block-button__link, .elementor-button) {
+        --padding-left: 14px;
+        --padding-right: 14px;
+        padding-inline: var(--padding-left) var(--padding-right);
+        font-size: .8125rem;
+    }
+
+    .evs-footer {
+        --padding-top: 48px;
+        padding-top: var(--padding-top);
+    }
+
+    .evs-footer .evs-footer-grid {
+        --padding-bottom: 38px;
+        padding-bottom: var(--padding-bottom);
+    }
+}
+
+@media (max-width: 560px) {
+    .evs-page .evs-service-grid,
+    .evs-page .evs-three-grid {
+        --e-con-grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: var(--e-con-grid-template-columns);
+        --row-gap: 18px;
+        --column-gap: 18px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-page .evs-card {
+        --padding-top: 26px;
+        --padding-right: 26px;
+        --padding-bottom: 26px;
+        --padding-left: 26px;
+        padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    }
+
+    .evs-page .evs-card-number {
+        margin-bottom: 20px;
+    }
+
+    .evs-page .evs-card h3 {
+        font-size: 1.35rem;
+    }
+
+    .evs-page .evs-hero-image,
+    .evs-page .evs-hero-image img {
+        border-radius: 18px;
+    }
+
+    .evs-page .evs-hero-image img {
+        aspect-ratio: 3 / 2;
+    }
+
+    .evs-page .evs-lead {
+        font-size: 1.0625rem;
+    }
+
+    .evs-page .evs-buttons {
+        --row-gap: 10px;
+        --column-gap: 10px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-page .evs-buttons :where(.wp-block-button__link, .elementor-button) {
+        --padding-left: 18px;
+        --padding-right: 18px;
+        padding-inline: var(--padding-left) var(--padding-right);
+        font-size: .875rem;
+    }
+
+    .evs-page .evs-request__grid {
+        --e-con-grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: var(--e-con-grid-template-columns);
+    }
+
+    .evs-page .evs-form-panel,
+    .evs-page .evs-contact-card {
+        --padding-top: 24px;
+        --padding-right: 20px;
+        --padding-bottom: 24px;
+        --padding-left: 20px;
+        padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+    }
+
+    .evs-header .evs-header-inner {
+        min-height: 76px;
+        --row-gap: 8px;
+        --column-gap: 8px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-header .evs-brand-image {
+        flex-basis: 138px;
+        width: 138px;
+    }
+
+    .evs-header .evs-header-actions {
+        --row-gap: 4px;
+        --column-gap: 4px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-header .evs-header-actions :where(.wp-block-button__link, .elementor-button) {
+        min-height: 44px;
+        --padding-left: 10px;
+        --padding-right: 10px;
+        padding-inline: var(--padding-left) var(--padding-right);
+        font-size: .75rem;
+    }
+
+    .evs-header .evs-navigation,
+    .evs-header .elementor-widget-evpower-navigation {
+        flex-basis: 40px;
+        width: 40px;
+    }
+
+    .evs-footer .evs-footer-grid {
+        --e-con-grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: var(--e-con-grid-template-columns);
+        --row-gap: 28px;
+        --column-gap: 28px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-footer .evs-footer-grid > :first-child {
+        max-width: 330px;
+    }
+
+    .evs-footer .evs-footer-bottom {
+        --flex-direction: column;
+        flex-direction: var(--flex-direction);
+        align-items: flex-start;
+        --row-gap: 8px;
+        --column-gap: 8px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+}
+
+@media (max-width: 480px) {
+    .evs-header .evs-header-inner {
+        flex-wrap: wrap;
+        --row-gap: 4px;
+        --column-gap: 10px;
+        gap: var(--row-gap) var(--column-gap);
+        --padding-top: 12px;
+        --padding-bottom: 12px;
+        padding-block: var(--padding-top) var(--padding-bottom);
+    }
+
+    .evs-header .evs-brand-image {
+        flex-basis: 142px;
+        width: 142px;
+    }
+
+    .evs-header .evs-header-actions {
+        order: 4;
+        flex: 1 1 100%;
+        justify-content: space-between;
+        --row-gap: 12px;
+        --column-gap: 12px;
+        gap: var(--row-gap) var(--column-gap);
+    }
+
+    .evs-header .evs-navigation,
+    .evs-header .elementor-widget-evpower-navigation {
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 390px) {
+    .evs-page .evs-container,
+.evs-header .evs-container,
+.evs-footer .evs-container {
+        --width: calc(100% - 32px);
+        width: var(--width);
+    }
+
+    .evs-page .evs-hero-copy .evs-eyebrow {
+        font-size: .6875rem;
+        letter-spacing: .1em;
+    }
+
+    .evs-page .evs-buttons {
+        align-items: stretch;
+        --flex-direction: column;
+        flex-direction: var(--flex-direction);
+        --width: 100%;
+        width: var(--width);
+    }
+
+    .evs-page .evs-buttons :where(.wp-block-button, .elementor-widget-button, .wp-block-button__link, .elementor-button) {
+        --width: 100%;
+        width: var(--width);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html:has(.evs-page) {
+        scroll-behavior: auto;
+    }
+
+    :where(.evs-page, .evs-header, .evs-footer) *,
+    :where(.evs-page, .evs-header, .evs-footer) *::before,
+    :where(.evs-page, .evs-header, .evs-footer) *::after {
+        animation-duration: .01ms;
+        animation-iteration-count: 1;
+        transition-duration: .01ms;
+        scroll-behavior: auto;
+    }
+}

@@ -1,10 +1,15 @@
 {
   "evpower.zip": {
-    "sha256": "d10301cf4eeb7ddc217a50e8595fdb0e97ec8532c5c82c58898b28935290df6a",
-    "bytes": 1229007
+    "sha256": "6162740982856cc00ce1a5b61602b652899d0c8117f136eaf77cacc885b02647",
+    "bytes": 6694883
   },
   "evpower-core.zip": {
-    "sha256": "be2bbb659882d884012d987767574393487e63caf9b85642e2429a9d850611d2",
-    "bytes": 105769
+    "sha256": "e5aab51db0628f7ef5e815e90e8b947480e21793fad9f6dac442a0552c67923b",
+    "bytes": 119932
+  },
+  "evpower-website-preview.zip": {
+    "sha256": "1f2612bb0d1cc616498da38d3ed36f52433f45fa60bf01f61966189593e2456f",
+    "bytes": 10812182,
+    "purpose": "Offline design preview; forms do not submit."
   }
 }

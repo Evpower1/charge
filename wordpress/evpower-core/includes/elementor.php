@@ -28,7 +28,7 @@ function evpower_elementor_layout_preview_id() {
     if ( 'evpower' !== get_template() || ! class_exists( '\Elementor\Plugin' ) || ! isset( $_GET['elementor-preview'] ) || ! is_scalar( $_GET['elementor-preview'] ) ) { return 0; }
     $id = absint( wp_unslash( $_GET['elementor-preview'] ) );
     if ( ! $id || 'elementor_library' !== get_post_type( $id ) || ! \Elementor\Plugin::$instance->preview->is_preview_mode( $id ) ) { return 0; }
-    $saved = get_option( 'evpower_elementor_layouts', array() );
+    $saved = array_merge( (array) get_option( 'evpower_elementor_layouts', array() ), (array) get_option( 'evpower_services_elementor_layouts', array() ) );
     $layouts = is_array( $saved ) ? array_map( 'absint', $saved ) : array();
     $type = get_post_meta( $id, '_elementor_template_type', true );
     return in_array( $id, $layouts, true ) || in_array( $type, array( 'header', 'footer' ), true ) ? $id : 0;

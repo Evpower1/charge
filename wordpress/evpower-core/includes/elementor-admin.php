@@ -14,6 +14,7 @@ function evpower_elementor_action_form( $action, $label, $id = 0, $class = 'butt
 }
 function evpower_elementor_admin() {
     if ( ! current_user_can( 'manage_options' ) ) { return; }
+    echo '<div class="notice notice-info inline"><p>For the new four-service website, use <a href="' . esc_url( admin_url( 'admin.php?page=evpower-services' ) ) . '">Evpower → Services website</a> to prepare, edit and activate its separate pages, header and footer.</p></div>';
     if ( isset( $_GET['check_preview'] ) && is_scalar( $_GET['check_preview'] ) ) { evpower_elementor_preview_check_admin( absint( wp_unslash( $_GET['check_preview'] ) ) ); return; }
     $active = class_exists( '\Elementor\Plugin' ); $pro = function_exists( 'elementor_theme_do_location' );
     $layouts = get_option( 'evpower_elementor_layouts', array() );
