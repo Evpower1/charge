@@ -1,0 +1,30 @@
+{
+  "source": "https://evpower1.github.io/charge/kedir/",
+  "source_commit": "36587192becc3c9c6747a37e8157c81cc159d48f",
+  "duration_seconds": 21.6,
+  "files": {
+    "evpower-charging-animation.html": {
+      "bytes": 2663859,
+      "sha256": "0a9f0031006cef24ba2cde29bc0f99e9cb808f1e91ec68ff6a230d9c8a647033"
+    },
+    "evpower-charging-animation.mp4": {
+      "bytes": 1011897,
+      "sha256": "dca7cdf95855c9fc86fd4f662edafef0a53583a59b9379a2e257d5c7f998bd18"
+    },
+    "evpower-charging-animation-preview.png": {
+      "bytes": 769426,
+      "sha256": "95ea12c920f35e7fa6dd9c01b2523a4568cd93799c4233f965afcad33345e45c"
+    }
+  },
+  "embedded_images": {
+    "ev-car-realistic.png": "602ad043fc4b888b8c9cc835e1659d2e01f2846dd33ba4f69771f19e20720eb3",
+    "ev-charger-realistic.png": "0fe5b0ddc60dfbb96c388eb7b99227ddbfa3c4c8acd90676a1303a1fad7afbe4"
+  },
+  "width": 1280,
+  "height": 960,
+  "fps": 30,
+  "frames": 648,
+  "codec": "H.264",
+  "pixel_format": "yuv420p",
+  "audio": false
+}
